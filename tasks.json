@@ -1,9 +1,17 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 0,
-  "updatedAt": "2026-11-04T19:10:55.940Z",
-  "history": [],
+  "revision": 1,
+  "updatedAt": "2026-11-04T19:55:12.033Z",
+  "history": [
+    {
+      "at": "2026-11-04T19:55:12.033Z",
+      "taskId": "SV-003",
+      "command": "claim",
+      "agent": "codex-design-reference",
+      "owner": "wil"
+    }
+  ],
   "tasks": [
     {
       "id": "SV-000",
@@ -68,7 +76,7 @@
     {
       "id": "SV-003",
       "title": "Accessible equipment workflows and fallback",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -82,7 +90,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "codex-design-reference",
+        "owner": "wil",
+        "leaseId": "f3316ab0-937e-474d-bf24-845b28a4fb63",
+        "claimedAt": "2026-11-04T19:55:12.033Z",
+        "expiresAt": "2026-11-04T21:55:12.033Z"
+      }
     },
     {
       "id": "SV-004",
