@@ -1,0 +1,269 @@
+{
+  "version": "1.0.0",
+  "name": "Baltimore NICU reference section",
+  "units": "meters",
+  "upAxis": "Y",
+  "dimensions": {
+    "width": 23,
+    "depth": 14,
+    "height": 2.85
+  },
+  "roomCount": 6,
+  "accuracy": "Reference-based reconstruction; all dimensions, room numbering, adjacencies, inventory and equipment brands are illustrative. Not an as-built survey.",
+  "roomIds": [
+    "room-101",
+    "room-102",
+    "room-103",
+    "room-104",
+    "room-105",
+    "room-106",
+    "clean-supply",
+    "staff-base",
+    "equipment-store",
+    "family-lounge"
+  ],
+  "sources": [
+    {
+      "title": "NICU parent guide · 2024",
+      "url": "https://www.hopkinsmedicine.org/-/media/johns-hopkins-childrens-center/documents/specialties/neonatal-medicine/a-parents-guide-to-the-nicu-english-2024.pdf",
+      "supports": "Private-room furnishings, family sleep chair, family facilities and representative clinical equipment."
+    },
+    {
+      "title": "NICU design · Johns Hopkins",
+      "url": "https://www.hopkinsmedicine.org/news/articles/2012/07/nicu-design-with-less-movement-in-mind",
+      "supports": "Eighth-floor location, private rooms, proximity to Labor & Delivery and family accommodations. Historical source, 2012."
+    },
+    {
+      "title": "Patient-room design · Johns Hopkins",
+      "url": "https://www.hopkinsmedicine.org/johns-hopkins-childrens-center/patients-and-families/bloomberg-childrens-center/patient-rooms",
+      "supports": "NICU rubber flooring, distributed workstations and quiet interior design."
+    },
+    {
+      "title": "Bloomberg Tower public map",
+      "url": "https://www.hopkinsmedicine.org/-/media/hse/maps/bloomberg-tower-north-south.pdf",
+      "supports": "Building context only. Not verified as a dimensioned eighth-floor NICU plan."
+    },
+    {
+      "title": "Architectural project · Perkins&Will",
+      "url": "https://perkinswill.com/project/the-johns-hopkins-hospital-sheikh-zayed-tower-and-the-charlotte-r-bloomberg-childrens-center/",
+      "supports": "Building material and circulation references. Does not verify this section layout."
+    }
+  ],
+  "assets": [
+    {
+      "id": "incubator",
+      "label": "Neonatal incubator",
+      "file": "incubator.glb",
+      "sizeMeters": [
+        0.827,
+        1.567,
+        1.307
+      ],
+      "boundsMin": [
+        -0.414,
+        0,
+        -0.625
+      ],
+      "triangles": 10176,
+      "bytes": 931636,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "warmer",
+      "label": "Radiant warmer",
+      "file": "warmer.glb",
+      "sizeMeters": [
+        0.885,
+        1.905,
+        1.125
+      ],
+      "boundsMin": [
+        -0.385,
+        0,
+        -0.57
+      ],
+      "triangles": 6804,
+      "bytes": 629816,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "monitor",
+      "label": "Patient monitor",
+      "file": "monitor.glb",
+      "sizeMeters": [
+        0.537,
+        1.618,
+        0.547
+      ],
+      "boundsMin": [
+        -0.245,
+        0,
+        -0.273
+      ],
+      "triangles": 7252,
+      "bytes": 651020,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "infusion",
+      "label": "Infusion stand",
+      "file": "infusion.glb",
+      "sizeMeters": [
+        0.527,
+        1.749,
+        0.585
+      ],
+      "boundsMin": [
+        -0.235,
+        0,
+        -0.292
+      ],
+      "triangles": 6132,
+      "bytes": 535552,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "recliner",
+      "label": "Family sleep chair",
+      "file": "recliner.glb",
+      "sizeMeters": [
+        0.904,
+        1.036,
+        0.933
+      ],
+      "boundsMin": [
+        -0.44,
+        0,
+        -0.433
+      ],
+      "triangles": 2268,
+      "bytes": 222240,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "supply-cabinet",
+      "label": "Supply cabinet",
+      "file": "supply-cabinet.glb",
+      "sizeMeters": [
+        1.575,
+        2.017,
+        0.52
+      ],
+      "boundsMin": [
+        -0.788,
+        0.001,
+        -0.26
+      ],
+      "triangles": 31772,
+      "bytes": 2830780,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "supply-cart",
+      "label": "Bedside supply cart",
+      "file": "supply-cart.glb",
+      "sizeMeters": [
+        0.831,
+        0.96,
+        0.6
+      ],
+      "boundsMin": [
+        -0.39,
+        0,
+        -0.285
+      ],
+      "triangles": 4016,
+      "bytes": 394972,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "workstation",
+      "label": "Clinical workstation",
+      "file": "workstation.glb",
+      "sizeMeters": [
+        1.4,
+        1.22,
+        1.439
+      ],
+      "boundsMin": [
+        -0.7,
+        0,
+        -0.325
+      ],
+      "triangles": 6656,
+      "bytes": 653052,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "sink",
+      "label": "Hand hygiene station",
+      "file": "sink.glb",
+      "sizeMeters": [
+        0.82,
+        1.105,
+        0.576
+      ],
+      "boundsMin": [
+        -0.41,
+        0,
+        -0.275
+      ],
+      "triangles": 3648,
+      "bytes": 357684,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "stool",
+      "label": "Clinical stool",
+      "file": "stool.glb",
+      "sizeMeters": [
+        0.457,
+        0.543,
+        0.489
+      ],
+      "boundsMin": [
+        -0.215,
+        0,
+        -0.245
+      ],
+      "triangles": 2244,
+      "bytes": 217788,
+      "pivot": "floor origin",
+      "front": "+Z",
+      "provenance": "Original representative equipment; make/model unverified."
+    }
+  ],
+  "ward": {
+    "file": "nicu-ward.glb",
+    "bytes": 7942568,
+    "cutawayFile": "nicu-ward-cutaway.glb",
+    "cutawayBytes": 7906696
+  },
+  "integration": {
+    "locations": "locations.json",
+    "navigation": "navigation.json",
+    "events": [
+      "supply-sentry:location-select",
+      "supply-sentry:inventory-change",
+      "supply-sentry:navigation-complete"
+    ]
+  }
+}

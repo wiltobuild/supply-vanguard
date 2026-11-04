@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#24483b"><title>Supply Sentry · NICU Spatial Lab</title><meta name="description" content="Explore a reference-based Baltimore NICU section, inspect reusable 3D equipment and find sample supplies."><link rel="stylesheet" href="styles.css"><script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script></head>
+<body>
+<div id="app">
+ <aside class="sidebar">
+  <a class="brand" href="./" aria-label="Supply Sentry home"><span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M12 3 21 8v9l-9 5-9-5V8Z M3 8l9 5 9-5 M12 13v9 M8 5l9 5"/></svg></span><span>Supply Sentry<small>SPATIAL LAB</small></span></a>
+  <div class="project-chip"><span class="project-icon">01</span><span>Baltimore NICU<small>Reference collection</small></span><span class="chevron">⌄</span></div>
+  <div class="eyebrow sidebar-label">WORKSPACE</div>
+  <nav class="main-nav" aria-label="Workspace"><button id="nav-ward" class="nav-item active"><span>▦</span>Ward explorer<span class="nav-count">6</span></button><button id="nav-inventory" class="nav-item"><span>▤</span>Supply locations<span class="nav-count">9</span></button><button id="nav-assets" class="nav-item"><span>◇</span>3D asset library<span class="nav-count">10</span></button></nav>
+  <div class="section-label"><span class="eyebrow">IN THIS SECTION</span><button id="reset-map" class="icon-button" title="Reset view" aria-label="Reset ward view">↺</button></div>
+  <div id="room-list" class="room-list"></div>
+  <div class="sidebar-bottom"><span class="status-dot"></span><span>Standalone preview<small>Ready for app integration</small></span><button id="about-button" class="icon-button" aria-label="View sources and accuracy">ⓘ</button></div>
+ </aside>
+ <main>
+  <header class="topbar"><div><div class="breadcrumb">Spatial workspace <span>/</span> Johns Hopkins reference</div><h1>NICU ward explorer<span class="version">v1.0</span></h1></div><div class="header-actions"><button id="source-button" class="subtle-button">Sources & accuracy ↗</button><a class="button primary small" href="assets/nicu-ward.glb" download>↓ <span>Export ward</span></a></div></header>
+  <div class="workspace">
+   <section class="viewport" aria-label="Interactive 3D ward">
+    <div id="scene"></div><div id="markers"></div>
+    <div class="scene-heading"><span class="eyebrow">BALTIMORE CHILDREN’S CENTER</span><h2>A quieter place for care.</h2><p>Six private rooms. One connected supply view.</p><span class="reference-badge"><span></span>Reference reconstruction</span></div>
+    <div class="view-switch" role="group" aria-label="Camera mode"><button id="overview" class="selected">⌘ <span>Overview</span></button><button id="walk">↟ <span>Walk through</span></button></div>
+    <div id="asset-title" hidden><span class="eyebrow">EQUIPMENT COLLECTION</span><h2 id="asset-name"></h2><p>Original geometry · meters · Y up</p><button id="back-to-ward" class="button">← Back to ward</button></div>
+    <div id="loading"><div class="spinner"></div><h3>Preparing your ward</h3><p>Building the architecture and equipment…</p></div>
+    <div class="view-options"><button id="cutaway" class="toggle active" aria-pressed="true">◫ <span>Cutaway</span></button><button id="labels" class="toggle active" aria-pressed="true">Aa <span>Labels</span></button><button id="supplies" class="toggle active" aria-pressed="true">◉ <span>Stock markers</span></button></div>
+    <div class="scene-legend"><span><i class="dot ready"></i>Ready</span><span><i class="dot watch"></i>Watch</span><span><i class="dot low"></i>Low stock</span><em>Sample data</em></div>
+    <div class="camera-tools"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="home-view" aria-label="Reset camera">⌂</button><button id="fullscreen" aria-label="Toggle fullscreen">⛶</button></div>
+    <div id="walk-help" hidden><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Move</span><span>Drag to look</span><span>Click floor to walk</span><button id="stop-route" hidden>Stop walking</button></div>
+    <div id="touch-controls" hidden><button data-move="KeyW" aria-label="Move forward">↑</button><div><button data-move="KeyA" aria-label="Move left">←</button><button data-move="KeyS" aria-label="Move backward">↓</button><button data-move="KeyD" aria-label="Move right">→</button></div></div>
+    <div id="toast" role="status" aria-live="polite"></div>
+    <div class="viewport-footer"><span id="view-status">Orbit to explore · scroll to zoom</span><span id="fps" hidden></span><span class="compass">N ↑</span></div>
+   </section>
+   <aside class="inspector" id="inspector" aria-label="Supply and asset details"></aside>
+  </div>
+  <footer class="app-footer"><span><b>REFERENCE MODEL</b> Layout and dimensions are estimated. Room numbers and inventory are illustrative.</span><span>23 × 14 m <i>·</i> 6 infant rooms <i>·</i> 10 asset types</span></footer>
+ </main>
+</div>
+<dialog id="sources-dialog"><div class="dialog-header"><span class="eyebrow">MODEL NOTES</span><button id="close-sources" class="icon-button" aria-label="Close sources">×</button></div><h2>Built from references.<br>Honest about the gaps.</h2><p>This is a modeled section inspired by the Sutland/Pakula Family NICU in the Charlotte R. Bloomberg Children’s Center, Baltimore. It is not a surveyed replica or an official Johns Hopkins product.</p><div class="evidence-grid"><div><b>Documented</b><p>Private infant rooms, family sleep chairs, rubber flooring and distributed work areas.</p></div><div><b>Estimated</b><p>This six-room layout, dimensions, door positions, cabinetry and equipment placement.</p></div><div><b>Demonstration</b><p>Room IDs, stock counts, replenishment actions and supply routing.</p></div></div><div id="source-list"></div><p class="fine-print">Equipment models are original representative geometry; manufacturer models have not been verified. The “N” indicator denotes model orientation, not verified geographic north. No patient data is used.</p><a href="assets/manifest.json" download class="button">↓ Download asset manifest</a></dialog>
+<script type="module" src="app.js"></script>
+</body></html>
