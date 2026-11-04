@@ -1,0 +1,428 @@
+{
+  "schemaVersion": 1,
+  "project": "supply-vanguard",
+  "revision": 0,
+  "updatedAt": "2026-11-04T19:10:55.940Z",
+  "history": [],
+  "tasks": [
+    {
+      "id": "SV-000",
+      "title": "Bootstrap repository and shared claiming board",
+      "status": "done",
+      "priority": "high",
+      "dependsOn": [],
+      "scope": [
+        "apps/web",
+        "packages/scene",
+        "tools/board.mjs"
+      ],
+      "acceptance": [
+        "Runnable equipment demo, 12 GLBs, plan and live board; claim race tests pass."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null,
+      "evidence": "a88e7430e3180ece6ba5823ca045a3b2a6fad29b"
+    },
+    {
+      "id": "SV-001",
+      "title": "Define equipment and event contracts",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [],
+      "scope": [
+        "packages/domain"
+      ],
+      "acceptance": [
+        "Typed/versioned schemas; separate observation freshness from administrative updates; invalid fields and transitions rejected."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-002",
+      "title": "Extract configurable ward and model mapping",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [],
+      "scope": [
+        "packages/scene"
+      ],
+      "acceptance": [
+        "Location configuration and model registry validated; stable IDs and meter coordinates; move updates identity-preserving meshes."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-003",
+      "title": "Accessible equipment workflows and fallback",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [],
+      "scope": [
+        "apps/web"
+      ],
+      "acceptance": [
+        "Keyboard and mobile search/edit flows; WebGL failure fallback; explicit loading/errors; escaped persisted data."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-004",
+      "title": "Database foundation and migrations",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [],
+      "scope": [
+        "services/api/db"
+      ],
+      "acceptance": [
+        "Local PostgreSQL setup, tenant-scoped schema, migrations, seed and rollback instructions; constraints tested."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-005",
+      "title": "Authentication and role authorization",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-004"
+      ],
+      "scope": [
+        "services/api/auth"
+      ],
+      "acceptance": [
+        "Authenticated memberships; role matrix; cross-tenant reads and writes denied in integration tests."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-006",
+      "title": "Equipment API and immutable audit transactions",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-001",
+        "SV-004",
+        "SV-005"
+      ],
+      "scope": [
+        "services/api/equipment"
+      ],
+      "acceptance": [
+        "Version-checked updates and atomic audit; 409 conflicts; paginated scoped queries; concurrency tests."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-007",
+      "title": "Connect web client to shared equipment API",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-003",
+        "SV-006"
+      ],
+      "scope": [
+        "apps/web"
+      ],
+      "acceptance": [
+        "Two clients synchronize; reconnect refetch; conflict recovery; browser persistence no longer authoritative."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-008",
+      "title": "Barcode and QR manual check-in",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-001",
+        "SV-006"
+      ],
+      "scope": [
+        "apps/web/check-in",
+        "services/api/check-in"
+      ],
+      "acceptance": [
+        "Scan/type ID, validate location, attributed idempotent check-in; unknown IDs and duplicate requests handled."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-009",
+      "title": "Supply ledger and bin inventory",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-004",
+        "SV-005"
+      ],
+      "scope": [
+        "services/api/supplies",
+        "packages/domain/supplies"
+      ],
+      "acceptance": [
+        "SKU units and bins; transactional adjustments/restocking; no lost or duplicated concurrent updates."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-010",
+      "title": "Replenishment queue and low-stock alerts",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-007",
+        "SV-009"
+      ],
+      "scope": [
+        "apps/web/supplies",
+        "services/api/replenishment"
+      ],
+      "acceptance": [
+        "Low-par detection; assign/complete replenishment; deduplicated alerts; count correction audited."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-011",
+      "title": "Equipment cleaning and maintenance workflows",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-006",
+        "SV-007"
+      ],
+      "scope": [
+        "apps/web/maintenance",
+        "services/api/maintenance"
+      ],
+      "acceptance": [
+        "Restricted transitions, service history; unavailable equipment excluded from ready search."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-012",
+      "title": "Audit search and permission-scoped export",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-006",
+        "SV-009"
+      ],
+      "scope": [
+        "apps/web/audit",
+        "services/api/audit"
+      ],
+      "acceptance": [
+        "Actor/time/source filtering, paginated immutable events, authorized export and redaction tests."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-013",
+      "title": "Provider-neutral observation ingestion simulator",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-001",
+        "SV-004",
+        "SV-005"
+      ],
+      "scope": [
+        "services/ingestion"
+      ],
+      "acceptance": [
+        "Authenticated observations; idempotency and observed/received timestamps; simulator; replay/dead-letter tests."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-014",
+      "title": "Location confidence and RTLS adapter boundary",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-006",
+        "SV-013"
+      ],
+      "scope": [
+        "services/ingestion/resolution",
+        "packages/domain/location"
+      ],
+      "acceptance": [
+        "Out-of-order and conflicting data rules; stale/uncertain states; manual overrides; vendor adapter contract without fabricated live integration."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-015",
+      "title": "Validate ward reference geometry",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-002"
+      ],
+      "scope": [
+        "packages/scene/references"
+      ],
+      "acceptance": [
+        "Source/confidence register; distinguish measured and estimated elements; authorized reference review, or document external block."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-016",
+      "title": "End-to-end and performance verification",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-007",
+        "SV-008",
+        "SV-010",
+        "SV-011",
+        "SV-012",
+        "SV-014"
+      ],
+      "scope": [
+        "tests/e2e",
+        "tools/benchmarks"
+      ],
+      "acceptance": [
+        "Find/move/check-in/replenish journeys; two-client conflicts and tenant isolation; browser and accessibility report; performance budgets measured."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-017",
+      "title": "Deployment and operational readiness",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-006",
+        "SV-013"
+      ],
+      "scope": [
+        "ops",
+        ".github/workflows"
+      ],
+      "acceptance": [
+        "Environment setup, secrets procedure, monitoring, backup/restore exercise, deployment rollback and ownership runbook."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-018",
+      "title": "Ward pilot and release sign-off",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-015",
+        "SV-016",
+        "SV-017"
+      ],
+      "scope": [
+        "planning/pilot"
+      ],
+      "acceptance": [
+        "Staff workflow validation, agreed performance targets and known limitations; operational approval evidence before production release."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    }
+  ]
+}
