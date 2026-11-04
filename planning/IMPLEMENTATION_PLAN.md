@@ -1,5 +1,9 @@
 # Supply Vanguard implementation plan
 
+## Selected UI/UX reference
+
+The [homepage reference and shared design direction](../design/README.md) govern future UI work. Use the supplied department-workspace composition, coral accents, pastel equipment cards and large typography for the homepage, adapting its content to the working NICU scope. Carry shared tokens, navigation and components into equipment, ward, coordination and approval screens. SV-003 must implement this direction alongside accessibility and fallback requirements; saving this reference does not mark the redesign complete.
+
 ## Product and first release
 
 Help staff find available equipment, understand whether its location is trustworthy, update movements and readiness, and replenish supplies. The 3D ward is a navigable representation of locations, not the source of inventory truth. Start with one Baltimore Children's Center NICU-inspired ward section: six infant rooms, supply room, equipment store, staff workroom and family area. Expand to additional wards only after location mapping and workflows are validated.
