@@ -29,6 +29,8 @@ Only start after a successful claim. Use separate clones/worktrees for simultane
 
 ## Layout
 
+The [shared UI/UX direction](design/README.md) contains the user-selected homepage reference and requirements for all future app screens.
+
 - `apps/web`: equipment register and scene integration.
 - `packages/domain`: versioned equipment updates, sample records and audit events.
 - `packages/scene/viewer`: full existing 3D source, vendored Three.js and GLB files under `assets/`.

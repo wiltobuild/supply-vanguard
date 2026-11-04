@@ -1,5 +1,7 @@
 # Working together
 
+For every UI/UX task, read [design/README.md](design/README.md) and inspect its user-selected homepage reference. It governs the homepage and informs the whole app. Preserve functional NICU workflows, accessibility, and truthful data states. SV-003 includes applying this visual direction; saving the reference alone does not complete that task.
+
 Read README.md and planning/IMPLEMENTATION_PLAN.md. Use the shared board before editing. Requires GitHub write access, authenticated Git and `gh`. Never use force pushes on `task-board`; never treat planning/tasks.json as live claims.
 
 ## Claim a task
