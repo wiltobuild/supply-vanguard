@@ -1,12 +1,12 @@
 # Supply Vanguard shared task board
 
-Revision 13. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 14. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
 | SV-000 Bootstrap repository and shared claiming board | done | — | — | — | apps/web, packages/scene, tools/board.mjs |
 | SV-001 Define equipment and event contracts | review | — | — | — | [PR](https://github.com/wiltobuild/supply-vanguard/pull/2) |
-| SV-002 Extract configurable ward and model mapping | claimed | cheich / cheich-agent-2 | 2026-11-05T11:27:07.829Z | — | packages/scene |
+| SV-002 Extract configurable ward and model mapping | claimed | cheich / cheich-agent-2 | 2026-11-05T11:27:33.047Z | — | packages/scene |
 | SV-003 Accessible equipment workflows and fallback | ready | — | — | — | apps/web |
 | SV-004 Database foundation and migrations | ready | — | — | — | services/api/db |
 | SV-005 Authentication and role authorization | ready | — | — | SV-004 | services/api/auth |
