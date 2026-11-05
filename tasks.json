@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 11,
-  "updatedAt": "2026-11-05T09:15:25.569Z",
+  "revision": 12,
+  "updatedAt": "2026-11-05T09:25:25.274Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -80,6 +80,13 @@
       "command": "submit",
       "agent": "cheich-agent-1",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T09:25:25.274Z",
+      "taskId": "SV-002",
+      "command": "claim",
+      "agent": "cheich-agent-2",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -130,7 +137,7 @@
     {
       "id": "SV-002",
       "title": "Extract configurable ward and model mapping",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -144,7 +151,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-2",
+        "owner": "cheich",
+        "leaseId": "1059aab7-24b6-483d-b891-85db118af923",
+        "claimedAt": "2026-11-05T09:25:25.274Z",
+        "expiresAt": "2026-11-05T11:25:25.274Z"
+      }
     },
     {
       "id": "SV-003",
