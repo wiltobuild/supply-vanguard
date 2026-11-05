@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 19,
-  "updatedAt": "2026-11-05T12:32:09.596Z",
+  "revision": 20,
+  "updatedAt": "2026-11-05T13:00:13.644Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -136,6 +136,13 @@
       "command": "submit",
       "agent": "cheich-agent-3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T13:00:13.644Z",
+      "taskId": "SV-003",
+      "command": "claim",
+      "agent": "cheich-agent-4",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -208,7 +215,7 @@
     {
       "id": "SV-003",
       "title": "Accessible equipment workflows and fallback",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -222,7 +229,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-4",
+        "owner": "cheich",
+        "leaseId": "f0715e5f-44d9-46d1-b820-1b16ba0dcdc8",
+        "claimedAt": "2026-11-05T13:00:13.644Z",
+        "expiresAt": "2026-11-05T15:00:13.644Z"
+      }
     },
     {
       "id": "SV-004",
