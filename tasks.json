@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 26,
-  "updatedAt": "2026-11-05T15:06:05.869Z",
+  "revision": 27,
+  "updatedAt": "2026-11-05T15:06:19.933Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -185,6 +185,13 @@
       "command": "complete",
       "agent": "wil-sol-sv005-20261105-a7f3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T15:06:19.933Z",
+      "taskId": "SV-004",
+      "command": "complete",
+      "agent": "wil-sol-sv005-20261105-a7f3",
+      "owner": null
     }
   ],
   "tasks": [
@@ -300,7 +307,7 @@
     {
       "id": "SV-004",
       "title": "Database foundation and migrations",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -317,7 +324,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/4",
       "submittedBy": "cheich-agent-3",
-      "submittedAt": "2026-11-05T12:32:09.596Z"
+      "submittedAt": "2026-11-05T12:32:09.596Z",
+      "completedAt": "2026-11-05T15:06:19.933Z",
+      "reviewedBy": "wil-sol-sv005-20261105-a7f3",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/4",
+        "mergeCommit": "603442d9cc7b0900049967f56376b522089005f0",
+        "mergedAt": "2026-11-05T14:53:54Z"
+      }
     },
     {
       "id": "SV-005",
