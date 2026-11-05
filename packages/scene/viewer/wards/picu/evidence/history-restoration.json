@@ -1,0 +1,63 @@
+[
+  {
+    "step": "3d-filtered",
+    "canvas": 1,
+    "count": "1 illustrative placement shown",
+    "highlight": "1 highlighted placement: IV pump in Demo room A1.",
+    "items": [
+      "picu-room-a1-infusion"
+    ],
+    "kind": "infusion",
+    "ready": "true",
+    "search": "A1",
+    "url": "http://127.0.0.1:4186/ward/wards/picu/index.html"
+  },
+  {
+    "step": "3d-back",
+    "canvas": 1,
+    "count": "1 illustrative placement shown",
+    "highlight": "1 highlighted placement: IV pump in Demo room A1.",
+    "items": [
+      "picu-room-a1-infusion"
+    ],
+    "kind": "infusion",
+    "ready": "true",
+    "search": "A1",
+    "url": "http://127.0.0.1:4186/ward/wards/picu/index.html"
+  },
+  {
+    "step": "3d-forward",
+    "canvas": 1,
+    "count": "1 illustrative placement shown",
+    "highlight": "1 highlighted placement: Monitor in Demo room B2.",
+    "items": [
+      "picu-room-b2-monitor"
+    ],
+    "kind": "monitor",
+    "ready": "true",
+    "search": "B2",
+    "url": "http://127.0.0.1:4186/ward/wards/picu/index.html"
+  },
+  {
+    "step": "list-back",
+    "canvas": 0,
+    "count": "1 illustrative placement shown",
+    "items": [
+      "picu-room-a1-infusion"
+    ],
+    "kind": "infusion",
+    "search": "A1",
+    "url": "http://127.0.0.1:4186/ward/wards/picu/index.html?view=list"
+  },
+  {
+    "step": "list-forward",
+    "canvas": 0,
+    "count": "1 illustrative placement shown",
+    "items": [
+      "picu-room-a1-infusion"
+    ],
+    "kind": "infusion",
+    "search": "A1",
+    "url": "http://127.0.0.1:4186/ward/wards/picu/index.html?view=list"
+  }
+]
