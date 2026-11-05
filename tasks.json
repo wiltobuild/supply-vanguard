@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 112,
-  "updatedAt": "2026-11-05T19:19:04.250Z",
+  "revision": 113,
+  "updatedAt": "2026-11-05T19:20:35.328Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -791,6 +791,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv014-20261105-resolve",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:20:35.328Z",
+      "taskId": "SV-012",
+      "command": "claim",
+      "agent": "cheich-agent-9",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -1133,7 +1140,7 @@
     {
       "id": "SV-012",
       "title": "Audit search and permission-scoped export",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1151,7 +1158,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-9",
+        "owner": "cheich",
+        "leaseId": "f371b35d-c8c5-492d-bd3e-ea6d39af1366",
+        "claimedAt": "2026-11-05T19:20:35.328Z",
+        "expiresAt": "2026-11-05T21:20:35.328Z"
+      }
     },
     {
       "id": "SV-013",
