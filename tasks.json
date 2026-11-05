@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 143,
-  "updatedAt": "2026-11-05T20:23:32.659Z",
+  "revision": 144,
+  "updatedAt": "2026-11-05T22:57:31.360Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1008,6 +1008,13 @@
       "command": "submit",
       "agent": "wil-astra-ward-two-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T22:57:31.360Z",
+      "taskId": "SV-024",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1727,7 +1734,7 @@
     {
       "id": "SV-024",
       "title": "Add fifteen illustrative NICU equipment assets",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1762,7 +1769,14 @@
       "submittedBy": "wil-astra-assets-20261105",
       "submittedAt": "2026-11-05T19:21:48.675Z",
       "blockedReason": null,
-      "reviewNote": "PR 16 Linux CI reproduces cross-platform floating point differences in strict new-GLB byte comparison. Correct validation while preserving original asset hashes and meaningful export drift checks."
+      "reviewNote": "PR 16 Linux CI reproduces cross-platform floating point differences in strict new-GLB byte comparison. Correct validation while preserving original asset hashes and meaningful export drift checks.",
+      "completedAt": "2026-11-05T22:57:31.360Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/16",
+        "mergeCommit": "9113df98c2601820f7a13c471b9d4c226458654c",
+        "mergedAt": "2026-11-05T20:01:08Z"
+      }
     },
     {
       "id": "SV-025",
