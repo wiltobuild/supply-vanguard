@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 153,
-  "updatedAt": "2026-11-05T23:06:43.590Z",
+  "revision": 154,
+  "updatedAt": "2026-11-05T23:09:04.738Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1078,6 +1078,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv007-20261105-9f2a",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T23:09:04.738Z",
+      "taskId": "SV-008",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1319,7 +1326,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1342,7 +1349,7 @@
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-05T18:37:46.923Z",
       "blockedReason": null,
-      "reviewNote": "Exact-head review ea5029774c06f838a42ea00e92811e463a446e6c: camera onScan compares raw SV1:EQ-001 text with normalized EQ-001 and eagerly clears attempt, so an equivalent prefixed QR rescan discards successful or uncertain-response retry keys. Remove eager invalidation, retain normalized submit comparison, and add deterministic successful/interrupted equivalent-prefixed-rescan regressions plus changed-target coverage."
+      "reviewNote": "Current-main fixture compatibility: services/api/check-in/tests/api.test.mjs applies core/auth/check-in only, but its administrative PATCH regression now consumes merged equipment_command_receipt. Original owner should integrate current main safely on the existing branch, apply services/api/equipment/migrations/0001_receipts.up.sql transactionally after core/auth in the check-in-local fixture, and grant SELECT,INSERT on equipment_command_receipt to sv_check_in_runtime. Add or strengthen focused admin-PATCH/replay integrity coverage and run permitted combined-main checks. Edit only apps/web/check-in and services/api/check-in; no shared mounting, auth/bootstrap/root dependency/test-loader/CI edits, persistent grants, or repeated Windows native/loopback denied stages. This rework is fixture compatibility only; actual host mounting/browser acceptance remain separate merge gates."
     },
     {
       "id": "SV-009",
