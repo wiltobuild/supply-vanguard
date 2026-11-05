@@ -4,6 +4,7 @@ import {createWard} from './ward.js';
 import {createAsset,ASSET_TYPES} from './models.js';
 import {ROOMS,INITIAL_LOCATIONS,SOURCES,ASSET_LABELS,stockState} from './data.js';
 import {findPath,isWalkable} from './nav.js';
+import {planPlacements,diffPlacements} from './config.js';
 
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let locations=structuredClone(INITIAL_LOCATIONS),mode='overview',section='ward',selected=null,filter='all',query='',labelsOn=true,suppliesOn=true,cutaway=true,assetKind=null;
@@ -97,15 +98,18 @@ window.SupplySentry={version:'1.0.0',getInventory:()=>structuredClone(locations)
 window.dispatchEvent(new CustomEvent('supply-sentry:ready'));
 // Serialized equipment layer: stable equipment IDs are independent of scene meshes.
 const equipmentLayer=new THREE.Group();equipmentLayer.name='tracked-equipment';ward.root.add(equipmentLayer);
-const trackedEquipment=new Map();
+const trackedEquipment=new Map(),equipmentMeshes=new Map();let currentPlan=new Map();
 window.SupplyVanguardScene={
  setEquipment(items){
   for(let i=markerEntries.length-1;i>=0;i--)if(markerEntries[i].type==='equipment'){markerEntries[i].el.remove();markerEntries.splice(i,1);}
-  equipmentLayer.clear();trackedEquipment.clear();const counts=new Map();
-  for(const item of items){const room=ROOMS.find(r=>r.id===item.roomId);if(!room)continue;
-   const slot=counts.get(room.id)||0;counts.set(room.id,slot+1);
-   const model=createAsset(item.modelKind);model.userData.equipmentId=item.id;
-   model.position.set(room.x-1+(slot%3)*.9,0,room.z+room.side*(.6+Math.floor(slot/3)*.8));equipmentLayer.add(model);
+  trackedEquipment.clear();
+  // A move keeps the same mesh object; only added, removed or re-typed items create or dispose meshes.
+  const plan=planPlacements(items,undefined,undefined,currentPlan),change=diffPlacements(currentPlan,plan);
+  for(const id of [...change.removed,...change.retyped]){const m=equipmentMeshes.get(id);if(m)equipmentLayer.remove(m);equipmentMeshes.delete(id);}
+  for(const id of [...change.added,...change.retyped]){const p=plan.get(id),model=createAsset(p.modelKind);model.userData.equipmentId=id;equipmentLayer.add(model);equipmentMeshes.set(id,model);}
+  for(const [id,p] of plan)equipmentMeshes.get(id).position.set(...p.position);
+  currentPlan=plan;
+  for(const item of items){const model=equipmentMeshes.get(item.id);if(!model)continue;
    const position=model.position.clone().add(new THREE.Vector3(0,1.9,0));trackedEquipment.set(item.id,{...item,position});
    const el=document.createElement('button');el.className='room-marker';el.textContent=item.id;el.title=`${item.name} · ${item.status}`;el.setAttribute('aria-label',el.title);
    el.style.borderColor=({available:'#22826a','in-use':'#527abd',maintenance:'#bb5149',cleaning:'#bb903d',retired:'#777'})[item.status];
