@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 40. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 41. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@ Revision 40. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-006 Equipment API and immutable audit transactions | ready | — | — | SV-001, SV-004, SV-005 | services/api/equipment |
 | SV-007 Connect web client to shared equipment API | ready | — | — | SV-003, SV-006 | apps/web |
 | SV-008 Barcode and QR manual check-in | ready | — | — | SV-001, SV-006 | apps/web/check-in, services/api/check-in |
-| SV-009 Supply ledger and bin inventory | claimed | wil / wil-sol-sv009-20261105-c4d8 | 2026-11-05T18:20:38.929Z | SV-004, SV-005 | services/api/supplies, packages/domain/supplies |
+| SV-009 Supply ledger and bin inventory | claimed | wil / wil-sol-sv009-20261105-c4d8 | 2026-11-05T18:22:31.871Z | SV-004, SV-005 | services/api/supplies, packages/domain/supplies |
 | SV-010 Replenishment queue and low-stock alerts | ready | — | — | SV-007, SV-009 | apps/web/supplies, services/api/replenishment |
 | SV-011 Equipment cleaning and maintenance workflows | ready | — | — | SV-006, SV-007 | apps/web/maintenance, services/api/maintenance |
 | SV-012 Audit search and permission-scoped export | ready | — | — | SV-006, SV-009 | apps/web/audit, services/api/audit |
