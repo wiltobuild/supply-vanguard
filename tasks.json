@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 146,
-  "updatedAt": "2026-11-05T22:58:42.288Z",
+  "revision": 147,
+  "updatedAt": "2026-11-05T22:59:40.172Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1029,6 +1029,13 @@
       "command": "claim",
       "agent": "wil-sol-sv007-20261105-9f2a",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-05T22:59:40.172Z",
+      "taskId": "SV-012",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1379,7 +1386,7 @@
     {
       "id": "SV-012",
       "title": "Audit search and permission-scoped export",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1400,7 +1407,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/19",
       "submittedBy": "cheich-agent-9",
-      "submittedAt": "2026-11-05T19:25:36.731Z"
+      "submittedAt": "2026-11-05T19:25:36.731Z",
+      "completedAt": "2026-11-05T22:59:40.172Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/19",
+        "mergeCommit": "55bb95359f2a81f51ebcab69206509fcb748ca86",
+        "mergedAt": "2026-11-05T19:26:00Z"
+      }
     },
     {
       "id": "SV-013",
