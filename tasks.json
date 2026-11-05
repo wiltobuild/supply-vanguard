@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 82,
-  "updatedAt": "2026-11-05T18:13:32.155Z",
+  "revision": 83,
+  "updatedAt": "2026-11-05T18:27:08.787Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -580,6 +580,13 @@
       "command": "submit",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T18:27:08.787Z",
+      "taskId": "SV-024",
+      "command": "migration-add-task",
+      "agent": "wil-vale-assets-coordinator-20261105",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1247,6 +1254,41 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/12",
       "submittedBy": "wil-vale-sv023-20261105-receipts-a81f",
       "submittedAt": "2026-11-05T17:21:38.002Z"
+    },
+    {
+      "id": "SV-024",
+      "title": "Add fifteen illustrative NICU equipment assets",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-002"
+      ],
+      "scope": [
+        "packages/scene/viewer additive model sources, registry and ward placement hooks",
+        "packages/scene/viewer/assets new GLBs and manifest entries",
+        "Task-local asset exporter, scene tests and documentation"
+      ],
+      "acceptance": [
+        "Create neonatal ventilator, CPAP stand, phototherapy light, portable ultrasound cart, portable X-ray, transport incubator, infant scale, feeding-pump stand distinct from infusion, portable suction, resuscitation cart, breast-milk refrigerator, milk-preparation counter, equipment charging station, soiled-equipment rack and wall PPE dispenser as usable original 3D assets matching the existing generated kit style and complexity.",
+        "Preserve the original procedural ward, all twelve existing GLBs, stable IDs and meters/Y-up conventions. Provide reusable procedural sources and exported GLBs for every addition.",
+        "Place additions intelligently in the existing illustrative six-room ward and support areas with clear navigation routes. Static decoration must not imply tracked equipment or live operational state.",
+        "Preserve illustrative, non-surveyed provenance. Verify model loading and scene navigation with screenshots; document limitations. Create a tested PR, do not merge."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "All fifteen new GLBs load and have finite bounds",
+        "Existing asset preservation checks",
+        "Browser navigation and placement screenshots"
+      ],
+      "sourceNotes": [
+        "User explicitly requested an Astra agent on high to generate the fifteen proposed assets using current models as reference and distribute them in the Hopkins NICU recreation on 2026-11-05."
+      ],
+      "coordinationNotes": [
+        "Implementation assigned to the isolated Astra high asset agent after a verified board claim. This migration itself does not claim the task.",
+        "Do not edit root package/dependencies, auth, core database/bootstrap, test-loader or CI files reserved to SV-019. Preserve all existing task states and pending review work. Keep integration minimal and scene-local."
+      ],
+      "claim": null
     }
   ]
 }
