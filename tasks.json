@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 162,
-  "updatedAt": "2026-11-05T23:31:13.402Z",
+  "revision": 163,
+  "updatedAt": "2026-11-05T23:41:00.020Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1141,6 +1141,13 @@
       "command": "submit",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T23:41:00.020Z",
+      "taskId": "SV-008",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1383,7 +1390,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1406,7 +1413,7 @@
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-05T23:31:13.402Z",
       "blockedReason": null,
-      "reviewNote": "Current-main fixture compatibility: services/api/check-in/tests/api.test.mjs applies core/auth/check-in only, but its administrative PATCH regression now consumes merged equipment_command_receipt. Original owner should integrate current main safely on the existing branch, apply services/api/equipment/migrations/0001_receipts.up.sql transactionally after core/auth in the check-in-local fixture, and grant SELECT,INSERT on equipment_command_receipt to sv_check_in_runtime. Add or strengthen focused admin-PATCH/replay integrity coverage and run permitted combined-main checks. Edit only apps/web/check-in and services/api/check-in; no shared mounting, auth/bootstrap/root dependency/test-loader/CI edits, persistent grants, or repeated Windows native/loopback denied stages. This rework is fixture compatibility only; actual host mounting/browser acceptance remain separate merge gates."
+      "reviewNote": "Bounded existing-scope host wiring for original owner wil-sol-sv008-20261105-f28c only: add services/api/check-in/host.mjs plus check-in-local README/tests. Accept existing {pool,identityProvider}, create one existing createAuthorization shared by equipment/check-in handlers, dispatch exact supported check-in and equipment routes while preserving request headers/body streams and normal error mapping. Optional CLI may load only an explicitly supplied trusted local config and bind 127.0.0.1; missing pool/verifier or unprovisioned schema/role must fail clearly. No token issuance, migration execution, roles/grants, persistent credentials, silent PGlite/identity fallback, or auth/bootstrap/root/CI edits. Test in-scope composition, routing, attribution, denial and retry behavior through permitted fixtures; retain prior Windows native/loopback stops. Do not edit any of the seven shared-web paths whose scope publication is held; shared scope and ownership remain unchanged. Original QR owner alone should claim normally, integrate current main safely on the same draft branch, then submit. Keep PR14 draft: mounted browser acceptance and externally supplied/provisioned runtime remain unresolved."
     },
     {
       "id": "SV-009",
