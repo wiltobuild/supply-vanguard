@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 18,
-  "updatedAt": "2026-11-05T12:32:06.004Z",
+  "revision": 19,
+  "updatedAt": "2026-11-05T12:32:09.596Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -129,6 +129,13 @@
       "command": "heartbeat",
       "agent": "cheich-agent-3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T12:32:09.596Z",
+      "taskId": "SV-004",
+      "command": "submit",
+      "agent": "cheich-agent-3",
+      "owner": null
     }
   ],
   "tasks": [
@@ -220,7 +227,7 @@
     {
       "id": "SV-004",
       "title": "Database foundation and migrations",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -234,13 +241,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "cheich-agent-3",
-        "owner": "cheich",
-        "leaseId": "ebddc978-ea41-4c68-92df-2aa36acb73e3",
-        "claimedAt": "2026-11-05T12:27:43.109Z",
-        "expiresAt": "2026-11-05T14:32:06.004Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/4",
+      "submittedBy": "cheich-agent-3",
+      "submittedAt": "2026-11-05T12:32:09.596Z"
     },
     {
       "id": "SV-005",
