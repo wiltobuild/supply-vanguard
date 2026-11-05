@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 37,
-  "updatedAt": "2026-11-05T16:16:58.194Z",
+  "revision": 38,
+  "updatedAt": "2026-11-05T16:20:38.929Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -262,6 +262,13 @@
       "command": "complete",
       "agent": "wil-sol-merge-verifier-20261105-a7f3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:20:38.929Z",
+      "taskId": "SV-009",
+      "command": "claim",
+      "agent": "wil-sol-sv009-20261105-c4d8",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -505,7 +512,7 @@
     {
       "id": "SV-009",
       "title": "Supply ledger and bin inventory",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-004",
@@ -523,7 +530,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-sol-sv009-20261105-c4d8",
+        "owner": "wil",
+        "leaseId": "47a0f13e-c3e9-43c2-b229-98cdd8c5835a",
+        "claimedAt": "2026-11-05T16:20:38.929Z",
+        "expiresAt": "2026-11-05T18:20:38.929Z"
+      }
     },
     {
       "id": "SV-010",
