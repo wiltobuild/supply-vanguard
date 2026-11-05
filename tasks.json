@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 42,
-  "updatedAt": "2026-11-05T16:23:42.837Z",
+  "revision": 43,
+  "updatedAt": "2026-11-05T16:25:04.141Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -297,6 +297,14 @@
       "command": "claim",
       "agent": "cheich-agent-5",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-05T16:25:04.141Z",
+      "taskId": "SV-019",
+      "command": "migration-add-task",
+      "agent": "wil-sol-board-coordinator-20261105-a7f3",
+      "owner": null,
+      "reason": "Explicitly coordinated new task for the user-requested repair of merged PR #7 forced-RLS seed/bootstrap and clean-install root npm test regressions. Existing completed SV-005 and all other tasks, leases, history and merge evidence are preserved. The separate repair owner must claim SV-019 through the normal CLI before editing."
     }
   ],
   "tasks": [
@@ -785,6 +793,33 @@
         "npm test",
         "npm run check",
         "Add and run task-specific acceptance checks"
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-019",
+      "title": "Repair auth bootstrap and clean test setup",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-005"
+      ],
+      "scope": [
+        "services/api/db bootstrap/seed",
+        "task-specific auth tests/dependency wiring",
+        "root package/test-loader and CI changes required for the two regressions only"
+      ],
+      "acceptance": [
+        "Owner-only transactional seed/bootstrap succeeds after core and forced-RLS auth migrations, preserves enforced RLS with no privileged runtime bypass, and proves rollback/idempotency behavior.",
+        "Documented clean-checkout installation followed by root npm test runs meaningfully without missing test dependencies; PGlite remains test-only and CI is aligned.",
+        "Focused regression tests truthfully disclose native-versus-embedded coverage. No patient/production data, new credentials, public auth API changes, or schema/policy changes are planned."
+      ],
+      "verification": [
+        "Documented clean install",
+        "npm test",
+        "npm run check",
+        "Scoped auth/regression tests",
+        "Native PostgreSQL bootstrap if available; otherwise precise embedded/native coverage disclosure"
       ],
       "claim": null
     }
