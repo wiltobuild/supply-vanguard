@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 90,
-  "updatedAt": "2026-11-05T18:46:03.594Z",
+  "revision": 91,
+  "updatedAt": "2026-11-05T18:53:03.097Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -636,6 +636,14 @@
       "command": "heartbeat",
       "agent": "wil-astra-assets-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T18:53:03.097Z",
+      "taskId": "SV-025,SV-026",
+      "command": "migration-add-tasks",
+      "agent": "wil-sol-board-coordinator-20261105-a7f3",
+      "owner": null,
+      "reason": "Explicitly coordinated registration of the user-requested two parallel illustrative ward builds: one Astra owner each for distinct PICU and PCU wards, reusing the existing NICU style and equipment assets. Only two tasks and this audit entry are added; all prior tasks, statuses, dependencies, claims, leases, history and evidence remain unchanged. No claims or merge authority are granted."
     }
   ],
   "tasks": [
@@ -1346,6 +1354,89 @@
         "claimedAt": "2026-11-05T18:27:49.371Z",
         "expiresAt": "2026-11-05T20:46:03.594Z"
       }
+    },
+    {
+      "id": "SV-025",
+      "title": "Build illustrative pediatric intensive care ward (PICU)",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-002"
+      ],
+      "scope": [
+        "packages/scene/viewer/wards/picu/ scene, configuration, references, tests and documentation",
+        "Exclusive minimal shared ward-selector/navigation integration for both PICU and PCU routes, coordinated with SV-024"
+      ],
+      "acceptance": [
+        "Research publicly available official or credible location and interior references; inspect the actual references. Document source URLs and distinguish sourced versus inferred geometry, dimensions, room counts and furniture placement.",
+        "Build an original usable illustrative ward from the available evidence, using the existing NICU model/navigation style and reusable existing equipment assets. Preserve the original procedural NICU, twelve GLBs, stable identity/mapping and meters/Y-up coordinates. Additive sources and assets are permitted.",
+        "Do not claim an exact hospital floorplan or measured accuracy without genuine approved evidence. Missing measured drawings remain explicitly unverified, never fabricated. No patients, patient data, production tracking or operational claims.",
+        "Keep ward navigation clear and reuse the accessible non-WebGL fallback. Verify finite bounds, model loading, ward switching, screenshot views and interior-navigation evidence, and truthfully record unrun limits.",
+        "Implement on an isolated branch after a confirmed normal claim, run task-specific tests plus npm test and npm run check, and deliver a draft PR without merging."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Ward-specific finite bounds, model loading, stable mapping and ward-switching tests",
+        "Inspect and document source references with sourced/inferred distinctions",
+        "Screenshot views and interior-navigation evidence; accessible non-WebGL fallback check; disclose unrun limits"
+      ],
+      "sourceNotes": [
+        "The user directly requested two additional nearby Johns Hopkins wards, using the current 3D NICU as the model and existing equipment assets, with one Astra implementation agent per ward.",
+        "Public PICU capacity figures conflict. Do not convert those figures into asserted room counts.",
+        "Public references inform illustrative work; no approved measured floorplan or architectural accuracy is asserted by this task.",
+        "Worker-selected location: Bloomberg 4 South pediatric intensive care. Official source to inspect and cite: https://www.hopkinsmedicine.org/nursing/specialties-units/pediatric-neonatal-icu. Published capacity is not a modeled room count or a measured floorplan."
+      ],
+      "coordinationNotes": [
+        "Exactly one Astra implementation owner after normal claim. Existing designated PICU worker 01a1ad08-41e1-7523-b3b9-9f53032cd01c intends agent wil-astra-picu-20261105. This migration does not claim or assign its lease.",
+        "PICU exclusively owns the minimal shared ward-selector/navigation integration for both routes; coordinate hooks with the SV-024 asset owner before edits. Reuse models.js unchanged; avoid SV-024 NICU asset source/manifest edits.",
+        "The implementation-plan owner exclusively owns planning/IMPLEMENTATION_PLAN.md. Additional-ward planning already exists in plan PR #15; do not duplicate plan edits.",
+        "SV-019 exclusively owns auth, core DB/bootstrap, root dependencies, test-loader and CI. Do not edit those scopes or change existing workflows.",
+        "No ward or feature merge is authorized by this registration.",
+        "Use picu-* stable IDs and route /ward/wards/picu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/picu/."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-026",
+      "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-002"
+      ],
+      "scope": [
+        "packages/scene/viewer/wards/pcu/ scene, configuration, references, local tests and documentation only"
+      ],
+      "acceptance": [
+        "Research publicly available official or credible location and interior references; inspect the actual references. Document source URLs and distinguish sourced versus inferred geometry, dimensions, room counts and furniture placement.",
+        "Build an original usable illustrative ward from the available evidence, using the existing NICU model/navigation style and reusable existing equipment assets. Preserve the original procedural NICU, twelve GLBs, stable identity/mapping and meters/Y-up coordinates. Additive sources and assets are permitted.",
+        "Do not claim an exact hospital floorplan or measured accuracy without genuine approved evidence. Missing measured drawings remain explicitly unverified, never fabricated. No patients, patient data, production tracking or operational claims.",
+        "Keep ward navigation clear and reuse the accessible non-WebGL fallback. Verify finite bounds, model loading, ward switching, screenshot views and interior-navigation evidence, and truthfully record unrun limits.",
+        "Implement on an isolated branch after a confirmed normal claim, run task-specific tests plus npm test and npm run check, and deliver a draft PR without merging."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Ward-specific finite bounds, model loading, stable mapping and ward-switching tests",
+        "Inspect and document source references with sourced/inferred distinctions",
+        "Screenshot views and interior-navigation evidence; accessible non-WebGL fallback check; disclose unrun limits"
+      ],
+      "sourceNotes": [
+        "The user directly requested two additional nearby Johns Hopkins wards, using the current 3D NICU as the model and existing equipment assets, with one Astra implementation agent per ward.",
+        "Worker-provided primary source to inspect: https://www.hopkinsmedicine.org/news/articles/2021/10/a-new-progressive-pediatric-cardiac-care-unit.",
+        "Public references inform illustrative work; no approved measured floorplan or architectural accuracy is asserted by this task.",
+        "Worker-selected location: Bloomberg 9 North progressive pediatric cardiac step-down. Cite the supplied official unit article; published bed counts do not establish modeled room counts or measured floorplans."
+      ],
+      "coordinationNotes": [
+        "Exactly one Astra implementation owner after normal claim. Existing designated PCU worker 01a1ad07-f60c-76c5-a68c-3a37376db02c intends agent wil-astra-ward-two-20261105. This migration does not claim or assign its lease.",
+        "PCU leaves shared viewer entry, app, navigation, registry and manifests untouched; PICU owns the mutually accepted minimal shared selector/navigation integration. Reuse models.js unchanged; avoid SV-024 NICU asset source/manifest edits.",
+        "The implementation-plan owner exclusively owns planning/IMPLEMENTATION_PLAN.md. Additional-ward planning already exists in plan PR #15; do not duplicate plan edits.",
+        "SV-019 exclusively owns auth, core DB/bootstrap, root dependencies, test-loader and CI. Do not edit those scopes or change existing workflows.",
+        "No ward or feature merge is authorized by this registration.",
+        "Use pcu-* stable IDs and route /ward/wards/pcu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/pcu/."
+      ],
+      "claim": null
     }
   ]
 }
