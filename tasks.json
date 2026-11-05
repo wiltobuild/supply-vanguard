@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 59,
-  "updatedAt": "2026-11-05T16:59:25.348Z",
+  "revision": 60,
+  "updatedAt": "2026-11-05T17:01:02.155Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -418,6 +418,14 @@
       "command": "submit",
       "agent": "wil-sol-sv009-20261105-c4d8",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T17:01:02.155Z",
+      "taskId": "SV-023",
+      "command": "migration-add-task",
+      "agent": "wil-sol-board-coordinator-20261105-a7f3",
+      "owner": null,
+      "reason": "Explicitly coordinated follow-up for the user-requested operator replay behavior in already-merged PR #8 and the independently reproduced native PostgreSQL observation locking regression. Only a new task is added; existing tasks, claims, leases, dependencies, history and merge evidence remain unchanged. No fix completion or new merge authority is implied."
     }
   ],
   "tasks": [
@@ -1031,6 +1039,46 @@
         "Criteria come from the user's 2026-11-05 pasted request (message Sentinel_2350f562f310819180941f4a4abf751f), including the explicitly referenced PRD test numbers.",
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-023",
+      "title": "Repair equipment replay and concurrency",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-006"
+      ],
+      "scope": [
+        "services/api/equipment",
+        "services/api/equipment task-local migrations, tests and documentation only"
+      ],
+      "acceptance": [
+        "An authorized operator retry of a previously successful identical equipment edit returns its original successful result without another write or event. Replays bind to the verified tenant, actor, exact normalized request and target; changed payload or cross-actor/tenant key misuse safely conflicts or denies. Membership and permission revocation are respected.",
+        "Keep existing general audit-log restrictions, policies and grants unchanged; do not broaden equipment_event SELECT access. A task-local immutable private receipt design is acceptable, with truthful legacy-key limitations.",
+        "Replay after an intervening administrative edit returns the original snapshot rather than the new current state. Successful no-op receipt behavior is explicit.",
+        "Fix the reproduced native PostgreSQL locking failure: concurrent observation A changes equipment.location_id while B waits on joined SELECT FOR UPDATE; after A commits, B must not falsely return 404 or drop its legitimate newer observation. Lock equipment independently then perform a fresh joined read, or use another proven correct solution preserving atomicity and location freshness.",
+        "State, audit and receipt writes roll back atomically on conflicts or failures; no duplicate updates, fabricated real hardware or patient data, or replacement of the existing generated NICU assets."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Scoped tests with actual native PostgreSQL multi-session same-key and same-version races",
+        "Deterministic native observation-wait interleaving regression",
+        "Authorized operator replay while direct audit reads remain denied",
+        "Original-snapshot replay, actor/tenant isolation and atomic rollback tests",
+        "Distinguish native tests from serial/PGlite checks and document skipped upstream stages"
+      ],
+      "sourceNotes": [
+        "The user requested the operator retry behavior in the 2026-11-05 PR #8 feedback.",
+        "SV-006 PR #8 is already merged: https://github.com/wiltobuild/supply-vanguard/pull/8, merge commit 149f62a26e3fba004b1f5ac776c64b4193b9e8f0. Preserve its completed status and merge evidence; do not edit or re-merge that PR.",
+        "The native observation locking interleaving was independently reproduced in PostgreSQL review. This task records follow-up work, not fix completion or new merge permission."
+      ],
+      "coordinationNotes": [
+        "Do not edit shared auth, core database/bootstrap, root package/dependencies, test-loader or CI/workflow files reserved to SV-019.",
+        "Keep the existing generated NICU and assets in use; additive assets are allowed.",
+        "This migration does not claim or assign SV-023 or SV-020, and leaves the SV-019 Library materialization stop intact."
       ],
       "claim": null
     }
