@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 108,
-  "updatedAt": "2026-11-05T19:08:44.957Z",
+  "revision": 109,
+  "updatedAt": "2026-11-05T19:08:48.022Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -763,6 +763,13 @@
       "command": "heartbeat",
       "agent": "cheich-agent-8",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:08:48.022Z",
+      "taskId": "SV-020",
+      "command": "submit",
+      "agent": "cheich-agent-8",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1324,7 +1331,7 @@
     {
       "id": "SV-020",
       "title": "Requests and atomic item assignments",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -1351,16 +1358,10 @@
         "Cheich offered to take this first task after SV-006 merges. This migration does not claim or assign the task on his behalf.",
         "SV-007 remains unchanged and may run alongside SV-020 after its existing dependencies complete."
       ],
-      "claim": {
-        "agent": "cheich-agent-8",
-        "owner": "cheich",
-        "leaseId": "b83ac6b8-7707-4ae8-82e1-049cc223c087",
-        "claimedAt": "2026-11-05T19:07:26.282Z",
-        "expiresAt": "2026-11-05T21:08:44.957Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/11",
-      "submittedBy": "cheich-agent-7",
-      "submittedAt": "2026-11-05T17:14:15.285Z",
+      "submittedBy": "cheich-agent-8",
+      "submittedAt": "2026-11-05T19:08:48.022Z",
       "blockedReason": null,
       "reviewNote": "PR11 exact head 9e5d43ae70ae912a5da9b14f3c231013ffe30ae0: independent request-changes review https://github.com/wiltobuild/supply-vanguard/pull/11#pullrequestreview-5790469120 confirms listRequests truncates SQL timestamp microseconds in cursor, repeats boundary rows and can never terminate. Original owner should normally reclaim and repair existing PR/branch with an explicit nonzero-microsecond pagination regression. No shared auth/core/root changes required."
     },
