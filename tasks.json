@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 25,
-  "updatedAt": "2026-11-05T15:05:51.281Z",
+  "revision": 26,
+  "updatedAt": "2026-11-05T15:06:05.869Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -178,6 +178,13 @@
       "command": "complete",
       "agent": "wil-sol-sv005-20261105-a7f3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T15:06:05.869Z",
+      "taskId": "SV-003",
+      "command": "complete",
+      "agent": "wil-sol-sv005-20261105-a7f3",
+      "owner": null
     }
   ],
   "tasks": [
@@ -264,7 +271,7 @@
     {
       "id": "SV-003",
       "title": "Accessible equipment workflows and fallback",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -281,7 +288,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/5",
       "submittedBy": "cheich-agent-4",
-      "submittedAt": "2026-11-05T13:06:38.644Z"
+      "submittedAt": "2026-11-05T13:06:38.644Z",
+      "completedAt": "2026-11-05T15:06:05.869Z",
+      "reviewedBy": "wil-sol-sv005-20261105-a7f3",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/5",
+        "mergeCommit": "4f671aaf1833edd392dd54cbb3e1e179e10d3882",
+        "mergedAt": "2026-11-05T14:53:34Z"
+      }
     },
     {
       "id": "SV-004",
