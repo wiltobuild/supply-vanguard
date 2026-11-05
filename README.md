@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 35. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 36. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -9,7 +9,7 @@ Revision 35. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-002 Extract configurable ward and model mapping | done | — | — | — | [PR](https://github.com/wiltobuild/supply-vanguard/pull/3) |
 | SV-003 Accessible equipment workflows and fallback | done | — | — | — | [PR](https://github.com/wiltobuild/supply-vanguard/pull/5) |
 | SV-004 Database foundation and migrations | done | — | — | — | [PR](https://github.com/wiltobuild/supply-vanguard/pull/4) |
-| SV-005 Authentication and role authorization | claimed | wil / wil-sol-sv005-20261105-a7f3 | 2026-11-05T17:16:40.478Z | SV-004 | services/api/auth |
+| SV-005 Authentication and role authorization | review | — | — | SV-004 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/7) |
 | SV-006 Equipment API and immutable audit transactions | ready | — | — | SV-001, SV-004, SV-005 | services/api/equipment |
 | SV-007 Connect web client to shared equipment API | ready | — | — | SV-003, SV-006 | apps/web |
 | SV-008 Barcode and QR manual check-in | ready | — | — | SV-001, SV-006 | apps/web/check-in, services/api/check-in |
