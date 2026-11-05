@@ -37,18 +37,21 @@ export async function createRequest(ctx,body){
  await ctx.query(`INSERT INTO request_event (organization_id, request_id, kind, actor, detail) VALUES ($1, $2, 'request-created', $3, $4::jsonb)`,[ctx.organizationId,id,actor,JSON.stringify({items:input.items.length})]);
  return getRequest(ctx,id);
 }
-// Keyset pagination on (created_at, id): stable while new requests arrive.
+// Keyset pagination on (created_at, id): stable while new requests arrive. The cursor carries the timestamp as exact
+// microsecond text from the database; a JavaScript Date would truncate to milliseconds and repeat the boundary row forever.
+const CURSOR_TIME=/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{6}Z$/;
+const encodeCursor=(t,id)=>Buffer.from(JSON.stringify({t,id}),'utf8').toString('base64url');
 export async function listRequests(ctx,{limit,cursor}={}){
  const n=limit===undefined?DEFAULT_LIMIT:limit;
  if(!Number.isInteger(n)||n<1||n>MAX_LIMIT)throw invalid(`limit must be a whole number from 1 to ${MAX_LIMIT}`);
  let after=null;
- if(cursor!==undefined){try{const v=JSON.parse(Buffer.from(cursor,'base64url').toString('utf8'));if(typeof v.t!=='string'||!Number.isFinite(Date.parse(v.t))||!UUID.test(v.id))throw new Error();after=v;}catch{throw invalid('cursor is not valid');}}
- const page=await ctx.query(`SELECT id, requested_by, note, created_at FROM request
+ if(cursor!==undefined){try{const v=JSON.parse(Buffer.from(cursor,'base64url').toString('utf8'));if(typeof v.t!=='string'||!CURSOR_TIME.test(v.t)||typeof v.id!=='string'||!UUID.test(v.id))throw new Error();after=v;}catch{throw invalid('cursor is not valid');}}
+ const page=await ctx.query(`SELECT id, requested_by, note, created_at, to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_time FROM request
   WHERE organization_id = $1 AND ($2::timestamptz IS NULL OR (created_at, id) > ($2::timestamptz, $3::uuid)) ORDER BY created_at, id LIMIT $4`,[ctx.organizationId,after?.t??null,after?.id??null,n+1]);
  const rows=page.rows.slice(0,n),items=[];
  for(const row of rows)items.push(shape(row,(await ctx.query(ITEM_ROWS,[ctx.organizationId,row.id])).rows));
  const last=rows[rows.length-1];
- return {items,nextCursor:page.rows.length>n?Buffer.from(JSON.stringify({t:new Date(last.created_at).toISOString(),id:last.id}),'utf8').toString('base64url'):null};
+ return {items,nextCursor:page.rows.length>n?encodeCursor(last.cursor_time,last.id):null};
 }
 // Claim: look up the asset by its external ID, then let the database function decide atomically.
 export async function claimItem(ctx,id,lineText,body){

@@ -104,6 +104,25 @@ test('create validates input and listing is paginated and tenant-scoped',{skip},
  assert.equal((await api('viewer','/requests/not-a-uuid')).status,404);
  assert.equal((await fetch(`${base}/organizations/${orgA}/requests`)).status,401);
 });
+test('pagination keeps PostgreSQL microsecond precision, so boundary rows are never repeated',{skip},async()=>{
+ // Three requests whose timestamps differ only below the millisecond (the case a JavaScript Date cannot represent).
+ const ids=[];
+ for(const t of ['2026-11-05T10:00:00.123456Z','2026-11-05T10:00:00.123789Z','2026-11-05T10:00:00.124456Z']){
+  const row=await owner("INSERT INTO request (organization_id, requested_by, created_at) VALUES ($1, 'user:test', $2::timestamptz) RETURNING id",[orgA,t]);
+  ids.push(row.rows[0].id);
+ }
+ const seen=[];let cursor=null,pages=0;
+ do{
+  const page=await (await api('viewer',`/requests?limit=1${cursor?`&cursor=${cursor}`:''}`)).json();
+  seen.push(...page.items.map(r=>r.id));cursor=page.nextCursor;
+  assert.ok(++pages<100,'pagination did not terminate');
+ }while(cursor);
+ assert.equal(new Set(seen).size,seen.length,'no request appears twice');
+ assert.deepEqual(seen.filter(id=>ids.includes(id)),ids,'the three close timestamps come out once each, in order');
+ const decoded=JSON.parse(Buffer.from((await (await api('viewer','/requests?limit=1')).json()).nextCursor,'base64url').toString('utf8'));
+ assert.match(decoded.t,/\.\d{6}Z$/,'cursor carries six fractional digits');
+ for(const t of ['2026-11-05T10:00:00.123Z','2026-11-05 10:00:00.123456','x'])assert.equal((await api('viewer',`/requests?cursor=${Buffer.from(JSON.stringify({t,id:ids[0]})).toString('base64url')}`)).status,400,t);
+});
 test('claims are refused for the right reasons and change nothing',{skip},async()=>{
  const id=(await newRequest(['incubator','monitor','supply-cart'])).id;
  await expectError(await claim('operator',id,2,'EQ-001'),422,'wrong_equipment_type');
