@@ -1,8 +1,19 @@
 # SV-008 verification evidence
 
-Base: main `75f2cf60a645aa9a40363b9836b3830047d77ca5` (includes merged PR #8 and #10). Isolated branch: `task/sv-008-wil-sol-sv008-20261105-f28c`. Normal CLI claim confirmed at board revision 78; lease file retained in this checkout. Only the two task-owned check-in directories are changed.
+Current integrated main: `f18d8967895b2c9ae52fea96a26f80e821640233`. Initial base was `75f2cf60a645aa9a40363b9836b3830047d77ca5`. Isolated branch: `task/sv-008-wil-sol-sv008-20261105-f28c`. Initial normal CLI claim was confirmed at board revision 78; fixture compatibility rework was recorded by the separate reviewer at revision 154, then the original owner claimed at revision 159. The lease file is retained in this checkout. Relative to integrated main, task-specific changes remain confined to the two check-in directories; shared files match main.
 
-## Completed checks (2026-11-05)
+## Current-main fixture repair (2026-11-05)
+
+Before the fixture repair, the combined-tree administrative PATCH regression failed with HTTP **500 instead of 200**, confirming the missing merged receipt setup. The fixture now applies `services/api/equipment/migrations/0001_receipts.up.sql` inside an explicit BEGIN/COMMIT transaction after core/auth, and grants its disposable `sv_check_in_runtime` role only SELECT and INSERT on `equipment_command_receipt`. No persistent runtime role, application migration, shared code or credentials were changed.
+
+- `npm test --prefix services/api/check-in`: **24 passed, 0 failed, 1 explicitly skipped** (25 cases). Twelve API/SQL cases pass in serialized PGlite; twelve DOM/scanner cases pass. Native lock-wait coverage remains skipped. The administrative PATCH and check-in replay regression now verifies complete original snapshots after later observations and two administrative edits, original receipt actor/request/result, and no duplicate observations, events or either receipt type. A separate metadata regression confirms SELECT/INSERT only, no UPDATE/DELETE grants, and enabled/forced RLS on merged equipment receipts.
+- `node --test tests/contracts.test.mjs tests/domain.test.mjs tests/web.test.mjs tests/scene-config.test.mjs tests/location.test.mjs`: **30 passed, 0 failed, 0 skipped**. These permitted repository checks do not repeat the denied filesystem/network stages.
+- `npm run check`: passed JavaScript syntax, **27 GLB containers** and 19 seed task definitions. This includes main's original twelve GLBs, fifteen additions and integrated ward code, preserved unchanged.
+- `git diff --check`: passed. Comparing the combined tree to integrated main outside the two task-owned directories produced no differences.
+
+Full root `npm test` was not retried: its previously denied temporary Git config write remains stopped, and the upstream auth loader/setup is outside this task. Windows native initialization and loopback HTTP were not retried, and there is no current native pass. The prior browser inventory request timed out after 300 seconds without a usable surface; real browser, hardware camera and shared application mounting remain unverified. No camera permission was requested or accepted in this fixture repair. Shared web mounting remains with the PR #13 owner and manager; this is a tested fixture repair, not a merge/readiness claim.
+
+## Earlier retry-rework checks (historical)
 
 - `npm test --prefix services/api/check-in`: 24 cases, **23 passed, 1 explicitly skipped** after focused retry rework. Eleven API/SQL cases run the real handler, existing `createAuthorization`, `recordObservation`, `applyObservation`, core/auth/check-in SQL migrations and RLS in serialized PGlite. Twelve DOM/scanner cases use jsdom and controlled scanner/media interfaces. No test substitutes a fake equipment/domain adapter for the SQL path.
 - API evidence: manual/QR/barcode sources; exact equipment identity and synthetic provenance; user-derived actor and server-derived received time; known tenant locations; unknown ID, invalid/future/date/payload data; exact original-result replay after later location and administrative edits; location/time/source/target/correlation changed-key conflicts; cross-actor/tenant isolation; inactive membership/user replay rejection; operator audit SELECT remains empty; old observations retained without location rollback; injected event and receipt failures roll back state/history/receipt together; repeated same-key and competing changed-key/actor requests create one observation.
@@ -11,7 +22,7 @@ Base: main `75f2cf60a645aa9a40363b9836b3830047d77ca5` (includes merged PR #8 and
 - `npm run check`: passed JavaScript syntax, **12 GLB** containers and 19 seed task definitions. Existing NICU assets and shared code remain unchanged.
 - `git diff --check`: passed.
 
-## Root suite and environment limits
+## Earlier root suite and retained environment limits
 
 `npm test` was run and failed: **23 passed, 2 failed, 16 skipped** (41 total). The auth loader cannot resolve `@electric-sql/pglite` from the untouched auth package. The board-race test's temporary Git repository failed to write `config` with Windows `Permission denied`. Existing core database tests skip because their upstream native detection does not find PostgreSQL; existing equipment suites skip because the auth-local dependency is absent. This task does not modify those reserved root/auth/native-detection files, or recreate/transfer the publication-blocked SV-019 artifact.
 

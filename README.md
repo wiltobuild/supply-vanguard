@@ -1,6 +1,6 @@
 # Supply Vanguard
 
-Equipment and supply tracking with an explorable NICU concept. This repository contains the complete editable Three.js scene, 12 reusable GLB assets, a working browser demo, implementation plan, and shared agent claiming board.
+Equipment and supply tracking with an explorable NICU concept. This repository contains the complete editable Three.js scene, 25 reusable equipment GLBs, two preserved original ward GLBs, a working browser demo, implementation plan, and shared agent claiming board.
 
 ## Start
 
@@ -39,3 +39,5 @@ The [shared UI/UX direction](design/README.md) contains the user-selected homepa
 - `tests`: domain and concurrent claiming checks.
 
 The Baltimore Children's Center concept includes six infant rooms and support areas. Layout dimensions, equipment makes and placement are illustrative, not an authenticated Hopkins floor plan. Original reference notes and public sources are preserved in [scene documentation](packages/scene/REFERENCE.md) and the viewer Sources dialog. The demo uses synthetic inventory, manual location updates, and browser storage; authentication, shared database, live tracking and production operations are planned work. The prior Supply Sentry viewer is preserved inside the Supply Vanguard scaffold.
+
+The [fifteen additional NICU models](packages/scene/ADDITIONAL_ASSETS.md) are illustrative static decoration in the live ward, separate from tracked equipment. Open `/ward/additional-gallery.html` for the collection contact sheet, or use the ward's 3D asset library to inspect and download any of the 25 equipment models. The two original ward GLBs remain unchanged baseline snapshots.

@@ -5,14 +5,15 @@
  <aside class="sidebar">
   <a class="brand" href="./" aria-label="Supply Sentry home"><span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M12 3 21 8v9l-9 5-9-5V8Z M3 8l9 5 9-5 M12 13v9 M8 5l9 5"/></svg></span><span>Supply Sentry<small>SPATIAL LAB</small></span></a>
   <div class="project-chip"><span class="project-icon">01</span><span>Baltimore NICU<small>Reference collection</small></span><span class="chevron">⌄</span></div>
+  <nav aria-label="Ward previews" data-ward-links="nicu" style="margin:0 16px 16px"><span aria-current="page">NICU</span><a href="wards/picu/index.html">PICU preview</a></nav>
   <div class="eyebrow sidebar-label">WORKSPACE</div>
-  <nav class="main-nav" aria-label="Workspace"><button id="nav-ward" class="nav-item active"><span>▦</span>Ward explorer<span class="nav-count">6</span></button><button id="nav-inventory" class="nav-item"><span>▤</span>Supply locations<span class="nav-count">9</span></button><button id="nav-assets" class="nav-item"><span>◇</span>3D asset library<span class="nav-count">10</span></button></nav>
+  <nav class="main-nav" aria-label="Workspace"><button id="nav-ward" class="nav-item active"><span>▦</span>Ward explorer<span class="nav-count">6</span></button><button id="nav-inventory" class="nav-item"><span>▤</span>Supply locations<span class="nav-count">9</span></button><button id="nav-assets" class="nav-item"><span>◇</span>3D asset library<span class="nav-count">25</span></button></nav>
   <div class="section-label"><span class="eyebrow">IN THIS SECTION</span><button id="reset-map" class="icon-button" title="Reset view" aria-label="Reset ward view">↺</button></div>
   <div id="room-list" class="room-list"></div>
   <div class="sidebar-bottom"><span class="status-dot"></span><span>Standalone preview<small>Ready for app integration</small></span><button id="about-button" class="icon-button" aria-label="View sources and accuracy">ⓘ</button></div>
  </aside>
  <main>
-  <header class="topbar"><div><div class="breadcrumb">Spatial workspace <span>/</span> Johns Hopkins reference</div><h1>NICU ward explorer<span class="version">v1.0</span></h1></div><div class="header-actions"><button id="source-button" class="subtle-button">Sources & accuracy ↗</button><a class="button primary small" href="assets/nicu-ward.glb" download>↓ <span>Export ward</span></a></div></header>
+  <header class="topbar"><div><div class="breadcrumb">Spatial workspace <span>/</span> Johns Hopkins reference</div><h1>NICU ward explorer<span class="version">v1.0</span></h1></div><div class="header-actions"><button id="source-button" class="subtle-button">Sources & accuracy ↗</button><a class="button primary small" href="assets/nicu-ward.glb" download>↓ <span>Original ward GLB</span></a></div></header>
   <div class="workspace">
    <section class="viewport" aria-label="Interactive 3D ward">
     <div id="scene"></div><div id="markers"></div>
@@ -30,9 +31,10 @@
    </section>
    <aside class="inspector" id="inspector" aria-label="Supply and asset details"></aside>
   </div>
-  <footer class="app-footer"><span><b>REFERENCE MODEL</b> Layout and dimensions are estimated. Room numbers and inventory are illustrative.</span><span>23 × 14 m <i>·</i> 6 infant rooms <i>·</i> 10 asset types</span></footer>
+  <footer class="app-footer"><span><b>REFERENCE MODEL</b> Layout and dimensions are estimated. Room numbers and inventory are illustrative. Added equipment is static decoration.</span><span>23 × 14 m <i>·</i> 6 infant rooms <i>·</i> 25 asset types</span></footer>
  </main>
 </div>
 <dialog id="sources-dialog"><div class="dialog-header"><span class="eyebrow">MODEL NOTES</span><button id="close-sources" class="icon-button" aria-label="Close sources">×</button></div><h2>Built from references.<br>Honest about the gaps.</h2><p>This is a modeled section inspired by the Sutland/Pakula Family NICU in the Charlotte R. Bloomberg Children’s Center, Baltimore. It is not a surveyed replica or an official Johns Hopkins product.</p><div class="evidence-grid"><div><b>Documented</b><p>Private infant rooms, family sleep chairs, rubber flooring and distributed work areas.</p></div><div><b>Estimated</b><p>This six-room layout, dimensions, door positions, cabinetry and equipment placement.</p></div><div><b>Demonstration</b><p>Room IDs, stock counts, replenishment actions and supply routing.</p></div></div><div id="source-list"></div><p class="fine-print">Equipment models are original representative geometry; manufacturer models have not been verified. The “N” indicator denotes model orientation, not verified geographic north. No patient data is used.</p><a href="assets/manifest.json" download class="button">↓ Download asset manifest</a></dialog>
 <script type="module" src="app.js"></script>
+<script type="module" src="wards/ward-links.js"></script>
 </body></html>

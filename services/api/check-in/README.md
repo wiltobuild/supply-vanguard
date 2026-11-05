@@ -1,6 +1,6 @@
 # Attributed check-in API (SV-008)
 
-This task-local handler consumes the merged auth, equipment and domain interfaces. It creates no competing server/auth layer. Only `services/api/check-in` and `apps/web/check-in` are changed. Pending PR #12's equipment repair and PR #13's shared web/API wiring are not imported.
+This task-local handler consumes the merged auth, equipment and domain interfaces. It creates no competing server/auth layer. Task-specific changes are confined to `services/api/check-in` and `apps/web/check-in`. The branch integrates main `f18d8967895b2c9ae52fea96a26f80e821640233`, including the merged PR #12 equipment repair; pending PR #13 shared web/API wiring is not imported.
 
 ## Integration contract
 
@@ -20,11 +20,13 @@ An actor-private, tenant-keyed SQL receipt reserves the exact normalized request
 
 The reservation, existing `recordObservation()` SQL, equipment state, immutable audit event and original result receipt share one authorization transaction. Any validation/conflict/write error rolls everything back. Receipt identity/request cannot change and a completed result is immutable. Observation keys use `check-in:<request key>`; their existing event keys are `observation:check-in:<request key>`. A colliding observation without a receipt is a 409, never an attributed success for a different request.
 
-The wrapper first locks **only** the equipment row, then calls the existing observation service for a fresh joined read. This is local protection for this route against the known joined-lock wait issue; it does not repair or claim verification of the general equipment route. That upstream repair remains in PR #12. Receipt replay does not call the observation service a second time.
+The wrapper first locks **only** the equipment row, then calls the existing observation service for a fresh joined read. Merged PR #12 now also locks equipment independently inside that service; both locks occur in the same authorization transaction. This task does not modify the shared repair or claim a new native verification of it. Receipt replay does not call the observation service a second time.
 
 The private receipt design is specific to interactive check-in; do not use it as an ingestion provider or an audit export. No persistent credentials, production accounts, hardware integrations or hosted services are provisioned. Test identities and inventory are fictional/synthetic. Record provenance is preserved unchanged, and administrative version/status timestamps are not refreshed by physical observations.
 
 ## Verification
+
+The disposable fixture applies the merged equipment receipt migration in one explicit transaction after core/auth, then creates the task-local receipt schema. Its `sv_check_in_runtime` fixture role receives only `SELECT, INSERT` on `equipment_command_receipt`; tests verify UPDATE/DELETE remain ungranted and forced RLS remains enabled. Administrative PATCH and check-in retries are exercised together after later observations and administrative edits, checking original snapshots, verified actor and unchanged history/receipt counts. These are temporary fixture grants, not application provisioning changes.
 
 ```powershell
 npm ci --prefix services/api/check-in --ignore-scripts

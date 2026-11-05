@@ -48,7 +48,14 @@ export async function listEquipment(ctx,{limit,cursor,status,location,q}={}){
 }
 async function load(ctx,externalId,{lock=false}={}){
  text(externalId,'equipment id',64);
- const result=await ctx.query(`SELECT ${COLUMNS} ${FROM} WHERE e.organization_id = $1 AND e.external_id = $2${lock?' FOR UPDATE OF e':''}`,[ctx.organizationId,externalId]);
+ // A joined locking read can lose a row during PostgreSQL's EvalPlanQual recheck when the
+ // lock holder changes location_id. Lock the tenant's equipment alone, then use a fresh
+ // READ COMMITTED statement snapshot for the joins (also used by observation commands).
+ if(lock){
+  const locked=await ctx.query('SELECT id FROM equipment WHERE organization_id = $1 AND external_id = $2 FOR UPDATE',[ctx.organizationId,externalId]);
+  if(!locked.rows.length)throw new ApiError(404,'not_found');
+ }
+ const result=await ctx.query(`SELECT ${COLUMNS} ${FROM} WHERE e.organization_id = $1 AND e.external_id = $2`,[ctx.organizationId,externalId]);
  if(!result.rows.length)throw new ApiError(404,'not_found');
  return result.rows[0];
 }
@@ -56,6 +63,17 @@ export async function getEquipment(ctx,externalId){return toRecord(await load(ct
 const ADMIN_BODY=['expectedVersion','status','note'];
 const eventKey=(kind,key)=>`${kind}:${key}`;
 const conflictBody=record=>({current:{version:record.version,status:record.status,lastAdminEditAt:record.lastAdminEditAt}});
+async function saveReceipt(ctx,row,key,request,result,correlationId){
+ try{
+  await ctx.query(`INSERT INTO equipment_command_receipt
+   (organization_id, equipment_id, actor_id, idempotency_key, request, result, correlation_id)
+   VALUES ($1,$2,$3,$4,$5::jsonb,$6::jsonb,$7)`,
+   [ctx.organizationId,row.uuid,ctx.userId,key,JSON.stringify(request),JSON.stringify(result),correlationId??null]);
+ }catch(error){
+  if(error?.code==='23505')throw new ApiError(409,'idempotency_key_reused');
+  throw error;
+ }
+}
 function mapDomainError(error){
  if(error instanceof ApiError)return error;
  if(/^Conflict/.test(error.message))return new ApiError(409,'version_conflict');
@@ -69,16 +87,29 @@ export async function updateEquipment(ctx,externalId,body,{idempotencyKey,correl
  if(extra.length)throw invalid(`unsupported fields: ${extra.join(', ')}`);
  text(idempotencyKey,'Idempotency-Key',100);
  if(!Number.isInteger(body.expectedVersion)||body.expectedVersion<0)throw invalid('expectedVersion must be a non-negative whole number');
+ // Fixed field order normalizes JSON member order, while retaining optional-field presence.
+ const request={expectedVersion:body.expectedVersion};
+ for(const field of ['status','note'])if(Object.hasOwn(body,field)){
+  if(field==='status'&&!STATUSES.includes(body[field]))throw invalid('Unknown equipment status');
+  if(field==='note'&&(typeof body[field]!=='string'||body[field].length>500))throw invalid('Note must be text under 500 characters');
+  request[field]=body[field];
+ }
  const row=await load(ctx,externalId,{lock:true}),current=toRecord(row),key=eventKey('admin',idempotencyKey);
- // A retry of a request that already succeeded returns the original result. Only roles that may read the audit log can see this.
- const prior=await ctx.query('SELECT equipment_id, before_state, after_state FROM equipment_event WHERE organization_id = $1 AND idempotency_key = $2',[ctx.organizationId,key]);
+ // RLS exposes only the verified actor's receipts under their current equipment:write permission.
+ // Check AFTER the row lock, BEFORE the version: an overlapping identical command may just have committed.
+ const prior=await ctx.query(`SELECT equipment_id, request, result FROM equipment_command_receipt
+  WHERE organization_id = $1 AND actor_id = $2 AND idempotency_key = $3`,[ctx.organizationId,ctx.userId,key]);
  if(prior.rows.length){
-  const p=prior.rows[0],same=p.equipment_id===row.uuid&&p.before_state?.version===body.expectedVersion&&(body.status===undefined||p.after_state?.status===body.status)&&(body.note===undefined||p.after_state?.note===body.note);
+  const p=prior.rows[0],same=p.equipment_id===row.uuid&&Object.keys(p.request).length===Object.keys(request).length&&Object.keys(request).every(k=>Object.hasOwn(p.request,k)&&p.request[k]===request[k]);
   if(!same)throw new ApiError(409,'idempotency_key_reused');
-  return {record:current,changed:false,replayed:true};
+  return {...p.result,changed:false,replayed:true};
  }
  if(current.version!==body.expectedVersion)throw Object.assign(new ApiError(409,'version_conflict'),conflictBody(current));
- if((body.status===undefined||body.status===current.status)&&(body.note===undefined||body.note===(current.note??undefined)))return {record:current,changed:false,replayed:false};
+ if((body.status===undefined||body.status===current.status)&&(body.note===undefined||body.note===(current.note??undefined))){
+  const result={record:current,changed:false,replayed:false};
+  await saveReceipt(ctx,row,key,request,result,correlationId);
+  return result;
+ }
  const cmd={schemaVersion:SCHEMA_VERSION,equipmentId:current.id,expectedVersion:body.expectedVersion,actor:`user:${ctx.userId}`,idempotencyKey,...(body.status!==undefined&&{status:body.status}),...(body.note!==undefined&&{note:body.note}),...(correlationId&&{correlationId})};
  let result;
  try{validateAdminCommand(cmd);result=applyAdminCommand(current,cmd);}catch(error){throw mapDomainError(error);}
@@ -95,7 +126,9 @@ export async function updateEquipment(ctx,externalId,body,{idempotencyKey,correl
   if(error?.code==='23505')throw new ApiError(409,'idempotency_key_reused');
   throw error;
  }
- return {record:next,changed:true,replayed:false};
+ const response={record:next,changed:true,replayed:false};
+ await saveReceipt(ctx,row,key,request,response,correlationId);
+ return response;
 }
 const OBS_BODY=['locationId','observedAt','source'];
 // Observation: always recorded in the append-only history; it moves the item's verified location only if it is newer.

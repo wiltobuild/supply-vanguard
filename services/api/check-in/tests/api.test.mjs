@@ -45,6 +45,9 @@ before(async()=>{
  INSERT INTO equipment(organization_id,external_id,name,equipment_type_id,location_id,status,provenance)
  SELECT '${B}','EQ-001','Other synthetic equipment',(SELECT id FROM equipment_type WHERE organization_id='${B}'),(SELECT id FROM location WHERE organization_id='${B}'),'available','synthetic-test';`);
  await db.exec(sql('../../auth/migrations/0001_auth.up.sql'));
+ // The merged equipment PATCH service requires its private receipts. Keep SET LOCAL and
+ // legacy-key backfill inside the same disposable-fixture migration transaction.
+ await db.exec(`BEGIN;\n${sql('../../equipment/migrations/0001_receipts.up.sql')}\nCOMMIT;`);
  await db.exec(sql('../migrations/0001_check_in.up.sql'));
  // PGlite runs its fixture owner as superuser, native PostgreSQL uses a disposable local owner.
  for(const [name,id]of Object.entries(users)) {
@@ -54,6 +57,7 @@ before(async()=>{
  await db.exec(`CREATE ROLE sv_check_in_runtime LOGIN NOSUPERUSER NOBYPASSRLS;
  GRANT USAGE ON SCHEMA public TO sv_check_in_runtime;
  GRANT SELECT,INSERT,UPDATE ON equipment,equipment_observation,equipment_event,check_in_receipt TO sv_check_in_runtime;
+ GRANT SELECT,INSERT ON equipment_command_receipt TO sv_check_in_runtime;
  GRANT SELECT ON organization,location,equipment_type,auth_user,auth_membership TO sv_check_in_runtime;
  GRANT EXECUTE ON FUNCTION auth_resolve_identity(text,text) TO sv_check_in_runtime;`);
  auth=createAuthorization({identityProvider:identity,pool:{connect:()=>db.connect()}});
@@ -73,13 +77,27 @@ test('manual, QR and barcode check-ins preserve identity, attribution, provenanc
  }
  const result=await http(`${base}/organizations/${A}/check-ins/locations`,{headers:{authorization:`Bearer ${tokens.operator}`}});assert.equal(result.status,200);assert.equal((await result.json()).items.length,10);
 });
-test('repeat request returns original snapshot after another observation, without duplicate history',async()=>{
+test('check-in and administrative PATCH replays retain original snapshots after later edits without duplicate history',async()=>{
  const input=body('EQ-004'),first=await (await call(input,'replay')).json();
  const newer={...body('EQ-004','room-103',-1000),source:'qr'};assert.equal((await call(newer,'intervening')).status,201);
- const edit=await http(`${base}/organizations/${A}/equipment/EQ-004`,{method:'PATCH',headers:{authorization:`Bearer ${tokens.operator}`,'content-type':'application/json','idempotency-key':'after-check-in'},body:JSON.stringify({expectedVersion:0,note:'Synthetic later administrative edit'})});assert.equal(edit.status,200);
- const n=await count('equipment_observation'),e=await count('equipment_event');
+ const patch=(body,key)=>http(`${base}/organizations/${A}/equipment/EQ-004`,{method:'PATCH',headers:{authorization:`Bearer ${tokens.operator}`,'content-type':'application/json','idempotency-key':key},body:JSON.stringify(body)});
+ const adminBody={expectedVersion:0,note:'Synthetic later administrative edit'},edit=await patch(adminBody,'after-check-in');assert.equal(edit.status,200);
+ const adminFirst=await edit.json();assert.equal(adminFirst.record.version,1);assert.equal(adminFirst.record.note,adminBody.note);
+ assert.equal((await patch({expectedVersion:1,note:'Synthetic newest administrative edit'},'after-check-in-newer')).status,200);
+ const n=await count('equipment_observation'),e=await count('equipment_event'),r=await count('equipment_command_receipt'),c=await count('check_in_receipt');
+ const adminRetry=await patch(adminBody,'after-check-in');assert.equal(adminRetry.status,200);assert.equal(adminRetry.headers.get('Idempotent-Replay'),'true');assert.deepEqual(await adminRetry.json(),{...adminFirst,changed:false,replayed:true});
  const retry=await call(input,'replay'),out=await retry.json();assert.equal(retry.status,200);assert.deepEqual(out,{...first,replayed:true});assert.equal(await count('equipment_observation'),n);assert.equal(await count('equipment_event'),e);
- assert.equal((await http(`${base}/organizations/${A}/equipment/EQ-004`,{headers:{authorization:`Bearer ${tokens.operator}`}}).then(r=>r.json())).locationId,'room-103');
+ assert.equal(await count('equipment_command_receipt'),r);assert.equal(await count('check_in_receipt'),c);
+ const currentRecord=await http(`${base}/organizations/${A}/equipment/EQ-004`,{headers:{authorization:`Bearer ${tokens.operator}`}}).then(r=>r.json());assert.equal(currentRecord.locationId,'room-103');assert.equal(currentRecord.version,2);assert.equal(currentRecord.note,'Synthetic newest administrative edit');
+ const receipt=(await owner("SELECT actor_id,request,result FROM equipment_command_receipt WHERE organization_id=$1 AND idempotency_key='admin:after-check-in'",[A])).rows[0];assert.equal(receipt.actor_id,users.operator);assert.deepEqual(receipt.request,adminBody);assert.deepEqual(receipt.result,adminFirst);
+});
+test('fixture grants only SELECT and INSERT on merged equipment receipts to its runtime role',async()=>{
+ const privileges=(await owner(`SELECT has_table_privilege('sv_check_in_runtime','equipment_command_receipt','SELECT') AS can_select,
+ has_table_privilege('sv_check_in_runtime','equipment_command_receipt','INSERT') AS can_insert,
+ has_table_privilege('sv_check_in_runtime','equipment_command_receipt','UPDATE') AS can_update,
+ has_table_privilege('sv_check_in_runtime','equipment_command_receipt','DELETE') AS can_delete`)).rows[0];
+ assert.deepEqual(privileges,{can_select:true,can_insert:true,can_update:false,can_delete:false});
+ const policy=(await owner("SELECT relrowsecurity,relforcerowsecurity FROM pg_class WHERE oid='equipment_command_receipt'::regclass")).rows[0];assert.deepEqual(policy,{relrowsecurity:true,relforcerowsecurity:true});
 });
 test('changed payload, target, source, time, correlation and actor cannot reuse a successful key',async()=>{
  const input=body('EQ-005');assert.equal((await call(input,'bound')).status,201);
