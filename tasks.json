@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 136,
-  "updatedAt": "2026-11-05T20:09:07.249Z",
+  "revision": 137,
+  "updatedAt": "2026-11-05T20:10:30.782Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -959,6 +959,13 @@
       "command": "rework",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:10:30.782Z",
+      "taskId": "SV-026",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1765,7 +1772,7 @@
     {
       "id": "SV-026",
       "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
-      "status": "review",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1806,7 +1813,7 @@
       "submittedBy": "wil-astra-ward-two-20261105",
       "submittedAt": "2026-11-05T20:04:27.211Z",
       "blockedReason": null,
-      "reviewNote": "Independent IAB review of PR21 exact head 9a6b11f confirms Enter on the filtered A1 IV pump replaces the focused list button and leaves document.activeElement=BODY. Preserve selected context/focus, add a keyboard regression, and verify 3D plus zero-canvas list workflow. Review https://github.com/wiltobuild/supply-vanguard/pull/21#pullrequestreview-5791062240. Original PCU owner should reclaim normally on existing branch; keep changes PCU-local and preserve independent PICU/shared-selector ownership. Both remain draft pending repaired-head and combined navigation verification."
+      "reviewNote": "Repaired head47ee00f resolves original focus loss;7wardtests andCIpass, independent Enter/Tab/Enter retains focused pump/monitor in3D andzero-canvaslistmode. New Back/history mismatch remains: restoreIVpumps, listmode showsall26 includingmonitors/carts; in3Dafterready summarysays9but liststill26. Reconcile restoredcontrols,list,count,highlight consistently with browserBackregression inbothmodes, preservingselectionfocus. OriginalPCUowner shouldreclaim normally onexistingbranch; keepdraft. PRmanager exact-head review links document repro; no merge/completion performed."
     }
   ]
 }
