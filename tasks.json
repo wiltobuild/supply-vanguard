@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 2,
-  "updatedAt": "2026-11-04T19:57:17.603Z",
+  "revision": 3,
+  "updatedAt": "2026-11-05T08:33:29.597Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -17,6 +17,13 @@
       "command": "release",
       "agent": "codex-design-reference",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T08:33:29.597Z",
+      "taskId": "SV-001",
+      "command": "claim",
+      "agent": "cheich-agent-1",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -45,7 +52,7 @@
     {
       "id": "SV-001",
       "title": "Define equipment and event contracts",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -59,7 +66,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-1",
+        "owner": "cheich",
+        "leaseId": "1e338bd3-b411-493d-9928-2e90c9cc7c1d",
+        "claimedAt": "2026-11-05T08:33:29.597Z",
+        "expiresAt": "2026-11-05T10:33:29.597Z"
+      }
     },
     {
       "id": "SV-002",
