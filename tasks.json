@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 98,
-  "updatedAt": "2026-11-05T19:02:50.626Z",
+  "revision": 99,
+  "updatedAt": "2026-11-05T19:03:32.014Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -693,6 +693,13 @@
       "command": "heartbeat",
       "agent": "wil-vale-sv019-20261105-authfix",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:03:32.014Z",
+      "taskId": "SV-017",
+      "command": "claim",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1162,7 +1169,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1180,7 +1187,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-sol-sv017-20261105-ops",
+        "owner": "wil",
+        "leaseId": "e2db931c-8da5-4725-accd-d7be203a928a",
+        "claimedAt": "2026-11-05T19:03:32.014Z",
+        "expiresAt": "2026-11-05T21:03:32.014Z"
+      }
     },
     {
       "id": "SV-018",
