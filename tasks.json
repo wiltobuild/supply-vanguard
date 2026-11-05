@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 43,
-  "updatedAt": "2026-11-05T16:25:04.141Z",
+  "revision": 44,
+  "updatedAt": "2026-11-05T16:27:53.525Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -305,6 +305,13 @@
       "agent": "wil-sol-board-coordinator-20261105-a7f3",
       "owner": null,
       "reason": "Explicitly coordinated new task for the user-requested repair of merged PR #7 forced-RLS seed/bootstrap and clean-install root npm test regressions. Existing completed SV-005 and all other tasks, leases, history and merge evidence are preserved. The separate repair owner must claim SV-019 through the normal CLI before editing."
+    },
+    {
+      "at": "2026-11-05T16:27:53.525Z",
+      "taskId": "SV-006",
+      "command": "heartbeat",
+      "agent": "cheich-agent-5",
+      "owner": null
     }
   ],
   "tasks": [
@@ -503,7 +510,7 @@
         "owner": "cheich",
         "leaseId": "a5b4e435-9970-48c8-818e-807be0e6919a",
         "claimedAt": "2026-11-05T16:23:42.837Z",
-        "expiresAt": "2026-11-05T18:23:42.837Z"
+        "expiresAt": "2026-11-05T18:27:53.525Z"
       }
     },
     {
