@@ -1,0 +1,1363 @@
+{
+  "schemaVersion": 1,
+  "taskId": "SV-015",
+  "reviewedOn": "2026-11-05",
+  "baselineCommit": "603442d9cc7b0900049967f56376b522089005f0",
+  "definitions": {
+    "measured": "Dimension or position established by approved measured drawings or authorized measurements, with per-field evidence and review. None available.",
+    "estimated": "Illustrative authored model value. A numeric value or exported GLB bound does not make it a real-world measurement.",
+    "qualitative": "Public source supports a general feature, never the modeled dimensions, quantity, identity or arrangement.",
+    "convention": "Declared software coordinate convention, not evidence of real-world location or orientation."
+  },
+  "validation": {
+    "status": "blocked-external-evidence",
+    "architecturalAccuracyClaimed": false,
+    "authorizedReview": null,
+    "requiredEvidence": [
+      {
+        "id": "permission",
+        "needed": "Owner-approved access and reuse permission for the specific ward/floor documents or measurement visit, with an approved storage/redaction route.",
+        "resolutionEvidence": "Record authorizing role, permission reference, scope, revision/date and permitted retention/sharing; no patient data."
+      },
+      {
+        "id": "measured-geometry",
+        "needed": "Current approved dimensioned ward drawings or an authorized measurement record for boundaries, rooms, door openings, walls, corridor widths, ceiling heights, fixed fixtures and coordinate anchors.",
+        "resolutionEvidence": "Drawing/survey ID and revision, floor/section identity, date, units/scale, measurement method, uncertainty/tolerances agreed by the owner, orientation and per-element/field comparisons with discrepancies."
+      },
+      {
+        "id": "location-mapping",
+        "needed": "Authorized mapping from synthetic room-101 through room-106 and support-area IDs to current real locations and adjacencies; verify the six-room assumption.",
+        "resolutionEvidence": "Approved stable location crosswalk including names/numbers, adjacencies and coordinate origin/orientation; retain synthetic IDs unless migration is reviewed."
+      },
+      {
+        "id": "equipment-placement",
+        "needed": "Approved equipment inventory/model dimensions and authorized staff review of fixed equipment, storage positions and workflow clearances.",
+        "resolutionEvidence": "Per-model approved dimensional source and per-placement review, deviations, agreed tolerances and unresolved items; representative GLB bounds alone are insufficient."
+      },
+      {
+        "id": "authorized-review",
+        "needed": "Facilities/reference-owner and ward staff review of mapped geometry, equipment placement and remaining limitations.",
+        "resolutionEvidence": "Dated role-based approval references tied to exact model commit and evidence revisions, per-element outcomes and discrepancy resolution. Public-source review and automated checks do not satisfy sign-off."
+      }
+    ]
+  },
+  "sources": [
+    {
+      "id": "local-scene",
+      "title": "Authored scene and original reference accuracy notes",
+      "scope": "illustrative-model",
+      "dimensionalEvidence": false,
+      "locator": "packages/scene/REFERENCE.md Accuracy; viewer/data.js MANIFEST; viewer/ward.js; viewer/assets/manifest.json",
+      "limitation": "All real-world dimensions, identities, adjacencies, equipment makes and placements remain unverified. Exported mesh measurements describe the model only."
+    },
+    {
+      "id": "parent-guide-2024",
+      "title": "NICU parent guide · 2024",
+      "url": "https://www.hopkinsmedicine.org/-/media/johns-hopkins-childrens-center/documents/specialties/neonatal-medicine/a-parents-guide-to-the-nicu-english-2024.pdf",
+      "scope": "qualitative-only",
+      "dimensionalEvidence": false,
+      "accessedOn": "2026-11-05",
+      "locator": "PDF printed pages 7-8 and 17-20",
+      "limitation": "Guide describes family amenities and representative equipment; no dimensions, brands, current room mapping or placement evidence."
+    },
+    {
+      "id": "nicu-design-2012",
+      "title": "NICU design · Johns Hopkins",
+      "url": "https://www.hopkinsmedicine.org/news/articles/2012/07/nicu-design-with-less-movement-in-mind",
+      "scope": "qualitative-only",
+      "dimensionalEvidence": false,
+      "accessedOn": "2026-11-05",
+      "locator": "Article dated 2012-07-20; configuration and family amenities paragraphs",
+      "limitation": "Historical account supports private rooms and eighth-floor context, not current adjacencies or this six-room section."
+    },
+    {
+      "id": "patient-rooms",
+      "title": "Patient-room design · Johns Hopkins",
+      "url": "https://www.hopkinsmedicine.org/johns-hopkins-childrens-center/patients-and-families/bloomberg-childrens-center/patient-rooms",
+      "scope": "qualitative-only",
+      "dimensionalEvidence": false,
+      "accessedOn": "2026-11-05",
+      "locator": "Patient Rooms; noise-reduction feature list",
+      "limitation": "Rubber flooring is NICU-specific; decentralized workstations are building-wide context. No NICU workstation coordinates or dimensions."
+    },
+    {
+      "id": "tower-map",
+      "title": "Bloomberg Tower public map",
+      "url": "https://www.hopkinsmedicine.org/-/media/hse/maps/bloomberg-tower-north-south.pdf",
+      "scope": "building-context-only",
+      "dimensionalEvidence": false,
+      "accessedOn": "2026-11-05",
+      "locator": "Single-page Bloomberg Tower North and South map",
+      "limitation": "Not verified as a dimensioned eighth-floor NICU plan. Not used for tracing, scale, orientation, room identity or adjacency validation."
+    },
+    {
+      "id": "architect-project",
+      "title": "Architectural project · Perkins&Will",
+      "url": "https://perkinswill.com/project/the-johns-hopkins-hospital-sheikh-zayed-tower-and-the-charlotte-r-bloomberg-childrens-center/",
+      "scope": "building-context-only",
+      "dimensionalEvidence": false,
+      "accessedOn": "2026-11-05",
+      "locator": "Project description; completion date 2012",
+      "limitation": "Building-wide circulation and materials context only; no verified NICU section drawing or current measured geometry."
+    }
+  ],
+  "qualitativeClaims": [
+    {
+      "id": "private-rooms",
+      "basis": "qualitative",
+      "sourceIds": [
+        "nicu-design-2012"
+      ],
+      "statement": "A historical Hopkins article describes private NICU rooms and family sleeping facilities on the eighth floor.",
+      "limitation": "Does not establish current room count, numbers, dimensions or modeled adjacency."
+    },
+    {
+      "id": "family-furnishings",
+      "basis": "qualitative",
+      "sourceIds": [
+        "parent-guide-2024"
+      ],
+      "statement": "The guide describes a reclining sleep chair in each baby room and a family lounge.",
+      "limitation": "Does not establish the modeled chair shape, brand, dimensions or lounge coordinates."
+    },
+    {
+      "id": "equipment-types",
+      "basis": "qualitative",
+      "sourceIds": [
+        "parent-guide-2024"
+      ],
+      "statement": "The guide identifies representative incubators, warmers and monitors.",
+      "limitation": "Does not authenticate the modeled makes, counts, sizes or placements."
+    },
+    {
+      "id": "rubber-floor",
+      "basis": "qualitative",
+      "sourceIds": [
+        "patient-rooms"
+      ],
+      "statement": "Hopkins describes rubber flooring in the NICU for noise reduction.",
+      "limitation": "Does not validate modeled floor color, pattern, area or thickness."
+    },
+    {
+      "id": "workstations",
+      "basis": "qualitative",
+      "sourceIds": [
+        "patient-rooms"
+      ],
+      "statement": "Hopkins describes decentralized workstations as a building design feature.",
+      "limitation": "Building-wide context does not authenticate this NICU workstation configuration."
+    }
+  ],
+  "elements": [
+    {
+      "id": "ward-envelope",
+      "kind": "architecture",
+      "modelValues": {
+        "width": 23,
+        "depth": 14,
+        "height": 2.85
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "dimensions",
+        "room count",
+        "adjacencies",
+        "walls",
+        "windows",
+        "doors",
+        "ceilings",
+        "finishes",
+        "service panels and built-in furnishings"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "ward-layout",
+      "kind": "architecture",
+      "modelValues": {
+        "infantRoomCount": 6,
+        "roomIds": [
+          "room-101",
+          "room-102",
+          "room-103",
+          "room-104",
+          "room-105",
+          "room-106",
+          "clean-supply",
+          "staff-base",
+          "equipment-store",
+          "family-lounge"
+        ]
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "dimensions",
+        "room count",
+        "adjacencies",
+        "walls",
+        "windows",
+        "doors",
+        "ceilings",
+        "finishes",
+        "service panels and built-in furnishings"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "procedural-architecture",
+      "kind": "architecture",
+      "modelValues": {
+        "file": "ward.js"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "dimensions",
+        "room count",
+        "adjacencies",
+        "walls",
+        "windows",
+        "doors",
+        "ceilings",
+        "finishes",
+        "service panels and built-in furnishings"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "navigation",
+      "kind": "navigation",
+      "modelValues": {
+        "limits": {
+          "minX": -11.32,
+          "maxX": 11.32,
+          "minZ": -6.82,
+          "maxZ": 6.82
+        },
+        "file": "assets/navigation.json"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "bounds",
+        "collision obstacles",
+        "clearance assumptions",
+        "route grid",
+        "destinations and spawn; model navigation only"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "equipment-slots",
+      "kind": "placement",
+      "modelValues": {
+        "columns": 3,
+        "spacingX": 0.9,
+        "spacingZ": 0.8,
+        "offsetX": -1,
+        "offsetZ": 0.6
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "dynamic equipment slot spacing",
+        "offsets and positions; illustrative arrangement"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "coordinate-system",
+      "kind": "convention",
+      "modelValues": {
+        "units": "meters",
+        "upAxis": "Y",
+        "equipmentFront": "+Z",
+        "geographicNorthVerified": false
+      },
+      "basis": "convention",
+      "confidence": "declared",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "meters",
+        "Y up",
+        "equipment +Z; model north is not verified geographic north"
+      ],
+      "limitation": "Software convention only; no geographic alignment established."
+    },
+    {
+      "id": "room-101",
+      "kind": "room",
+      "modelValues": {
+        "id": "room-101",
+        "name": "Infant room 101",
+        "number": 101,
+        "x": -1,
+        "z": -4.25,
+        "side": -1,
+        "doorX": -2.45,
+        "area": 27.5
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "room-102",
+      "kind": "room",
+      "modelValues": {
+        "id": "room-102",
+        "name": "Infant room 102",
+        "number": 102,
+        "x": 4,
+        "z": -4.25,
+        "side": -1,
+        "doorX": 2.55,
+        "area": 27.5
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "room-103",
+      "kind": "room",
+      "modelValues": {
+        "id": "room-103",
+        "name": "Infant room 103",
+        "number": 103,
+        "x": 9,
+        "z": -4.25,
+        "side": -1,
+        "doorX": 7.55,
+        "area": 27.5
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "room-104",
+      "kind": "room",
+      "modelValues": {
+        "id": "room-104",
+        "name": "Infant room 104",
+        "number": 104,
+        "x": -1,
+        "z": 4.25,
+        "side": 1,
+        "doorX": -2.45,
+        "area": 27.5
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "room-105",
+      "kind": "room",
+      "modelValues": {
+        "id": "room-105",
+        "name": "Infant room 105",
+        "number": 105,
+        "x": 4,
+        "z": 4.25,
+        "side": 1,
+        "doorX": 2.55,
+        "area": 27.5
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "room-106",
+      "kind": "room",
+      "modelValues": {
+        "id": "room-106",
+        "name": "Infant room 106",
+        "number": 106,
+        "x": 9,
+        "z": 4.25,
+        "side": 1,
+        "doorX": 7.55,
+        "area": 27.5
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "clean-supply",
+      "kind": "room",
+      "modelValues": {
+        "id": "clean-supply",
+        "name": "Clean supply",
+        "x": -9.5,
+        "z": -4.25,
+        "doorX": -10.3,
+        "side": -1,
+        "area": 22
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "staff-base",
+      "kind": "room",
+      "modelValues": {
+        "id": "staff-base",
+        "name": "Staff workroom",
+        "x": -5.5,
+        "z": -4.25,
+        "doorX": -6.3,
+        "side": -1,
+        "area": 22
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "equipment-store",
+      "kind": "room",
+      "modelValues": {
+        "id": "equipment-store",
+        "name": "Equipment store",
+        "x": -9.5,
+        "z": 4.25,
+        "doorX": -10.3,
+        "side": 1,
+        "area": 22
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "family-lounge",
+      "kind": "room",
+      "modelValues": {
+        "id": "family-lounge",
+        "name": "Family lounge",
+        "x": -5.5,
+        "z": 4.25,
+        "doorX": -6.3,
+        "side": 1,
+        "area": 22
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "room identity",
+        "number",
+        "name",
+        "center",
+        "doorway position",
+        "side",
+        "area",
+        "size and adjacency"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "CS-A",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "CS-A",
+        "name": "Supply cabinet A",
+        "room": "Clean supply",
+        "roomId": "clean-supply",
+        "position": [
+          -10.5,
+          1.4,
+          -6.5
+        ],
+        "approach": [
+          -10.1,
+          -5.45
+        ],
+        "assetKind": "supply-cabinet"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "CS-B",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "CS-B",
+        "name": "Supply cabinet B",
+        "room": "Clean supply",
+        "roomId": "clean-supply",
+        "position": [
+          -8.5,
+          1.4,
+          -6.5
+        ],
+        "approach": [
+          -8.5,
+          -5.45
+        ],
+        "assetKind": "supply-cabinet"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "EQ-A",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "EQ-A",
+        "name": "Equipment staging",
+        "room": "Equipment store",
+        "roomId": "equipment-store",
+        "position": [
+          -10,
+          1.1,
+          5.9
+        ],
+        "approach": [
+          -9.6,
+          4.6
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "BR-101",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "BR-101",
+        "name": "Bedside cart 101",
+        "room": "Infant room 101",
+        "roomId": "room-101",
+        "position": [
+          0.6499999999999999,
+          1.1,
+          -3.15
+        ],
+        "approach": [
+          -0.30000000000000004,
+          -2.7
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "BR-102",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "BR-102",
+        "name": "Bedside cart 102",
+        "room": "Infant room 102",
+        "roomId": "room-102",
+        "position": [
+          5.65,
+          1.1,
+          -3.15
+        ],
+        "approach": [
+          4.7,
+          -2.7
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "BR-103",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "BR-103",
+        "name": "Bedside cart 103",
+        "room": "Infant room 103",
+        "roomId": "room-103",
+        "position": [
+          10.65,
+          1.1,
+          -3.15
+        ],
+        "approach": [
+          9.7,
+          -2.7
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "BR-104",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "BR-104",
+        "name": "Bedside cart 104",
+        "room": "Infant room 104",
+        "roomId": "room-104",
+        "position": [
+          0.6499999999999999,
+          1.1,
+          3.15
+        ],
+        "approach": [
+          -0.30000000000000004,
+          2.7
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "BR-105",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "BR-105",
+        "name": "Bedside cart 105",
+        "room": "Infant room 105",
+        "roomId": "room-105",
+        "position": [
+          5.65,
+          1.1,
+          3.15
+        ],
+        "approach": [
+          4.7,
+          2.7
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "BR-106",
+      "kind": "supply-location",
+      "modelValues": {
+        "id": "BR-106",
+        "name": "Bedside cart 106",
+        "room": "Infant room 106",
+        "roomId": "room-106",
+        "position": [
+          10.65,
+          1.1,
+          3.15
+        ],
+        "approach": [
+          9.7,
+          2.7
+        ],
+        "assetKind": "supply-cart"
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "cabinet/cart identity",
+        "room assignment",
+        "model kind",
+        "position and approach; synthetic stock excluded from geometry evidence"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:incubator",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "incubator",
+        "label": "Neonatal incubator",
+        "file": "incubator.glb",
+        "sizeMeters": [
+          0.827,
+          1.567,
+          1.307
+        ],
+        "boundsMin": [
+          -0.414,
+          0,
+          -0.625
+        ],
+        "triangles": 10176,
+        "bytes": 931636,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:warmer",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "warmer",
+        "label": "Radiant warmer",
+        "file": "warmer.glb",
+        "sizeMeters": [
+          0.885,
+          1.905,
+          1.125
+        ],
+        "boundsMin": [
+          -0.385,
+          0,
+          -0.57
+        ],
+        "triangles": 6804,
+        "bytes": 629816,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:monitor",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "monitor",
+        "label": "Patient monitor",
+        "file": "monitor.glb",
+        "sizeMeters": [
+          0.537,
+          1.618,
+          0.547
+        ],
+        "boundsMin": [
+          -0.245,
+          0,
+          -0.273
+        ],
+        "triangles": 7252,
+        "bytes": 651020,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:infusion",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "infusion",
+        "label": "Infusion stand",
+        "file": "infusion.glb",
+        "sizeMeters": [
+          0.527,
+          1.749,
+          0.585
+        ],
+        "boundsMin": [
+          -0.235,
+          0,
+          -0.292
+        ],
+        "triangles": 6132,
+        "bytes": 535552,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:recliner",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "recliner",
+        "label": "Family sleep chair",
+        "file": "recliner.glb",
+        "sizeMeters": [
+          0.904,
+          1.036,
+          0.933
+        ],
+        "boundsMin": [
+          -0.44,
+          0,
+          -0.433
+        ],
+        "triangles": 2268,
+        "bytes": 222240,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:supply-cabinet",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "supply-cabinet",
+        "label": "Supply cabinet",
+        "file": "supply-cabinet.glb",
+        "sizeMeters": [
+          1.575,
+          2.017,
+          0.52
+        ],
+        "boundsMin": [
+          -0.788,
+          0.001,
+          -0.26
+        ],
+        "triangles": 31772,
+        "bytes": 2830780,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:supply-cart",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "supply-cart",
+        "label": "Bedside supply cart",
+        "file": "supply-cart.glb",
+        "sizeMeters": [
+          0.831,
+          0.96,
+          0.6
+        ],
+        "boundsMin": [
+          -0.39,
+          0,
+          -0.285
+        ],
+        "triangles": 4016,
+        "bytes": 394972,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:workstation",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "workstation",
+        "label": "Clinical workstation",
+        "file": "workstation.glb",
+        "sizeMeters": [
+          1.4,
+          1.22,
+          1.439
+        ],
+        "boundsMin": [
+          -0.7,
+          0,
+          -0.325
+        ],
+        "triangles": 6656,
+        "bytes": 653052,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:sink",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "sink",
+        "label": "Hand hygiene station",
+        "file": "sink.glb",
+        "sizeMeters": [
+          0.82,
+          1.105,
+          0.576
+        ],
+        "boundsMin": [
+          -0.41,
+          0,
+          -0.275
+        ],
+        "triangles": 3648,
+        "bytes": 357684,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    },
+    {
+      "id": "model:stool",
+      "kind": "equipment-model",
+      "modelValues": {
+        "id": "stool",
+        "label": "Clinical stool",
+        "file": "stool.glb",
+        "sizeMeters": [
+          0.457,
+          0.543,
+          0.489
+        ],
+        "boundsMin": [
+          -0.215,
+          0,
+          -0.245
+        ],
+        "triangles": 2244,
+        "bytes": 217788,
+        "pivot": "floor origin",
+        "front": "+Z",
+        "provenance": "Original representative equipment; make/model unverified."
+      },
+      "basis": "estimated",
+      "confidence": "unverified",
+      "sourceIds": [
+        "local-scene"
+      ],
+      "scope": [
+        "representative shape",
+        "size",
+        "bounds",
+        "make/model",
+        "quantity and static placement; not manufacturer or surveyed dimensions"
+      ],
+      "limitation": "Illustrative model only. Requires the relevant approved drawings/measurements, identity mapping and authorized reference review before any accuracy claim."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "data.js",
+      "normalization": "utf8-lf",
+      "sha256": "afcee4b9fce68acdc584d3da351a0d14ffb2d800db400d60fdec5ab66471bffe"
+    },
+    {
+      "path": "config.js",
+      "normalization": "utf8-lf",
+      "sha256": "b251403de65914485554a57b13944debd09d075c281ab0c4d4a6da2ad2c13994"
+    },
+    {
+      "path": "ward.js",
+      "normalization": "utf8-lf",
+      "sha256": "16763a08ce3b89bf0453466fa6021163eb85378489c75aa66af333ae98e2aaa8"
+    },
+    {
+      "path": "models.js",
+      "normalization": "utf8-lf",
+      "sha256": "81ab27c97c4c8d73bb90548c0da1cf421010f926747ba3580c1724d57959de30"
+    },
+    {
+      "path": "nav.js",
+      "normalization": "utf8-lf",
+      "sha256": "390495dc7fc7ff0d1ed6bd6ca8ef89477c63b2a652848d4d5455032b7538c305"
+    },
+    {
+      "path": "assets/manifest.json",
+      "normalization": "utf8-lf",
+      "sha256": "238b955c7b057e4cc1c49fb81e3147b16d74a181c80dc9b46d030f5ccfe5523a"
+    },
+    {
+      "path": "assets/locations.json",
+      "normalization": "utf8-lf",
+      "sha256": "2413dc6cff8fdea0a97c9622c01e9893049e925be5f19686e04549a9cd0126b7"
+    },
+    {
+      "path": "assets/navigation.json",
+      "normalization": "utf8-lf",
+      "sha256": "487de3676b5191538eeae41c234836b69a0af911a42501892aa26d9ea75ff1a8"
+    },
+    {
+      "path": "assets/incubator.glb",
+      "normalization": "binary",
+      "sha256": "67983ab3347dcccd8b79df7e14c7bbcb3b131ea27a0a70718d37a59111438633"
+    },
+    {
+      "path": "assets/warmer.glb",
+      "normalization": "binary",
+      "sha256": "49f23b0c3b22ddddf709f6737177b29fb62802a1875285402467141d27148024"
+    },
+    {
+      "path": "assets/monitor.glb",
+      "normalization": "binary",
+      "sha256": "f4ed3551d71b1d2d586368f72a9f6b689fe6279ea1b444113053ed553d842304"
+    },
+    {
+      "path": "assets/infusion.glb",
+      "normalization": "binary",
+      "sha256": "029a96884ff18809c20a565042bc479ab28fda52ff9faffd7d6bc07f71f52152"
+    },
+    {
+      "path": "assets/recliner.glb",
+      "normalization": "binary",
+      "sha256": "5dab4e038ca8d26fdc0a021d387f6e421bd92b4870ec1ce5ca02c7c750d113eb"
+    },
+    {
+      "path": "assets/supply-cabinet.glb",
+      "normalization": "binary",
+      "sha256": "c157976a5a4a5facf32b0a0724e9c4d0f25503895260a4f0915986d9c6eeba97"
+    },
+    {
+      "path": "assets/supply-cart.glb",
+      "normalization": "binary",
+      "sha256": "ab2d852eb039dab51ad5c15d4f70917555fe6d479521b30d44e88aff9d907ecc"
+    },
+    {
+      "path": "assets/workstation.glb",
+      "normalization": "binary",
+      "sha256": "ea0b5e162c899373342c6714236b3a2f9e484889280cb28a2f881741c341cfcd"
+    },
+    {
+      "path": "assets/sink.glb",
+      "normalization": "binary",
+      "sha256": "27ef0314e163e0e6f86dacd1b33c8524222a79c07e3a7f47549cac1010649263"
+    },
+    {
+      "path": "assets/stool.glb",
+      "normalization": "binary",
+      "sha256": "03ef1da2ce7a19ff33142e756a0b82548f3daaa20139928cd77837f1bda07ee7"
+    },
+    {
+      "path": "assets/nicu-ward.glb",
+      "normalization": "binary",
+      "sha256": "c4eb623fa3b6bbf006933322317aa233aab063f80d21d923f7d9e7494f575b96"
+    },
+    {
+      "path": "assets/nicu-ward-cutaway.glb",
+      "normalization": "binary",
+      "sha256": "d39ae6988f48df94cb8f24cb7bfdb2d3c5026605ac18296250ad325e2903d96e"
+    }
+  ]
+}
