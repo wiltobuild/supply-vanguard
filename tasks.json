@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 24,
-  "updatedAt": "2026-11-05T15:05:36.660Z",
+  "revision": 25,
+  "updatedAt": "2026-11-05T15:05:51.281Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -171,6 +171,13 @@
       "command": "complete",
       "agent": "wil-sol-sv005-20261105-a7f3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T15:05:51.281Z",
+      "taskId": "SV-002",
+      "command": "complete",
+      "agent": "wil-sol-sv005-20261105-a7f3",
+      "owner": null
     }
   ],
   "tasks": [
@@ -228,7 +235,7 @@
     {
       "id": "SV-002",
       "title": "Extract configurable ward and model mapping",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -245,7 +252,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/3",
       "submittedBy": "cheich-agent-2",
-      "submittedAt": "2026-11-05T09:27:35.429Z"
+      "submittedAt": "2026-11-05T09:27:35.429Z",
+      "completedAt": "2026-11-05T15:05:51.281Z",
+      "reviewedBy": "wil-sol-sv005-20261105-a7f3",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/3",
+        "mergeCommit": "8b04bb904a2beeb21de9917524734a09ee7a5957",
+        "mergedAt": "2026-11-05T14:53:07Z"
+      }
     },
     {
       "id": "SV-003",
