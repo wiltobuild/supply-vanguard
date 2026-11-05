@@ -1,4 +1,5 @@
-// Pure helpers for the web app (SV-003). No DOM and no imports, so they run unchanged in Node tests.
+// Pure helpers for the web app. Legacy save parsers are retained for compatibility tests only.
+import {freshness as recordFreshness} from '../../../packages/domain/contracts.js';
 export const STORAGE_KEY='supply-vanguard-demo-v1';
 const clip=(v,max=200)=>typeof v==='string'?v.slice(0,max):'';
 const state=o=>o&&typeof o==='object'?{roomId:clip(o.roomId,64),status:clip(o.status,32),version:Number.isInteger(o.version)?o.version:0}:{roomId:'',status:'',version:0};
@@ -23,6 +24,10 @@ export function filterEquipment(items,query='',status='all'){
  return items.filter(i=>(status==='all'||i.status===status)&&(!q||`${i.id} ${i.name} ${i.roomId} ${i.status}`.toLowerCase().includes(q)));
 }
 export function describeFreshness(item,stale){
+ if(Object.hasOwn(item,'lastVerified')){
+  const f=recordFreshness(item);
+  return f==='unknown'?{state:'unverified',text:'Not yet verified'}:f==='aging'?{state:'stale',text:'Location observation aging'}:f==='stale'?{state:'stale',text:'Location needs verification'}:{state:'fresh',text:'Location recently observed'};
+ }
  if(!item.lastSeenAt)return {state:'unverified',text:'Not yet verified'};
  return stale(item)?{state:'stale',text:'Location needs verification'}:{state:'fresh',text:'Recently updated'};
 }
@@ -38,3 +43,5 @@ export function latestUpdate(items){
 export function webglAvailable(createCanvas){
  try{const c=createCanvas();return !!(c.getContext('webgl2')||c.getContext('webgl'));}catch{return false;}
 }
+// Compatibility boundary for the existing scene. Keep canonical wire fields and provenance.
+export const presentEquipment=record=>({...record,roomId:record.locationId,lastSeenAt:record.lastVerified?.observedAt??null,source:record.lastVerified?.source??record.provenance});
