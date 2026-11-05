@@ -41,6 +41,7 @@ before(async()=>{
  if(skip)return;
  await db.exec(sql('../../db/migrations/0001_core.up.sql').replace('CREATE EXTENSION IF NOT EXISTS pgcrypto;',''));
  await db.exec(sql('../../auth/migrations/0001_auth.up.sql'));
+ await db.exec(`BEGIN; ${sql('../migrations/0001_receipts.up.sql')} COMMIT;`);
  await db.exec(sql('../../db/seed/seed.sql'));
  orgA=(await db.query("SELECT id FROM organization WHERE name LIKE 'Demo%'")).rows[0].id;
  await db.exec(`
@@ -55,6 +56,7 @@ before(async()=>{
   GRANT USAGE ON SCHEMA public TO sv_auth_test_runtime;
   GRANT SELECT, INSERT, UPDATE, DELETE ON organization, facility, ward, location, equipment_type, equipment, equipment_observation, equipment_event TO sv_auth_test_runtime;
   GRANT SELECT ON auth_user, auth_membership TO sv_auth_test_runtime;
+  GRANT SELECT, INSERT ON equipment_command_receipt TO sv_auth_test_runtime;
   GRANT EXECUTE ON FUNCTION auth_resolve_identity(text, text) TO sv_auth_test_runtime;`);
  orgB=(await db.query("SELECT id FROM organization WHERE name = 'Other org'")).rows[0].id;
  let i=0;
@@ -131,7 +133,7 @@ test('a failed audit write rolls the whole update back',{skip},async()=>{
  assert.equal(res.status,409);assert.equal((await res.json()).error,'idempotency_key_reused');
  assert.deepEqual(await row('EQ-004'),before);assert.equal((await eventsFor('EQ-004')).length,0);
 });
-test('retries are safe: audit readers get the original result back, others get a clean conflict, nothing applies twice',{skip},async()=>{
+test('retries replay only the original actor; a different actor conflicts and nothing applies twice',{skip},async()=>{
  const first=await patch('equipment_manager','EQ-005',{expectedVersion:0,status:'cleaning'},'retry-1');assert.equal(first.status,200);
  const again=await patch('equipment_manager','EQ-005',{expectedVersion:0,status:'cleaning'},'retry-1'),out=await again.json();
  assert.equal(again.status,200);assert.equal(again.headers.get('idempotent-replay'),'true');assert.equal(out.replayed,true);assert.equal(out.record.version,1);
