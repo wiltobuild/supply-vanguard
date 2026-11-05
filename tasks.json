@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 161,
-  "updatedAt": "2026-11-05T23:30:06.183Z",
+  "revision": 162,
+  "updatedAt": "2026-11-05T23:31:13.402Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1134,6 +1134,13 @@
       "command": "complete",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T23:31:13.402Z",
+      "taskId": "SV-008",
+      "command": "submit",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1376,7 +1383,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1394,16 +1401,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "e7942ef4-0307-4a04-aeff-7ea6308e2642",
-        "claimedAt": "2026-11-05T23:25:40.964Z",
-        "expiresAt": "2026-11-06T01:29:33.536Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
-      "submittedAt": "2026-11-05T18:37:46.923Z",
+      "submittedAt": "2026-11-05T23:31:13.402Z",
       "blockedReason": null,
       "reviewNote": "Current-main fixture compatibility: services/api/check-in/tests/api.test.mjs applies core/auth/check-in only, but its administrative PATCH regression now consumes merged equipment_command_receipt. Original owner should integrate current main safely on the existing branch, apply services/api/equipment/migrations/0001_receipts.up.sql transactionally after core/auth in the check-in-local fixture, and grant SELECT,INSERT on equipment_command_receipt to sv_check_in_runtime. Add or strengthen focused admin-PATCH/replay integrity coverage and run permitted combined-main checks. Edit only apps/web/check-in and services/api/check-in; no shared mounting, auth/bootstrap/root dependency/test-loader/CI edits, persistent grants, or repeated Windows native/loopback denied stages. This rework is fixture compatibility only; actual host mounting/browser acceptance remain separate merge gates."
     },
