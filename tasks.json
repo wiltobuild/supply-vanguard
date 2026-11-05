@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 147,
-  "updatedAt": "2026-11-05T22:59:40.172Z",
+  "revision": 148,
+  "updatedAt": "2026-11-05T23:00:10.687Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1036,6 +1036,13 @@
       "command": "complete",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T23:00:10.687Z",
+      "taskId": "SV-017",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1534,7 +1541,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1555,7 +1562,9 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
-      "submittedAt": "2026-11-05T19:24:57.495Z"
+      "submittedAt": "2026-11-05T19:24:57.495Z",
+      "blockedReason": null,
+      "reviewNote": "Reconcile recovery inventory with merged equipment receipt, supply, request and location-resolution migrations and add focused integrity regressions. Integrate current main on the existing branch, editing ops/ only. Native recovery remains unverified until PostgreSQL clients and disposable cluster setup are available."
     },
     {
       "id": "SV-018",
