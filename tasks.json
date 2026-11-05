@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 135,
-  "updatedAt": "2026-11-05T20:04:27.211Z",
+  "revision": 136,
+  "updatedAt": "2026-11-05T20:09:07.249Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -952,6 +952,13 @@
       "command": "submit",
       "agent": "wil-astra-ward-two-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:09:07.249Z",
+      "taskId": "SV-025",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1711,7 +1718,7 @@
     {
       "id": "SV-025",
       "title": "Build illustrative pediatric intensive care ward (PICU)",
-      "status": "review",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1753,7 +1760,7 @@
       "submittedBy": "wil-astra-picu-20261105",
       "submittedAt": "2026-11-05T20:00:48.855Z",
       "blockedReason": null,
-      "reviewNote": "Independent exact-head browser review of PR20 8059876: keyboard Enter selection removes the focused list button and leaves document.activeElement=BODY in both 3D and zero-canvas list mode; preserve focus and add keyboard regression. Header Equipment workspace href /#ward is unrecognized and opens Department workspace; use /#/equipment and verify navigation/Back. Review https://github.com/wiltobuild/supply-vanguard/pull/20#pullrequestreview-5791058503. Original PICU owner should normally reclaim existing branch; preserve PCU independence, source provenance and asset PR16 index hunks."
+      "reviewNote": "Repaired head b628592 resolves original keyboard-focus and route findings; independent browser re-review found a further Back/history filter mismatch: after A1+IV pump then Equipment link and Back, controls retain A1/infusion but list/count show all55 and 3D highlights unrelated placements even after sceneReady=true. Synchronize post-history controls, results/count and highlights, add real Back regression in3D and list mode without focus loss. Review https://github.com/wiltobuild/supply-vanguard/pull/20#pullrequestreview-5791325356. Original PICU owner should reclaim normally; current-main integration/tests and27GLBs passed, but keepdraft until this correctness repair."
     },
     {
       "id": "SV-026",
