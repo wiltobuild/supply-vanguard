@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 103,
-  "updatedAt": "2026-11-05T19:04:42.672Z",
+  "revision": 104,
+  "updatedAt": "2026-11-05T19:04:52.990Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -728,6 +728,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:04:52.990Z",
+      "taskId": "SV-024",
+      "command": "claim",
+      "agent": "wil-astra-assets-20261105",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1422,7 +1429,7 @@
     {
       "id": "SV-024",
       "title": "Add fifteen illustrative NICU equipment assets",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1452,7 +1459,13 @@
         "Implementation assigned to the isolated Astra high asset agent after a verified board claim. This migration itself does not claim the task.",
         "Do not edit root package/dependencies, auth, core database/bootstrap, test-loader or CI files reserved to SV-019. Preserve all existing task states and pending review work. Keep integration minimal and scene-local."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-astra-assets-20261105",
+        "owner": "wil",
+        "leaseId": "5bf141b3-b79e-429e-9117-70873fda31dd",
+        "claimedAt": "2026-11-05T19:04:52.990Z",
+        "expiresAt": "2026-11-05T21:04:52.990Z"
+      },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/16",
       "submittedBy": "wil-astra-assets-20261105",
       "submittedAt": "2026-11-05T19:01:24.122Z",
