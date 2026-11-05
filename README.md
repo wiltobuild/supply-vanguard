@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 45. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 46. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -23,4 +23,4 @@ Revision 45. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e, tools/benchmarks |
 | SV-017 Deployment and operational readiness | ready | — | — | SV-006, SV-013 | ops, .github/workflows |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
-| SV-019 Repair auth bootstrap and clean test setup | ready | — | — | SV-005 | services/api/db bootstrap/seed, task-specific auth tests/dependency wiring, root package/test-loader and CI changes required for the two regressions only |
+| SV-019 Repair auth bootstrap and clean test setup | claimed | wil / wil-vale-sv019-20261105-authfix | 2026-11-05T18:30:45.088Z | SV-005 | services/api/db bootstrap/seed, task-specific auth tests/dependency wiring, root package/test-loader and CI changes required for the two regressions only |

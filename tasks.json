@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 45,
-  "updatedAt": "2026-11-05T16:30:38.990Z",
+  "revision": 46,
+  "updatedAt": "2026-11-05T16:30:45.088Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -319,6 +319,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv013-20261105-e6b1",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:30:45.088Z",
+      "taskId": "SV-019",
+      "command": "claim",
+      "agent": "wil-vale-sv019-20261105-authfix",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -813,7 +820,7 @@
     {
       "id": "SV-019",
       "title": "Repair auth bootstrap and clean test setup",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-005"
@@ -835,7 +842,13 @@
         "Scoped auth/regression tests",
         "Native PostgreSQL bootstrap if available; otherwise precise embedded/native coverage disclosure"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-vale-sv019-20261105-authfix",
+        "owner": "wil",
+        "leaseId": "1b602b74-ff50-412c-a4b1-8d52e05b6914",
+        "claimedAt": "2026-11-05T16:30:45.088Z",
+        "expiresAt": "2026-11-05T18:30:45.088Z"
+      }
     }
   ]
 }
