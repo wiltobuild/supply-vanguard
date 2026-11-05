@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 100. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 101. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -28,6 +28,6 @@ Revision 100. Live state is on the task-board branch. Use npm run board -- claim
 | SV-021 Independent stacked equipment holds | ready | — | — | SV-006, SV-020 | packages/domain/holds, services/api/holds, Task-local assignment-eligibility integration |
 | SV-022 Partial fulfillment and safe returns | ready | — | — | SV-020, SV-021 | Task-local request fulfillment lifecycle, Task-local return lifecycle integration |
 | SV-023 Repair equipment replay and concurrency | review | — | — | SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/12) |
-| SV-024 Add fifteen illustrative NICU equipment assets | review | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/16) |
+| SV-024 Add fifteen illustrative NICU equipment assets | ready | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/16) |
 | SV-025 Build illustrative pediatric intensive care ward (PICU) | claimed | wil / wil-astra-picu-20261105 | 2026-11-05T20:56:26.402Z | SV-002 | packages/scene/viewer/wards/picu/ scene, configuration, references, tests and documentation, Exclusive minimal shared ward-selector/navigation integration for both PICU and PCU routes, coordinated with SV-024 |
 | SV-026 Build illustrative pediatric cardiac step-down ward (PCU) | claimed | wil / wil-astra-ward-two-20261105 | 2026-11-05T20:57:08.811Z | SV-002 | packages/scene/viewer/wards/pcu/ scene, configuration, references, local tests and documentation only |
