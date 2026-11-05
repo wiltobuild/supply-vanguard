@@ -8,6 +8,7 @@ import {presentEquipment} from '../src/lib.js';
 import {planPlacements,diffPlacements} from '../../../packages/scene/viewer/config.js';
 import {startFixture} from './api-fixture.mjs';
 import {createWebHandler} from '../serve.mjs';
+import {WARD_ROUTES,routeAvailable} from '../../../packages/scene/viewer/wards/ward-links.js';
 let fixture;
 before(async()=>{fixture=await startFixture();});
 after(async()=>{await fixture?.close();});
@@ -81,6 +82,8 @@ test('local web entry serves only public assets and reports a missing upstream e
  const server=createServer(createWebHandler());server.listen(0,'127.0.0.1');await once(server,'listening');const base=`http://127.0.0.1:${server.address().port}`;
  try{
   for(const path of ['/','/src/app.js','/src/equipment-api.js','/packages/domain/contracts.js','/ward/','/ward/assets/monitor.glb'])assert.equal((await fetch(base+path)).status,200,path);
+  for(const route of WARD_ROUTES)assert.equal(await routeAvailable(route,(path,options)=>fetch(base+path,options)),true,`combined ward route ${route.id} is available through the web host`);
+  assert.equal((await fetch(base+'/ward/wards/ward-links.js')).status,200);
   for(const path of ['/tests/api-fixture.mjs','/serve.mjs','/package.json','/.claims/SV-007.json'])assert.equal((await fetch(base+path)).status,404,path);
   const response=await fetch(base+'/organizations/synthetic/equipment');assert.equal(response.status,503);assert.equal((await response.json()).error,'api_not_configured');
   assert.throws(()=>createWebHandler({apiOrigin:'https://example.com'}),/loopback/);
