@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cardiac step-down · Supply Vanguard</title><link rel="stylesheet" href="./styles.css"><script type="importmap">{"imports":{"three":"../../vendor/three.module.js","three/addons/":"../../vendor/addons/"}}</script></head>
+<body data-ward="pcu">
+ <a class="skip" href="#equipment-search">Skip to equipment</a>
+ <header class="header"><a class="brand" href="/">◩ <span>Supply Vanguard</span></a><span class="descriptor">Equipment across care spaces</span><nav aria-label="Ward navigation"><a href="/ward/">NICU</a><a href="./index.html" aria-current="page">Cardiac step-down</a><a href="/#/equipment">Equipment workspace</a></nav></header>
+ <main>
+  <div class="intro"><div><p class="eyebrow">JOHNS HOPKINS REFERENCE · BLOOMBERG 9 NORTH</p><h1>Pediatric cardiac step-down</h1><p>A family-centered ward section, with the equipment in view.</p></div><button id="sources-open">Sources &amp; accuracy ↗</button></div>
+  <div class="notice"><strong>Illustrative section</strong><span>Eight authored room bays. Layout, room labels and equipment positions are inferred. Synthetic examples only.</span></div>
+  <div class="workspace">
+   <section class="viewport" aria-label="Interactive illustrative cardiac step-down ward">
+    <div class="scene-toolbar"><div class="segmented" aria-label="Camera mode"><button id="overview" aria-pressed="true" disabled>Overview</button><button id="walk" aria-pressed="false" disabled>Walk inside</button></div><button id="cutaway" aria-pressed="true" disabled>Cutaway on</button><button id="reset" disabled>Reset view</button><button id="save-view" disabled>Save view</button></div>
+    <div id="scene" aria-label="3D ward. Use the adjacent room and equipment lists for keyboard access."><p id="loading" role="status">Loading the illustrative ward…</p></div>
+    <div id="room-markers" aria-hidden="true"></div>
+    <div class="scene-caption"><span class="pill">REFERENCE MODEL</span><span id="view-status" role="status">Drag to orbit · scroll to zoom</span></div>
+    <div id="walk-help" hidden><p>Drag to look. Focus the view, then use W A S D or arrow keys to walk. Escape returns to overview.</p><div class="walk-pad" aria-label="Walking controls"><button data-move="forward" aria-label="Move forward" disabled>↑</button><button data-move="left" aria-label="Move left" disabled>←</button><button data-move="back" aria-label="Move backward" disabled>↓</button><button data-move="right" aria-label="Move right" disabled>→</button></div></div>
+   </section>
+   <aside aria-label="Ward equipment and rooms">
+    <div class="aside-heading"><span class="eyebrow">EXPLORE THIS SECTION</span><h2>Equipment, in place.</h2><p>Find a model or visit an illustrative room. These examples do not report actual availability.</p></div>
+    <label for="equipment-search">Search equipment or room</label><input id="equipment-search" type="search" placeholder="Try IV pump or bay A1" autocomplete="off">
+    <label for="equipment-kind">Equipment type</label><select id="equipment-kind"><option value="all">All example equipment</option><option value="infusion">IV pumps</option><option value="monitor">Patient monitors</option><option value="supply-cart">Supply carts</option></select>
+    <p id="result-count" role="status"></p><div id="equipment-list" class="equipment-list"></div>
+    <section id="selection" class="selection" aria-label="Selected model" hidden></section>
+    <details class="room-details"><summary>Visit an illustrative room</summary><div id="room-list"></div></details>
+    <p class="fallback-link"><a id="list-toggle" href="?view=list">Use equipment list without 3D</a></p>
+   </aside>
+  </div>
+  <footer>Public sources inform this concept. No approved measured drawing or real inventory is included. <a href="./REFERENCE.md" download>Download the evidence notes</a>.</footer>
+ </main>
+ <dialog id="sources-dialog" aria-labelledby="sources-title"><button id="sources-close" class="close" aria-label="Close sources">Close ×</button><p class="eyebrow">EVIDENCE &amp; LIMITS</p><h2 id="sources-title">What this scene represents</h2><p>Hopkins identifies cardiac step-down on Bloomberg 9 North and the NICU on 8 North. That supports a nearby ward, one floor level above. Direct adjacency and travel routes are unknown.</p><p>The eight bays here form an authored section, not the full 20-bed unit reported in the public listing. All dimensions, room names, connections and object placements are illustrative. The public patient-room photograph is a building-wide reference, not verified imagery of 9 North.</p><div id="source-list"></div><p>Reviewed 5 November 2026. Original procedural assets are reused. No patient information, real stock or hospital wayfinding is provided.</p></dialog>
+ <noscript><p class="noscript">JavaScript is required for the interactive model and example list. <a href="./REFERENCE.md">Read the reference and example-location notes</a> or <a href="/">return to the workspace</a>.</p></noscript>
+ <script type="module" src="./app.js"></script>
+</body></html>
