@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 38. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 39. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -17,7 +17,7 @@ Revision 38. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-010 Replenishment queue and low-stock alerts | ready | — | — | SV-007, SV-009 | apps/web/supplies, services/api/replenishment |
 | SV-011 Equipment cleaning and maintenance workflows | ready | — | — | SV-006, SV-007 | apps/web/maintenance, services/api/maintenance |
 | SV-012 Audit search and permission-scoped export | ready | — | — | SV-006, SV-009 | apps/web/audit, services/api/audit |
-| SV-013 Provider-neutral observation ingestion simulator | ready | — | — | SV-001, SV-004, SV-005 | services/ingestion |
+| SV-013 Provider-neutral observation ingestion simulator | claimed | wil / wil-sol-sv013-20261105-e6b1 | 2026-11-05T18:21:06.978Z | SV-001, SV-004, SV-005 | services/ingestion |
 | SV-014 Location confidence and RTLS adapter boundary | ready | — | — | SV-006, SV-013 | services/ingestion/resolution, packages/domain/location |
 | SV-015 Validate ward reference geometry | blocked | — | — | SV-002 | packages/scene/references |
 | SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e, tools/benchmarks |

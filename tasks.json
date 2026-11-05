@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 38,
-  "updatedAt": "2026-11-05T16:20:38.929Z",
+  "revision": 39,
+  "updatedAt": "2026-11-05T16:21:06.978Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -268,6 +268,13 @@
       "taskId": "SV-009",
       "command": "claim",
       "agent": "wil-sol-sv009-20261105-c4d8",
+      "owner": "wil"
+    },
+    {
+      "at": "2026-11-05T16:21:06.978Z",
+      "taskId": "SV-013",
+      "command": "claim",
+      "agent": "wil-sol-sv013-20261105-e6b1",
       "owner": "wil"
     }
   ],
@@ -610,7 +617,7 @@
     {
       "id": "SV-013",
       "title": "Provider-neutral observation ingestion simulator",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -628,7 +635,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-sol-sv013-20261105-e6b1",
+        "owner": "wil",
+        "leaseId": "a55481b7-5e0b-41ce-a43b-fd1a2c6b76ff",
+        "claimedAt": "2026-11-05T16:21:06.978Z",
+        "expiresAt": "2026-11-05T18:21:06.978Z"
+      }
     },
     {
       "id": "SV-014",
