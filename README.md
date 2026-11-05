@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 29. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 30. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -19,7 +19,7 @@ Revision 29. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-012 Audit search and permission-scoped export | ready | — | — | SV-006, SV-009 | apps/web/audit, services/api/audit |
 | SV-013 Provider-neutral observation ingestion simulator | ready | — | — | SV-001, SV-004, SV-005 | services/ingestion |
 | SV-014 Location confidence and RTLS adapter boundary | ready | — | — | SV-006, SV-013 | services/ingestion/resolution, packages/domain/location |
-| SV-015 Validate ward reference geometry | ready | — | — | SV-002 | packages/scene/references |
+| SV-015 Validate ward reference geometry | claimed | wil / wil-sol-sv015-20261105-b9c2 | 2026-11-05T17:09:35.932Z | SV-002 | packages/scene/references |
 | SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e, tools/benchmarks |
 | SV-017 Deployment and operational readiness | ready | — | — | SV-006, SV-013 | ops, .github/workflows |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
