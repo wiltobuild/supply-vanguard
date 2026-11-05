@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 120,
-  "updatedAt": "2026-11-05T19:25:16.205Z",
+  "revision": 121,
+  "updatedAt": "2026-11-05T19:25:36.731Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -847,6 +847,13 @@
       "command": "heartbeat",
       "agent": "cheich-agent-9",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:25:36.731Z",
+      "taskId": "SV-012",
+      "command": "submit",
+      "agent": "cheich-agent-9",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1189,7 +1196,7 @@
     {
       "id": "SV-012",
       "title": "Audit search and permission-scoped export",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1207,13 +1214,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "cheich-agent-9",
-        "owner": "cheich",
-        "leaseId": "f371b35d-c8c5-492d-bd3e-ea6d39af1366",
-        "claimedAt": "2026-11-05T19:20:35.328Z",
-        "expiresAt": "2026-11-05T21:25:16.205Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/19",
+      "submittedBy": "cheich-agent-9",
+      "submittedAt": "2026-11-05T19:25:36.731Z"
     },
     {
       "id": "SV-013",
