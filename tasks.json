@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 41,
-  "updatedAt": "2026-11-05T16:22:31.871Z",
+  "revision": 42,
+  "updatedAt": "2026-11-05T16:23:42.837Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -290,6 +290,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv009-20261105-c4d8",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:23:42.837Z",
+      "taskId": "SV-006",
+      "command": "claim",
+      "agent": "cheich-agent-5",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -465,7 +472,7 @@
     {
       "id": "SV-006",
       "title": "Equipment API and immutable audit transactions",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -483,7 +490,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-5",
+        "owner": "cheich",
+        "leaseId": "a5b4e435-9970-48c8-818e-807be0e6919a",
+        "claimedAt": "2026-11-05T16:23:42.837Z",
+        "expiresAt": "2026-11-05T18:23:42.837Z"
+      }
     },
     {
       "id": "SV-007",
