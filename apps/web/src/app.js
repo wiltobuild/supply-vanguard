@@ -2,6 +2,8 @@ import {STATUSES,isStale} from '/packages/domain/equipment.js';
 import {roomIds} from '/packages/domain/seed.js';
 import {presentEquipment,filterEquipment,describeFreshness,nextToReview,summarize,latestUpdate,webglAvailable} from '/src/lib.js';
 import {createEquipmentApi,createEquipmentSession} from '/src/equipment-api.js';
+import {createEquipmentPolling} from '/src/equipment-polling.js';
+import {updateEquipmentFreshness} from '/src/equipment-freshness.js';
 // All text from state or storage is added as text nodes by h(); no markup is ever built from data.
 const h=(tag,attrs={},...kids)=>{const el=document.createElement(tag);for(const [k,v] of Object.entries(attrs)){if(v===false||v===null||v===undefined)continue;if(k==='class')el.className=v;else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else el.setAttribute(k,v===true?'':v);}for(const kid of kids.flat())if(kid!==null&&kid!==undefined&&kid!==false)el.append(kid.nodeType?kid:document.createTextNode(String(kid)));return el;};
 const main=document.getElementById('main'),view=document.getElementById('view');
@@ -35,13 +37,14 @@ function renderConnection(){
  if(key===connectionRenderKey)return;
  connectionRenderKey=key;connectionHost.replaceChildren(connectionPanel());
 }
-setInterval(()=>{if(session&&!connection.busy&&connection.phase==='ready'&&document.visibilityState==='visible'&&navigator.onLine)session.refresh({background:true}).catch(()=>{});},5000);
+const polling=createEquipmentPolling({getSession:()=>session,canRead:()=>document.visibilityState==='visible'&&navigator.onLine,onTick:now=>updateEquipmentFreshness(main,items,{now,stale:isStale})});
+setInterval(()=>polling.tick(),1000);
 addEventListener('online',refresh);
 addEventListener('offline',()=>{connection={...connection,phase:'error',error:{message:'Offline. Showing the last successful response. Reconnect to refresh before saving.'}};renderConnection();});
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')refresh();});
 const fmt=d=>d.toLocaleString([], {dateStyle:'medium',timeStyle:'short'});
 const statusBadge=s=>h('span',{class:`badge s-${STATUSES.includes(s)?s:'retired'}`},s);
-const freshness=i=>{const f=describeFreshness(i,isStale);return h('span',{class:`fresh-${f.state}`},f.text);};
+const freshness=i=>{const f=describeFreshness(i,isStale);return h('span',{class:`fresh-${f.state}`,'data-freshness-id':i.id},f.text);};
 const noticeEl=()=>notice?h('p',{class:'notice',role:'status'},notice):null;
 function scene(){try{return ward.frame?.contentWindow?.SupplyVanguardScene;}catch{return undefined;}}
 function syncScene(){const s=scene();if(s){try{s.setEquipment(items);}catch{ward.state='error';render();}}}
@@ -57,12 +60,13 @@ function workspace(){
   h('section',{class:'card mint nicu','aria-labelledby':'nicu-h'},
    h('h2',{id:'nicu-h'},h('a',{class:'card-link',href:'#/equipment'},'NICU ',h('span',{class:'arrow','aria-hidden':'true'},'→'))),
    h('p',{class:'lede'},'Equipment register and an explorable ward for the NICU reference section.'),
-   h('ul',{class:'chips'},h('li',{},`${sum.total} shared assets`),h('li',{},`${sum.available} available`),h('li',{},`${sum.needsVerification} need location verification`)),
+   h('ul',{class:'chips'},h('li',{},`${sum.total} shared assets`),h('li',{},`${sum.available} available`),h('li',{'data-verification-count':true},`${sum.needsVerification} need location verification`)),
    h('div',{class:'card-actions'},h('a',{class:'btn primary',href:'#/equipment'},'Open equipment'),h('a',{class:'btn',href:'#/ward'},'Open 3D ward'))),
   h('section',{class:'card blush panel next-item','aria-labelledby':'next-h'},
    h('h2',{id:'next-h'},'Next to verify'),
-   next?[h('div',{class:'what'},h('h3',{},next.name),h('p',{class:'muted',style:'margin:0'},`${next.id} · ${next.roomId}`),h('p',{style:'margin:4px 0 0'},freshness(next))),h('button',{class:'primary',type:'button',onclick:()=>go('equipment',{select:next.id})},'Review ',h('span',{'aria-hidden':'true'},'→'))]
-        :h('p',{},sum.total?'Every asset has a recent location observation.':session?'No equipment loaded. Check the connection above.':'Connect to load shared equipment.')),
+   h('div',{class:'what','data-review-summary':true,hidden:!next},h('h3',{'data-review-name':true},next?.name||''),h('p',{class:'muted',style:'margin:0','data-review-location':true},next?`${next.id} · ${next.roomId}`:''),h('p',{style:'margin:4px 0 0','data-review-freshness':true},next?describeFreshness(next,isStale).text:'')),
+   h('button',{class:'primary',type:'button','data-review-id':next?.id||'',hidden:!next,onclick:e=>go('equipment',{select:e.currentTarget.dataset.reviewId})},'Review ',h('span',{'aria-hidden':'true'},'→')),
+   h('p',{'data-review-empty':true,hidden:!!next},sum.total?'Every asset has a recent location observation.':session?'No equipment loaded. Check the connection above.':'Connect to load shared equipment.')),
   h('p',{class:'preview-note more'},'More departments will appear here when they have real content.'));
 }
 /* equipment */

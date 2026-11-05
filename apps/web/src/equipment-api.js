@@ -9,15 +9,15 @@ export function createEquipmentApi({organizationId,token,fetcher=fetch,base='',t
  const root=`${base}/organizations/${encodeURIComponent(organizationId.trim())}/equipment`;
  async function request(path='',{method='GET',body,key,signal}={}){
   const controller=new AbortController(),abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
-  const timer=setTimeout(abort,timeoutMs);
+  let timedOut=false;const timer=setTimeout(()=>{timedOut=true;abort();},timeoutMs);
   try{
    const response=await fetcher(root+path,{method,signal:controller.signal,cache:'no-store',credentials:'omit',redirect:'error',headers:{Authorization:`Bearer ${token}`,...(body&&{'Content-Type':'application/json','Idempotency-Key':key})},...(body&&{body:JSON.stringify(body)})});
-   let data;try{data=await response.json();}catch{throw new EquipmentError('The equipment service returned an unreadable response.',{code:'response',uncertain:method!=='GET'});}
+   let data;try{data=await response.json();}catch{throw new EquipmentError('The equipment service returned an unreadable response.',{status:response.ok?0:response.status,code:'response',uncertain:method!=='GET'});}
    if(!response.ok)throw new EquipmentError(errorMessage(response.status),{status:response.status,code:data.error||'request'});
    return data;
   }catch(error){
    if(error instanceof EquipmentError)throw error;
-   throw new EquipmentError(controller.signal.aborted?'Request stopped. Refresh to check committed state before trying again.':'Cannot reach the equipment service. Check your connection and retry.',{code:controller.signal.aborted?'cancelled':'network',uncertain:method!=='GET'});
+   throw new EquipmentError(timedOut?'Request timed out. Refresh to check committed state before trying again.':controller.signal.aborted?'Request stopped. Refresh to check committed state before trying again.':'Cannot reach the equipment service. Check your connection and retry.',{code:timedOut?'timeout':controller.signal.aborted?'cancelled':'network',uncertain:method!=='GET'});
   }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
  }
  return {
@@ -43,7 +43,8 @@ export function createEquipmentSession(api,{onChange=()=>{}}={}){
  const emit=patch=>{state={...state,...patch};if(!closed)onChange(state);};
  async function refresh({background=false}={}){
   const gen=++generation;read?.abort();read=new AbortController();
-  if(!background||state.phase!=='ready')emit({phase:'loading',error:null});
+  // Keep the failed-refresh warning visible during automatic retries, until a read succeeds.
+  if(!background)emit({phase:'loading'});
   try{const items=await api.list({signal:read.signal});if(gen===generation&&!closed)emit({items,phase:'ready',error:null,needsRefresh:false});return items;}
   catch(error){if(gen===generation&&!closed)emit({phase:'error',error});throw error;}
  }

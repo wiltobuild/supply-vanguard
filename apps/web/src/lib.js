@@ -23,18 +23,18 @@ export function filterEquipment(items,query='',status='all'){
  const q=query.trim().toLowerCase();
  return items.filter(i=>(status==='all'||i.status===status)&&(!q||`${i.id} ${i.name} ${i.roomId} ${i.status}`.toLowerCase().includes(q)));
 }
-export function describeFreshness(item,stale){
+export function describeFreshness(item,stale,now=Date.now()){
  if(Object.hasOwn(item,'lastVerified')){
-  const f=recordFreshness(item);
+  const f=recordFreshness(item,now);
   return f==='unknown'?{state:'unverified',text:'Not yet verified'}:f==='aging'?{state:'stale',text:'Location observation aging'}:f==='stale'?{state:'stale',text:'Location needs verification'}:{state:'fresh',text:'Location recently observed'};
  }
  if(!item.lastSeenAt)return {state:'unverified',text:'Not yet verified'};
- return stale(item)?{state:'stale',text:'Location needs verification'}:{state:'fresh',text:'Recently updated'};
+ return stale(item,now)?{state:'stale',text:'Location needs verification'}:{state:'fresh',text:'Recently updated'};
 }
 // First item whose location is unverified or stale, for the workspace panel. null when everything is current.
-export function nextToReview(items,stale){return items.find(i=>describeFreshness(i,stale).state!=='fresh')||null;}
-export function summarize(items,stale){
- return {total:items.length,available:items.filter(i=>i.status==='available').length,needsVerification:items.filter(i=>describeFreshness(i,stale).state!=='fresh').length};
+export function nextToReview(items,stale,now=Date.now()){return items.find(i=>describeFreshness(i,stale,now).state!=='fresh')||null;}
+export function summarize(items,stale,now=Date.now()){
+ return {total:items.length,available:items.filter(i=>i.status==='available').length,needsVerification:items.filter(i=>describeFreshness(i,stale,now).state!=='fresh').length};
 }
 export function latestUpdate(items){
  const times=items.map(i=>Date.parse(i.lastSeenAt)).filter(Number.isFinite);

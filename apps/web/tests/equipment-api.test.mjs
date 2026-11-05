@@ -51,8 +51,10 @@ test('replayed response cannot roll back a newer record: commands always refetch
  const a=session();await a.refresh();const key='web-replay-stable';
  await a.mutate('admin','EQ-008',{expectedVersion:0,status:'in-use'},{key});
  await a.mutate('admin','EQ-008',{expectedVersion:1,status:'cleaning'});
- // The HTTP boundary replaces only the successful replay snapshot, to exercise SV-023's documented contract.
- const b=session({fetcher:async(url,options)=>{const response=await fetch(url,options);if(options.method==='PATCH'&&options.headers['Idempotency-Key']===key&&response.ok){const data=await response.json();data.record={...data.record,status:'in-use',version:1};return Response.json(data);}return response;}});
+ // Current main's real receipt replay returns the original snapshot, after a newer commit.
+ const replay=await api().admin('EQ-008',{expectedVersion:0,status:'in-use'},{key});
+ assert.equal(replay.replayed,true);assert.equal(replay.record.version,1);assert.equal(replay.record.status,'in-use');
+ const b=session();
  await b.refresh();await b.mutate('admin','EQ-008',{expectedVersion:0,status:'in-use'},{key});
  assert.equal(b.state.items.find(i=>i.id==='EQ-008').version,2);assert.equal(b.state.items.find(i=>i.id==='EQ-008').status,'cleaning');a.close();b.close();
 });
@@ -91,12 +93,12 @@ test('pagination is complete and cancellation prevents late responses from repop
  let resolve;const late=createEquipmentSession({list:()=>new Promise(r=>{resolve=r;})});const pending=late.refresh();late.close();resolve([{id:'late'}]);await pending;assert.deepEqual(late.state.items,[]);
 });
 test('server and unreadable responses are explicit; timeout marks a write outcome uncertain',async()=>{
- for(const [response,status] of [[Response.json({error:'server'}, {status:500}),500],[new Response('Not found',{status:404}),0]]){
+ for(const [response,status] of [[Response.json({error:'server'}, {status:500}),500],[new Response('Not found',{status:404}),404]]){
   const client=createEquipmentApi({organizationId:'org',token:'synthetic',fetcher:async()=>response});await assert.rejects(client.list(),e=>e instanceof EquipmentError&&e.status===status);
  }
  const client=createEquipmentApi({organizationId:'org',token:'synthetic',timeoutMs:5,fetcher:(_,o)=>new Promise((resolve,reject)=>{o.signal.addEventListener('abort',()=>reject(Error('aborted')));})});
- await assert.rejects(client.admin('id',{expectedVersion:0,status:'cleaning'},{key:'synthetic'}),e=>e.code==='cancelled'&&e.uncertain);
+ await assert.rejects(client.admin('id',{expectedVersion:0,status:'cleaning'},{key:'synthetic'}),e=>e.code==='timeout'&&e.uncertain);
 });
 test('app excludes browser inventory persistence and demo mutations; reconnect and WebGL fallback remain wired',()=>{
- const text=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');assert.doesNotMatch(text,/localStorage|parseSaved|seedEquipment|updateEquipment/);assert.match(text,/addEventListener\('online',refresh\)/);assert.match(text,/no-webgl/);assert.match(text,/Cancel edits/);assert.match(text,/locationId/);
+ const text=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');assert.doesNotMatch(text,/\b(localStorage|parseSaved|seedEquipment|updateEquipment)\b/);assert.match(text,/addEventListener\('online',refresh\)/);assert.match(text,/no-webgl/);assert.match(text,/Cancel edits/);assert.match(text,/locationId/);
 });

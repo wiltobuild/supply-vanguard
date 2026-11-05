@@ -2,7 +2,7 @@
 // No token logs, persistence, issuance endpoint, or production identity provisioning.
 import {createRequire} from 'node:module';
 import {pathToFileURL} from 'node:url';
-import {readFileSync} from 'node:fs';
+import {readFileSync,existsSync} from 'node:fs';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
 import {createAuthorization} from '../../../services/api/auth/index.mjs';
@@ -17,6 +17,9 @@ export async function startFixture(){
  async function connect(){const prior=available;let release;available=new Promise(r=>{release=r;});await prior;await db.query('SET ROLE sv_web_test_runtime');return {query:(...a)=>db.query(...a),release};}
  await db.exec(sql('db/migrations/0001_core.up.sql').replace('CREATE EXTENSION IF NOT EXISTS pgcrypto;',''));
  await db.exec(sql('auth/migrations/0001_auth.up.sql'));
+ const receiptMigration=new URL('../../../services/api/equipment/migrations/0001_receipts.up.sql',import.meta.url);
+ const hasReceipts=existsSync(receiptMigration);
+ if(hasReceipts)await db.exec(`BEGIN; ${readFileSync(receiptMigration,'utf8')} COMMIT;`);
  await db.exec(sql('db/seed/seed.sql'));
  const organizationId=(await db.query('SELECT id FROM organization')).rows[0].id;
  await db.exec(`CREATE ROLE sv_web_test_runtime NOSUPERUSER NOBYPASSRLS NOLOGIN;
@@ -24,6 +27,7 @@ export async function startFixture(){
  GRANT SELECT, INSERT, UPDATE ON organization,facility,ward,location,equipment_type,equipment,equipment_observation,equipment_event TO sv_web_test_runtime;
  GRANT SELECT ON auth_user,auth_membership TO sv_web_test_runtime;
  GRANT EXECUTE ON FUNCTION auth_resolve_identity(text,text) TO sv_web_test_runtime;`);
+ if(hasReceipts)await db.exec('GRANT SELECT, INSERT ON equipment_command_receipt TO sv_web_test_runtime');
  const identityProvider=createLocalIdentityProvider({mode:'test'}),tokens={};
  for(const role of ['equipment_manager','viewer']){
   const {rows}=await db.query('INSERT INTO auth_user(issuer,subject) VALUES ($1,$2) RETURNING id',['urn:supply-vanguard:local','synthetic-web-'+role]);
