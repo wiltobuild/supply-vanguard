@@ -18,6 +18,8 @@ The shared board is implemented separately on the remote task-board Git branch. 
 
 ## Architecture
 
+Reuse the existing generated NICU ward and equipment asset kit in `packages/scene/viewer`: preserve the procedural `ward.js` and `models.js` source, the full ward and cutaway GLBs, and all ten individual equipment GLBs in `assets/` (12 GLBs total). Continue building on this scene and its configuration rather than regenerating or replacing it with an unrelated scene. Preserve stable room/location/equipment IDs and identity mappings, meters/Y-up coordinates, source labels and illustrative, non-surveyed provenance. Validate and refine the existing assets against approved reference evidence; any future geometry corrections must retain traceable source/confidence records and reviewed mapping changes.
+
 Keep the web client, scene package and domain rules separate. A future API owns authoritative inventory state. The scene receives stable equipment IDs, location IDs, status, freshness and provenance; meshes are disposable render objects. Keep the list/search workflow fully usable without WebGL. Introduce a typed API contract before replacing the demo adapter.
 
 Proposed production stack: current browser UI and Three.js initially, Node service and PostgreSQL, managed OpenID Connect authentication, migrations and CI. Provider selection, organizational access requirements and hosting region are decisions for the deployment milestone; no paid services are provisioned by this scaffold. Evaluate framework migration only if it simplifies required workflows; do not rewrite the scene to change UI frameworks.
