@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 106. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 107. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@ Revision 106. Live state is on the task-board branch. Use npm run board -- claim
 | SV-006 Equipment API and immutable audit transactions | done | — | — | SV-001, SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/8) |
 | SV-007 Connect web client to shared equipment API | review | — | — | SV-003, SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/13) |
 | SV-008 Barcode and QR manual check-in | review | — | — | SV-001, SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/14) |
-| SV-009 Supply ledger and bin inventory | review | — | — | SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/9) |
+| SV-009 Supply ledger and bin inventory | done | — | — | SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/9) |
 | SV-010 Replenishment queue and low-stock alerts | ready | — | — | SV-007, SV-009 | apps/web/supplies, services/api/replenishment |
 | SV-011 Equipment cleaning and maintenance workflows | ready | — | — | SV-006, SV-007 | apps/web/maintenance, services/api/maintenance |
 | SV-012 Audit search and permission-scoped export | ready | — | — | SV-006, SV-009 | apps/web/audit, services/api/audit |
