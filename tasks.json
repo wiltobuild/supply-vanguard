@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 151,
-  "updatedAt": "2026-11-05T23:03:07.338Z",
+  "revision": 152,
+  "updatedAt": "2026-11-05T23:03:56.392Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1064,6 +1064,13 @@
       "command": "complete",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T23:03:56.392Z",
+      "taskId": "SV-026",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1907,7 +1914,7 @@
     {
       "id": "SV-026",
       "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1948,7 +1955,14 @@
       "submittedBy": "wil-astra-ward-two-20261105",
       "submittedAt": "2026-11-05T20:23:32.659Z",
       "blockedReason": null,
-      "reviewNote": "Repaired head47ee00f resolves original focus loss;7wardtests andCIpass, independent Enter/Tab/Enter retains focused pump/monitor in3D andzero-canvaslistmode. New Back/history mismatch remains: restoreIVpumps, listmode showsall26 includingmonitors/carts; in3Dafterready summarysays9but liststill26. Reconcile restoredcontrols,list,count,highlight consistently with browserBackregression inbothmodes, preservingselectionfocus. OriginalPCUowner shouldreclaim normally onexistingbranch; keepdraft. PRmanager exact-head review links document repro; no merge/completion performed."
+      "reviewNote": "Repaired head47ee00f resolves original focus loss;7wardtests andCIpass, independent Enter/Tab/Enter retains focused pump/monitor in3D andzero-canvaslistmode. New Back/history mismatch remains: restoreIVpumps, listmode showsall26 includingmonitors/carts; in3Dafterready summarysays9but liststill26. Reconcile restoredcontrols,list,count,highlight consistently with browserBackregression inbothmodes, preservingselectionfocus. OriginalPCUowner shouldreclaim normally onexistingbranch; keepdraft. PRmanager exact-head review links document repro; no merge/completion performed.",
+      "completedAt": "2026-11-05T23:03:56.392Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/21",
+        "mergeCommit": "f18d8967895b2c9ae52fea96a26f80e821640233",
+        "mergedAt": "2026-11-05T23:03:28Z"
+      }
     }
   ]
 }
