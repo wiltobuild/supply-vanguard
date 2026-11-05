@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 132. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 133. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -29,5 +29,5 @@ Revision 132. Live state is on the task-board branch. Use npm run board -- claim
 | SV-022 Partial fulfillment and safe returns | ready | — | — | SV-020, SV-021 | Task-local request fulfillment lifecycle, Task-local return lifecycle integration |
 | SV-023 Repair equipment replay and concurrency | done | — | — | SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/12) |
 | SV-024 Add fifteen illustrative NICU equipment assets | review | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/16) |
-| SV-025 Build illustrative pediatric intensive care ward (PICU) | claimed | wil / wil-astra-picu-20261105 | 2026-11-05T21:56:58.907Z | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/20) |
+| SV-025 Build illustrative pediatric intensive care ward (PICU) | review | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/20) |
 | SV-026 Build illustrative pediatric cardiac step-down ward (PCU) | claimed | wil / wil-astra-ward-two-20261105 | 2026-11-05T21:52:00.996Z | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/21) |

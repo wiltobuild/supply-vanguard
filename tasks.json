@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 132,
-  "updatedAt": "2026-11-05T19:56:58.907Z",
+  "revision": 133,
+  "updatedAt": "2026-11-05T20:00:48.855Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -931,6 +931,13 @@
       "command": "heartbeat",
       "agent": "wil-astra-picu-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:00:48.855Z",
+      "taskId": "SV-025",
+      "command": "submit",
+      "agent": "wil-astra-picu-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1690,7 +1697,7 @@
     {
       "id": "SV-025",
       "title": "Build illustrative pediatric intensive care ward (PICU)",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1727,16 +1734,10 @@
         "No ward or feature merge is authorized by this registration.",
         "Use picu-* stable IDs and route /ward/wards/picu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/picu/."
       ],
-      "claim": {
-        "agent": "wil-astra-picu-20261105",
-        "owner": "wil",
-        "leaseId": "6533fc00-e546-416c-bb54-7756fc6a5a36",
-        "claimedAt": "2026-11-05T19:51:03.353Z",
-        "expiresAt": "2026-11-05T21:56:58.907Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/20",
       "submittedBy": "wil-astra-picu-20261105",
-      "submittedAt": "2026-11-05T19:33:53.803Z",
+      "submittedAt": "2026-11-05T20:00:48.855Z",
       "blockedReason": null,
       "reviewNote": "Independent exact-head browser review of PR20 8059876: keyboard Enter selection removes the focused list button and leaves document.activeElement=BODY in both 3D and zero-canvas list mode; preserve focus and add keyboard regression. Header Equipment workspace href /#ward is unrecognized and opens Department workspace; use /#/equipment and verify navigation/Back. Review https://github.com/wiltobuild/supply-vanguard/pull/20#pullrequestreview-5791058503. Original PICU owner should normally reclaim existing branch; preserve PCU independence, source provenance and asset PR16 index hunks."
     },
