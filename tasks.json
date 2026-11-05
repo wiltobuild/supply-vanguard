@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 94,
-  "updatedAt": "2026-11-05T18:57:08.811Z",
+  "revision": 95,
+  "updatedAt": "2026-11-05T18:58:32.424Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -665,6 +665,13 @@
       "command": "claim",
       "agent": "wil-astra-ward-two-20261105",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-05T18:58:32.424Z",
+      "taskId": "SV-013",
+      "command": "complete",
+      "agent": "wil-vale-merge-verifier-sv013-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1023,7 +1030,7 @@
     {
       "id": "SV-013",
       "title": "Provider-neutral observation ingestion simulator",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1044,7 +1051,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/10",
       "submittedBy": "wil-sol-sv013-20261105-e6b1",
-      "submittedAt": "2026-11-05T16:40:52.946Z"
+      "submittedAt": "2026-11-05T16:40:52.946Z",
+      "completedAt": "2026-11-05T18:58:32.424Z",
+      "reviewedBy": "wil-vale-merge-verifier-sv013-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/10",
+        "mergeCommit": "75f2cf60a645aa9a40363b9836b3830047d77ca5",
+        "mergedAt": "2026-11-05T17:04:07Z"
+      }
     },
     {
       "id": "SV-014",
