@@ -1,1 +1,29 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Supply Vanguard</title><link rel="stylesheet" href="/src/styles.css"></head><body><header><div><small>SUPPLY VANGUARD / DEVELOPMENT SCAFFOLD</small><h1>Find the equipment. Keep care moving.</h1></div><a href="https://github.com/wiltobuild/supply-vanguard/tree/task-board" target="_blank" rel="noreferrer">Shared agent board ↗</a></header><main><section class="register"><div class="heading"><h2>Equipment register</h2><span>LOCAL DEMO</span></div><p>Manual locations and sample assets. No live tracking feed.</p><label>Search equipment<input id="search" type="search" placeholder="Name, asset ID or room"></label><div id="equipment-list"></div><button id="reset">Reset demo</button><section id="detail" aria-live="polite"></section><h3>Recent activity</h3><div id="events"></div></section><section class="spatial"><div class="heading"><h2>Spatial equipment view</h2><span id="scene-status">Loading ward…</span></div><p>Equipment pins follow the register. Building geometry is an estimated reference reconstruction.</p><iframe id="ward" src="/ward/" title="Explorable NICU ward and equipment tracking"></iframe></section></main><script type="module" src="/src/app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Supply Vanguard</title>
+<link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+ <a class="brand" href="#/workspace" aria-label="Supply Vanguard, workspace">
+  <svg class="mark" viewBox="0 0 48 28" aria-hidden="true" focusable="false"><path d="M9 2h22l-9 24H0z"/><path d="M26 2h22L39 26H17z"/></svg>
+  <span class="wordmark">Supply Vanguard</span>
+ </a>
+ <p class="descriptor">Equipment coordination · NICU pilot</p>
+ <nav aria-label="Main" class="nav">
+  <a href="#/workspace" data-route="workspace">Workspace</a>
+  <a href="#/equipment" data-route="equipment">Equipment</a>
+  <a href="#/ward" data-route="ward">3D ward</a>
+  <a href="#/equipment?search=1" class="nav-search" data-search>Search</a>
+ </nav>
+</header>
+<main id="main" tabindex="-1"><div id="view"><p class="loading" role="status">Loading…</p></div><div id="ward-wrap" hidden></div></main>
+<footer class="site-footer"><p>Synthetic demo data. No live tracking, no patient information. <a href="https://github.com/wiltobuild/supply-vanguard/tree/task-board" target="_blank" rel="noreferrer">Engineering task board (opens in a new tab)</a></p></footer>
+<noscript><p class="notice">Supply Vanguard needs JavaScript to run.</p></noscript>
+<script type="module" src="/src/app.js"></script>
+</body>
+</html>
