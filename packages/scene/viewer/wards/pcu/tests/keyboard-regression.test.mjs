@@ -28,7 +28,8 @@ function fixture() {
 }
 
 test('selecting a focused filtered row preserves focus, node identity, scroll and next-row context in graphics-free mode',async()=>{
- const {document,nodes}=fixture(),oldDocument=Object.getOwnPropertyDescriptor(globalThis,'document'),oldLocation=Object.getOwnPropertyDescriptor(globalThis,'location');
+ const {document,nodes}=fixture(),oldDocument=Object.getOwnPropertyDescriptor(globalThis,'document'),oldLocation=Object.getOwnPropertyDescriptor(globalThis,'location'),oldWindow=Object.getOwnPropertyDescriptor(globalThis,'window');
+ const events={},history={state:{otherFeature:'retained'},replaceState(value){this.state=value;}};Object.defineProperty(globalThis,'window',{value:{history,addEventListener:(type,handler)=>events[type]=handler},configurable:true});
  Object.defineProperty(globalThis,'document',{value:document,configurable:true});Object.defineProperty(globalThis,'location',{value:{search:'?view=list'},configurable:true});
  try{
   await import('../app.js?keyboard-regression');
@@ -43,8 +44,28 @@ test('selecting a focused filtered row preserves focus, node identity, scroll an
   pump.onclick();assert.equal(document.activeElement,pump,'repeated keyboard activation stays on the result');
   monitor.focus();monitor.onclick();assert.equal(document.activeElement,monitor);assert.equal(pump.getAttribute('aria-pressed'),'false');assert.equal(monitor.getAttribute('aria-pressed'),'true');assert.match(nodes.get('selection').textContent,/pcu-bay-a1-monitor/);
   assert.equal(nodes.get('scene').children.length,0,'list mode must not create a graphics canvas');
+  events.pageshow({persisted:true});await new Promise(resolve=>setTimeout(resolve,0));
+  assert.equal(document.activeElement,monitor,'unchanged history results preserve focus');assert.deepEqual(list.children,[pump,monitor,cart]);
+  // Simulate browser form restoration after pageshow, without input/change events.
+  history.state=null;
+  events.pageshow({persisted:false});search.value='';nodes.get('equipment-kind').value='infusion';
+  await new Promise(resolve=>setTimeout(resolve,0));
+  assert.equal(list.children.length,9);assert.ok(list.children.every(row=>row.dataset.equipmentId.endsWith('-iv')));assert.match(nodes.get('result-count').textContent,/^9 of 26/);
+  // A later traversal restores both controls; the intersection yields one monitor.
+  events.pageshow({persisted:true});search.value='bay A1';nodes.get('equipment-kind').value='monitor';
+  await new Promise(resolve=>setTimeout(resolve,0));
+  assert.deepEqual(list.children.map(row=>row.dataset.equipmentId),['pcu-bay-a1-monitor']);assert.match(nodes.get('result-count').textContent,/^1 of 26/);
+  events.pageshow({persisted:true});search.value='no match';
+  await new Promise(resolve=>setTimeout(resolve,0));assert.match(nodes.get('result-count').textContent,/^0 of 26/);assert.match(list.textContent,/No matching/);
+  // Own history state preserves both controls even if native restoration clears text.
+  history.state={otherFeature:'retained'};search.value='A1';nodes.get('equipment-kind').value='monitor';search.listeners.input();
+  assert.deepEqual(history.state,{otherFeature:'retained',pcuFilters:{query:'A1',kind:'monitor'}});
+  search.value='';nodes.get('equipment-kind').value='all';events.pageshow({persisted:false});
+  await new Promise(resolve=>setTimeout(resolve,0));
+  assert.equal(search.value,'A1');assert.equal(nodes.get('equipment-kind').value,'monitor');assert.deepEqual(list.children.map(row=>row.dataset.equipmentId),['pcu-bay-a1-monitor']);assert.match(nodes.get('result-count').textContent,/^1 of 26/);
  }finally{
   if(oldDocument)Object.defineProperty(globalThis,'document',oldDocument);else delete globalThis.document;
   if(oldLocation)Object.defineProperty(globalThis,'location',oldLocation);else delete globalThis.location;
+  if(oldWindow)Object.defineProperty(globalThis,'window',oldWindow);else delete globalThis.window;
  }
 });

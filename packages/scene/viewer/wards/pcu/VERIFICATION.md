@@ -56,6 +56,25 @@ Native IAB testing on the repaired code confirmed in both 3D and `?view=list`: E
 
 After the repair: all seven ward tests passed; `npm test` again passed 45 with the six existing native PostgreSQL skips; `npm run check` passed. PCU route and `body[data-ward="pcu"]` remain compatible with SV-025's availability probe. Shared selector ownership remains with SV-025; combined navigation requires that integration review and is not claimed here.
 
+### PR #21 Back/forward rework
+
+Reclaimed normally at board revision 139 after independent review of `47ee00f`. Reproduced Back restoring the IV-pump type while 26 rows remained. Initial rendering ran before browser form restoration; viewer readiness only refreshed the count/highlights.
+
+Each history entry now retains both filter controls in namespaced history state. A deferred `pageshow` reconciliation reads that state after native form restoration (or uses the native values for older entries). List rows, count and 3D highlights use the same matches, including when the viewer becomes ready. Rows are rebuilt only when their result IDs change, retaining focus and scroll for unchanged results and page-cache restores. No extra history entries, persistent storage or shared navigation files were added.
+
+The app regression now covers native values restored after `pageshow` without input/change, cached-page events, nine pumps, one monitor, zero matches, preservation of unrelated history state, and both controls restored from saved state even when native restoration clears them. Existing focus/node/scroll/selection assertions still pass. The fixture simulates lifecycle events; actual Back and Forward were separately exercised in IAB.
+
+Final browser verification used different filters on adjacent 3D/list history entries:
+
+| Traversal | Restored controls and exact rows | Graphics |
+| --- | --- | --- |
+| Back to list | Empty query + IV pumps; nine `*-iv` rows, count 9 | Zero canvases |
+| Forward to 3D | `A1` + Patient monitors; only `pcu-bay-a1-monitor`, count 1 | One canvas, matching 3D highlight |
+| Back to 3D | `A1` + Patient monitors; only `pcu-bay-a1-monitor`, count 1 | One canvas, matching 3D highlight |
+| Forward to list | `store` + IV pumps; only `pcu-store-iv`, count 1 | Zero canvases |
+
+Enter selected the restored 3D monitor and list-mode pump without moving focus from their buttons. Evidence: [Back to list](evidence/history-back-list.jpg), [Forward to 3D](evidence/history-forward-3d.jpg), [Back to 3D](evidence/history-back-3d.jpg), [Forward to list](evidence/history-forward-list.jpg). Seven ward tests and the required repository checks were rerun. Browser page-cache use itself was not forced; cached-event behavior is covered by the fixture.
+
 Base: main `5e1100ca`. Normal SV-026 claim confirmed at live board revision 94, owner `wil`, agent `wil-astra-ward-two-20261105`; retained claim renewed at revisions 114 and 123 before finalization. Work branch: `task/sv-026-wil-astra-ward-two-20261105`. Draft PR only; no merge or deployment is part of this task.
 
 Approved measured geometry, current ward-specific imagery, verified room mappings, real equipment inventory and authorized facilities/staff review remain unavailable. Those gaps are documented in [REFERENCE.md](REFERENCE.md) and block any claim of exact physical fidelity. Broader timeline, cross-ward inventory and borrowing workflows remain plan work, not capabilities of this static section.
