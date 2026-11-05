@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 58,
-  "updatedAt": "2026-11-05T16:58:21.438Z",
+  "revision": 59,
+  "updatedAt": "2026-11-05T16:59:25.348Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -411,6 +411,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv009-20261105-c4d8",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:59:25.348Z",
+      "taskId": "SV-009",
+      "command": "submit",
+      "agent": "wil-sol-sv009-20261105-c4d8",
+      "owner": null
     }
   ],
   "tasks": [
@@ -664,7 +671,7 @@
     {
       "id": "SV-009",
       "title": "Supply ledger and bin inventory",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-004",
@@ -682,16 +689,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv009-20261105-c4d8",
-        "owner": "wil",
-        "leaseId": "93b0dfbf-38bd-44df-8b11-1d9a05f5e21e",
-        "claimedAt": "2026-11-05T16:55:16.482Z",
-        "expiresAt": "2026-11-05T18:58:21.438Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/9",
       "submittedBy": "wil-sol-sv009-20261105-c4d8",
-      "submittedAt": "2026-11-05T16:33:10.249Z",
+      "submittedAt": "2026-11-05T16:59:25.348Z",
       "blockedReason": null,
       "reviewNote": "Independent native PostgreSQL 16 review of PR #9 head ac0c7b311261c1fb68e1e2003d1930eacac509e8 found an overlapping idempotency replay race in services/api/supplies/index.mjs lines 65-70: identical request B reads no prior key, request A commits that operation, then B reads the updated balance/version and returns 409 stock_conflict before rechecking that its idempotency key now exists. The single stock delta remains correct, but the overlapping replay must return documented 200 with the original transaction. Original 10 scoped native tests pass; add a deterministic multi-session regression for this exact interleaving, fix replay-versus-version ordering, and retain tenant isolation, immutable ledger and no duplicated stock delta. Original worker should claim normally and update its existing branch and PR #9."
     },
