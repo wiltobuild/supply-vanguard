@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 133,
-  "updatedAt": "2026-11-05T20:00:48.855Z",
+  "revision": 134,
+  "updatedAt": "2026-11-05T20:02:08.650Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -938,6 +938,13 @@
       "command": "submit",
       "agent": "wil-astra-picu-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:02:08.650Z",
+      "taskId": "SV-026",
+      "command": "heartbeat",
+      "agent": "wil-astra-ward-two-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1785,7 +1792,7 @@
         "owner": "wil",
         "leaseId": "10f1b9cd-a7ff-4fef-b5ea-1e4f2e4c2058",
         "claimedAt": "2026-11-05T19:52:00.996Z",
-        "expiresAt": "2026-11-05T21:52:00.996Z"
+        "expiresAt": "2026-11-05T22:02:08.650Z"
       },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/21",
       "submittedBy": "wil-astra-ward-two-20261105",
