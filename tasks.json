@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 34,
-  "updatedAt": "2026-11-05T15:16:40.478Z",
+  "revision": 35,
+  "updatedAt": "2026-11-05T15:17:32.852Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -240,6 +240,13 @@
       "taskId": "SV-005",
       "command": "heartbeat",
       "agent": "wil-sol-sv005-20261105-a7f3",
+      "owner": null
+    },
+    {
+      "at": "2026-11-05T15:17:32.852Z",
+      "taskId": "SV-015",
+      "command": "block",
+      "agent": "wil-sol-sv015-20261105-b9c2",
       "owner": null
     }
   ],
@@ -618,7 +625,7 @@
     {
       "id": "SV-015",
       "title": "Validate ward reference geometry",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-002"
@@ -634,13 +641,8 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv015-20261105-b9c2",
-        "owner": "wil",
-        "leaseId": "64039016-a05d-4e77-80b3-4f89a9b50503",
-        "claimedAt": "2026-11-05T15:09:35.932Z",
-        "expiresAt": "2026-11-05T17:16:34.365Z"
-      }
+      "claim": null,
+      "blockedReason": "External geometry validation blocked: no owner-approved measured drawings or authorized measurements, current synthetic-to-real location mapping, approved equipment placement evidence, or facilities/ward-staff review. Tested reference register and explicit existing NICU asset-reuse plan are preserved in draft PR https://github.com/wiltobuild/supply-vanguard/pull/6 at fb31b61 for Claude code/documentation review; no architectural accuracy or sign-off claimed. See packages/scene/references/README.md and validation.requiredEvidence in register.json for exact resolution evidence."
     },
     {
       "id": "SV-016",
