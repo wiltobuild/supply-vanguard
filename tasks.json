@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 145,
-  "updatedAt": "2026-11-05T22:58:27.993Z",
+  "revision": 146,
+  "updatedAt": "2026-11-05T22:58:42.288Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1022,6 +1022,13 @@
       "command": "rework",
       "agent": "wil-vale-review-sv007-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T22:58:42.288Z",
+      "taskId": "SV-007",
+      "command": "claim",
+      "agent": "wil-sol-sv007-20261105-9f2a",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1230,7 +1237,7 @@
     {
       "id": "SV-007",
       "title": "Connect web client to shared equipment API",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-003",
@@ -1247,7 +1254,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-sol-sv007-20261105-9f2a",
+        "owner": "wil",
+        "leaseId": "3bbba1ec-e6a5-4ace-82fd-c8b276d30af7",
+        "claimedAt": "2026-11-05T22:58:42.288Z",
+        "expiresAt": "2026-11-06T00:58:42.288Z"
+      },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/13",
       "submittedBy": "wil-sol-sv007-20261105-9f2a",
       "submittedAt": "2026-11-05T17:25:22.406Z",
