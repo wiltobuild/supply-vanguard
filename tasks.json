@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 105,
-  "updatedAt": "2026-11-05T19:06:25.779Z",
+  "revision": 106,
+  "updatedAt": "2026-11-05T19:07:26.282Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -742,6 +742,13 @@
       "command": "complete",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:07:26.282Z",
+      "taskId": "SV-020",
+      "command": "claim",
+      "agent": "cheich-agent-8",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -1296,7 +1303,7 @@
     {
       "id": "SV-020",
       "title": "Requests and atomic item assignments",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -1323,7 +1330,13 @@
         "Cheich offered to take this first task after SV-006 merges. This migration does not claim or assign the task on his behalf.",
         "SV-007 remains unchanged and may run alongside SV-020 after its existing dependencies complete."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "cheich-agent-8",
+        "owner": "cheich",
+        "leaseId": "b83ac6b8-7707-4ae8-82e1-049cc223c087",
+        "claimedAt": "2026-11-05T19:07:26.282Z",
+        "expiresAt": "2026-11-05T21:07:26.282Z"
+      },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/11",
       "submittedBy": "cheich-agent-7",
       "submittedAt": "2026-11-05T17:14:15.285Z",
