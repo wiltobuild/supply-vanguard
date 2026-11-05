@@ -4,9 +4,11 @@ import {tmpdir} from 'node:os';
 import {delimiter, isAbsolute, join, relative, resolve} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {randomUUID, createHash} from 'node:crypto';
-import assert from 'node:assert/strict';
+import {inventoryEvidence, loadRecoveryInventory} from './recovery-inventory.mjs';
+import {fixtureSetupSql} from './recovery-fixture.mjs';
+import {verifySnapshot} from './recovery-integrity.mjs';
+export {verifySnapshot} from './recovery-integrity.mjs';
 
-const root = new URL('../', import.meta.url);
 export const marker = 'sv-ops-disposable';
 const tools = ['psql', 'pg_dump', 'pg_restore'];
 export function drillConfig(env, args) {
@@ -28,49 +30,13 @@ export function findTools(env = process.env) {
   return Object.fromEntries(tools.map(tool => [tool, join(directory, tool + suffix)]));
 }
 
-const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 export function archiveCleanupTarget(directory, temporaryRoot = tmpdir()) {
   const target = resolve(directory), child = relative(resolve(temporaryRoot), target);
   if (isAbsolute(child) || !/^sv-ops-recovery-[^\\/]+$/.test(child)) throw Error('Refusing cleanup outside the exact drill temporary directory');
   return target;
 }
-export function verifySnapshot(before, after) {
-  if (digest(after) !== digest(before)) throw Error('Restored data or security/schema metadata differs');
-  assert.equal(before.tables.equipment.length, 8, 'Expected unchanged synthetic core seed');
-  assert.equal(before.tables.location.length, 10);
-  for (const name of ['equipment_observation', 'equipment_event', 'ingestion_nonce', 'ingestion_receipt', 'ingestion_dead_letter']) {
-    assert.equal(before.tables[name].length, 1, `Missing synthetic evidence: ${name}`);
-  }
-  const obs = before.tables.equipment_observation[0], receipt = before.tables.ingestion_receipt[0];
-  assert.equal(receipt.observation_id, obs.id);
-  assert.equal(receipt.organization_id, obs.organization_id);
-  assert.equal(receipt.idempotency_key, obs.idempotency_key);
-  assert.ok(Date.parse(obs.observed_at) < Date.parse(obs.received_at), 'Physical and receipt time must remain distinct');
-  return {dataSha256: digest(before.tables), metadataSha256: digest(before.metadata), tableCount: Object.keys(before.tables).length};
-}
-
-const fixtureSql = `
-INSERT INTO auth_user(id, issuer, subject) VALUES ('00000000-0000-4000-8000-00000000f017', 'urn:sv:ops:synthetic', 'recovery-fixture');
-INSERT INTO auth_membership(organization_id, user_id, role)
-  SELECT id, '00000000-0000-4000-8000-00000000f017', 'operator' FROM organization;
-INSERT INTO equipment_observation(id, organization_id, equipment_id, location_id, observed_at, received_at, source, actor, idempotency_key)
-  SELECT '00000000-0000-4000-8000-00000000f018', e.organization_id, e.id, l.id,
-    '2026-11-05T10:00:00Z', '2026-11-05T10:01:00Z', 'simulator', 'synthetic-recovery', 'ops-synthetic-observation'
-  FROM equipment e JOIN location l ON l.organization_id=e.organization_id AND l.external_key='room-101'
-  WHERE e.external_id='EQ-001';
-INSERT INTO equipment_event(organization_id, equipment_id, kind, actor, source, recorded_at, idempotency_key, before_state, after_state)
-  SELECT organization_id, id, 'admin', 'synthetic-recovery', 'synthetic-fixture', '2026-11-05T10:02:00Z',
-    'ops-synthetic-event', to_jsonb(e), to_jsonb(e) FROM equipment e WHERE external_id='EQ-001';
-INSERT INTO ingestion_nonce(organization_id, source_id, nonce, received_at)
-  SELECT organization_id, 'ops-synthetic', 'ops-synthetic-nonce', received_at FROM equipment_observation;
-INSERT INTO ingestion_receipt(organization_id, idempotency_key, observation_id, source_id, user_id, fingerprint, received_at)
-  SELECT organization_id, idempotency_key, id, 'ops-synthetic', '00000000-0000-4000-8000-00000000f017', repeat('a',64), received_at FROM equipment_observation;
-INSERT INTO ingestion_dead_letter(organization_id, user_id, received_at, reason, envelope_digest)
-  SELECT id, '00000000-0000-4000-8000-00000000f017', '2026-11-05T10:03:00Z', 'replay', repeat('b',64) FROM organization;
-`;
-
 export function runDrill({env = process.env, args = process.argv.slice(2)} = {}) {
-  const config = drillConfig(env, args), binaries = findTools(env);
+  const config = drillConfig(env, args), inventory = loadRecoveryInventory(), binaries = findTools(env);
   // Explicit routing overrides inherited libpq settings. Never echo child errors or connection strings.
   const childEnv = {...env, PGHOST: config.host, PGPORT: config.port, PGUSER: config.user,
     PGDATABASE: 'postgres', PGCONNECT_TIMEOUT: '5', PGAPPNAME: 'sv-ops-synthetic-recovery',
@@ -104,11 +70,12 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
       tables[name] = JSON.parse(query(database, `SELECT coalesce(jsonb_agg(to_jsonb(t) ORDER BY to_jsonb(t)::text COLLATE "C"),'[]') FROM public.${name} t;`));
     }
     const metadata = JSON.parse(query(database, `SELECT jsonb_build_object(
-      'rls', (SELECT jsonb_agg(jsonb_build_array(c.relname,c.relrowsecurity,c.relforcerowsecurity,c.relacl) ORDER BY c.relname) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r'),
+      'rls', (SELECT jsonb_agg(jsonb_build_object('table',c.relname,'enabled',c.relrowsecurity,'forced',c.relforcerowsecurity,'owner',pg_get_userbyid(c.relowner),'acl',c.relacl) ORDER BY c.relname) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r'),
+      'indexes', (SELECT jsonb_agg(jsonb_build_object('name',i.relname,'unique',x.indisunique,'valid',x.indisvalid,'definition',pg_get_indexdef(x.indexrelid)) ORDER BY i.relname) FROM pg_index x JOIN pg_class c ON c.oid=x.indrelid JOIN pg_class i ON i.oid=x.indexrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
       'policies', (SELECT jsonb_agg(to_jsonb(p) ORDER BY tablename,policyname) FROM pg_policies p WHERE schemaname='public'),
       'constraints', (SELECT jsonb_agg(jsonb_build_array(c.relname,k.conname,pg_get_constraintdef(k.oid)) ORDER BY c.relname,k.conname) FROM pg_constraint k JOIN pg_class c ON c.oid=k.conrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
       'triggers', (SELECT jsonb_agg(pg_get_triggerdef(t.oid) ORDER BY c.relname,t.tgname) FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal),
-      'functions', (SELECT jsonb_agg(pg_get_functiondef(p.oid) ORDER BY p.proname,p.oid::regprocedure::text) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid=p.oid AND d.classid='pg_proc'::regclass AND d.deptype='e'))
+      'functions', (SELECT jsonb_agg(jsonb_build_object('definition',pg_get_functiondef(p.oid),'owner',pg_get_userbyid(p.proowner),'acl',p.proacl,'securityDefiner',p.prosecdef,'config',p.proconfig) ORDER BY p.proname,p.oid::regprocedure::text) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid=p.oid AND d.classid='pg_proc'::regclass AND d.deptype='e'))
     );`));
     return {tables, metadata};
   };
@@ -122,10 +89,9 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
     }
     // Unchanged migrations; seed precedes FORCE RLS only in this disposable exercise.
     // This is not a repair or test of the independent SV-019 bootstrap sequence.
-    const files = ['services/api/db/migrations/0001_core.up.sql', 'services/api/db/seed/seed.sql',
-      'services/api/auth/migrations/0001_auth.up.sql', 'services/ingestion/migrations/0001_ingestion.up.sql'];
-    query(source, `BEGIN;\n${files.map(file => readFileSync(new URL(file, root), 'utf8')).join('\n')}\n${fixtureSql}\nCOMMIT;`);
+    query(source, fixtureSetupSql(inventory));
     const before = snapshot(source);
+    verifySnapshot(before, before); // Refuse to archive an incomplete fixture even if restore would match it.
     run('pg_dump', ['--no-password', '--format=custom', '--file', archive, '--dbname', source]);
     const archiveSha256 = createHash('sha256').update(readFileSync(archive)).digest('hex');
     run('pg_restore', ['--no-password', '--exit-on-error', '--single-transaction', '--dbname', target, archive]);
@@ -137,11 +103,29 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
       BEGIN DELETE FROM ingestion_dead_letter; RAISE EXCEPTION 'dead-letter assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
       BEGIN INSERT INTO ingestion_nonce SELECT * FROM ingestion_nonce; RAISE EXCEPTION 'nonce assertion failed'; EXCEPTION WHEN unique_violation THEN NULL; END;
       BEGIN INSERT INTO ingestion_receipt SELECT * FROM ingestion_receipt; RAISE EXCEPTION 'receipt assertion failed'; EXCEPTION WHEN unique_violation THEN NULL; END;
+      BEGIN UPDATE equipment_command_receipt SET correlation_id='forbidden'; RAISE EXCEPTION 'command receipt assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN INSERT INTO equipment_command_receipt SELECT * FROM equipment_command_receipt; RAISE EXCEPTION 'command key assertion failed'; EXCEPTION WHEN unique_violation THEN NULL; END;
+      BEGIN UPDATE supply_stock_transaction SET reason='forbidden'; RAISE EXCEPTION 'stock history assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN
+        INSERT INTO supply_stock_transaction(organization_id,bin_id,kind,delta,quantity_before,expected_version,actor_id,source,reason,idempotency_key)
+          SELECT organization_id,bin_id,'adjustment',1,quantity,99,'00000000-0000-4000-8000-00000000f017','synthetic-fixture','Synthetic rejected conflict','ops-rejected-stock' FROM supply_bin_stock;
+        RAISE EXCEPTION 'stock conflict rollback assertion failed';
+      EXCEPTION WHEN serialization_failure THEN NULL; END;
+      BEGIN UPDATE request_event SET actor='forbidden'; RAISE EXCEPTION 'request event assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN INSERT INTO item_assignment(organization_id,request_item_id,equipment_id,assigned_by) SELECT organization_id,request_item_id,equipment_id,assigned_by FROM item_assignment; RAISE EXCEPTION 'active assignment assertion failed'; EXCEPTION WHEN unique_violation THEN NULL; END;
+      BEGIN DELETE FROM location_override_audit; RAISE EXCEPTION 'override audit assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN
+        INSERT INTO location_override(id,organization_id,equipment_id,location_id,observed_at,starts_at,expires_at)
+          SELECT '00000000-0000-4000-8000-00000000f051',organization_id,equipment_id,location_id,observed_at,starts_at,expires_at FROM location_override;
+        SET CONSTRAINTS location_override_requires_audit IMMEDIATE;
+        RAISE EXCEPTION 'missing override audit assertion failed';
+      EXCEPTION WHEN foreign_key_violation THEN NULL; END;
     END $$;`);
     verifySnapshot(before, snapshot(target));
     evidence = {state: 'passed', engine: `native PostgreSQL ${serverMajor}`, syntheticOnly: true,
-      ...integrity, archiveSha256, checks: ['all public rows', 'physical/receipt timestamps', 'receipt references',
-        'RLS flags/policies/ACLs', 'constraints/triggers/functions', 'append-only and replay uniqueness'],
+      ...integrity, archiveSha256, inventory: inventoryEvidence(inventory), checks: ['all 24 public tables', 'physical/receipt timestamps',
+        'legacy and no-op command receipts', 'fractional ledger and stock projection', 'request assignment and event links',
+        'override audit and expiry links', 'RLS/ownership/ACLs', 'indexes/constraints/triggers/functions', 'append-only and replay/assignment uniqueness'],
       limitations: ['No runtime-role authorization, hosted restore, PITR, measured RPO/RTO or service rollback demonstrated']};
   } catch (error) { failure = error; }
   const cleanupFailed = [];

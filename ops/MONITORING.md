@@ -14,7 +14,7 @@ does not grant audit-read access to dead letters.
 | API errors and latency | Count response status and duration at the assembled equipment HTTP handler; group unexpected 5xx separately from expected 401/403/409/422 | Service owner investigates 5xx, latency and conflict/retry spikes; security owner reviews auth anomalies |
 | Ingestion delay | `received_at - observed_at` from accepted immutable observations; retain both clocks and report a distribution over a defined window | Integration owner checks device clock, source/network and backlog; late receipt is not fresh physical verification |
 | Source silence | Age of most recent accepted receipt per expected source; a zero-event interval is missing evidence, not zero delay | Integration/ward owners verify expected schedules and device status; no real hardware exists here |
-| Stale/unknown equipment | At evaluation time, compare equipment `last_verified_at` to the ward owner's chosen physical-freshness threshold; null is unknown; expose unknown count separately | Ward lead verifies equipment manually; administrative edits and receipt times never refresh physical confidence |
+| Stale/unknown/uncertain equipment | Where the host adopts SV-014, evaluate `resolution.get` under the approved versioned freshness/conflict/override policy; keep unknown and uncertain counts distinct from stale. Legacy API `last_verified_at` is physical evidence only, not an adopted resolution projection | Ward lead verifies equipment manually; administrative edits and receipt times never refresh physical confidence |
 | Dead-letter/replay trends | Tenant `ingestion_dead_letter` reason counts through an authorized audit capability; external journal for pre-auth and transaction failures | Service/security owners investigate; never automatically resubmit rejected raw bodies |
 | Journal failures | Safe failure counter at rejectionJournal adapter/HTTP failure boundary | Service owner restores writable protected evidence sink; investigate 503 ingestion-unavailable and retain missing-evidence interval |
 | Failed background work | Failure/retry/backlog counts for each future actual job | No job runner currently exists; owner must implement a collector when adding jobs; absent data is unknown |
@@ -23,10 +23,13 @@ does not grant audit-read access to dead letters.
 The service currently returns ingestion `201 accepted`, `200 duplicate`, expected `400/401/403/404/409`
 errors and unexpected `503 ingestion-unavailable`. Count duplicates/replays separately from new
 observations. Do not count a successful HTTP retry as another equipment observation. The injectable
-handler does not project location; SV-014 owns resolution. A recent receipt cannot certify a
-current equipment location. Equipment replay/concurrency fixes in PR #12 were absent from this
-branch's pinned baseline; they merged into main while SV-017 was being built. Reconcile the
-actual release revision before pilot testing; this branch does not rebase another owner's work.
+handler does not project location. Merged SV-014 supplies the separate `createLocationResolution`
+capability with `get`/`override`; the host must explicitly adopt it and approve
+`{version, freshMs, staleMs, conflictWindowMs, maxOverrideMs}`. A recent receipt cannot certify a
+current equipment location. Record override expiry, source conflicts and evidence-limit failures
+as distinct conditions; do not classify unavailable projection data as healthy. Equipment command
+receipts preserve an original replay response, so refetch current state after a retry rather than
+treating the receipt snapshot as fresh inventory. No collector or HTTP adoption is supplied here.
 
 ## Aggregate sample evaluator
 

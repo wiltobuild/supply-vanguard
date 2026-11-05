@@ -33,11 +33,18 @@ times require agreement; this repository establishes none and sends no messages.
    `createIngestionHandler` contracts. Use reviewed managed identity/source adapters, a non-owner
    `NOBYPASSRLS` runtime pool and a durable protected rejection journal. Reject startup if required
    configuration/verifier/journal is absent. Do not enable the local verifier in production.
-4. Have the DB owner review migrations in core → auth → ingestion order. Existing commands are:
+4. Have the DB owner review all seven paths in `ops/recovery-inventory.mjs`: core, auth,
+   equipment receipts, supplies, requests, ingestion and location resolution. Core/auth precede
+   their dependents; resolution also requires ingestion. Existing foundation commands are:
    `node services/api/db/cli.mjs migrate`, `node services/api/auth/migrate.mjs up`, and
    `npm run migrate --prefix services/ingestion -- up`. Each uses its documented prerequisites;
    auth/ingestion take an existing `DATABASE_URL`. The core helper's native path discovery is
-   Unix-oriented. These are lifecycle references, not a hosted bootstrap recipe.
+   Unix-oriented. Equipment receipts use `node services/api/equipment/migrate.mjs up`; stop old
+   equipment writers and preserve full audit visibility for its transactional legacy-key backfill.
+   Supplies use `node services/api/supplies/migrate.mjs up`. Requests document applying their
+   unchanged SQL transactionally; resolution exposes `migrateResolution(ownerClient, 'up')`.
+   Follow each module's owner-reviewed prerequisites. These are lifecycle references, not a
+   hosted bootstrap recipe or authorization to create identities/grants.
 5. Keep synthetic seed (`services/api/db/seed/seed.sql`) restricted to an empty disposable local
    DB. Do not seed a pilot with operational data or run root reset on a retained database.
    SV-019 owns the unresolved seed-after-forced-RLS/bootstrap repair. The recovery fixture's
@@ -94,6 +101,10 @@ remaining limitations; the task board's review state is not that acceptance.
 Core `rollback/reset` and auth/ingestion `down` are destructive local tools, not safe production
 rollback. Ingestion down drops receipts, nonces and dead letters, and reapplication loses runtime
 table ACLs. Auth down removes the authorization layer. Neither belongs in automatic rollback.
+Dropping equipment command receipts loses legacy/no-op key reservations; supply down loses
+ledger/balance history; request down loses assignment evidence; resolution down loses paired
+override facts/audits and their original policies. Reapplying schema cannot reconstruct these
+records. Review all module down scripts and compatibility before any separately authorized change.
 Database backup does not include browser localStorage, external rejection files, device/OIDC
 secrets, provider configuration or global roles. See the recovery inventory before any cutover.
 

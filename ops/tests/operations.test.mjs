@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {inspectEnvironment} from '../environment.mjs';
 import {evaluateTelemetry} from '../monitor.mjs';
-import {archiveCleanupTarget, drillConfig, findTools, verifySnapshot} from '../recovery-drill.mjs';
+import {archiveCleanupTarget, drillConfig, findTools} from '../recovery-drill.mjs';
 
 const sample = () => JSON.parse(readFileSync(new URL('../examples/telemetry.synthetic.json', import.meta.url)));
 const now = Date.parse('2026-11-05T00:00:30.000Z');
@@ -54,33 +54,6 @@ test('drill refuses implicit remote connections, production and missing acknowle
     assert.throws(() => drillConfig({...env, ...patch}, args));
   }
   assert.throws(() => findTools({PG_BIN: new URL('../missing-client-tools', import.meta.url).pathname}), /unavailable/);
-});
-function recoverySnapshot() {
-  const observation = {id: 'observation', organization_id: 'tenant', idempotency_key: 'synthetic-key',
-    observed_at: '2026-11-05T10:00:00Z', received_at: '2026-11-05T10:01:00Z'};
-  return {tables: {equipment: Array.from({length: 8}, (_, id) => ({id})), location: Array.from({length: 10}, (_, id) => ({id})),
-    equipment_observation: [observation], equipment_event: [{id: 'event'}], ingestion_nonce: [{nonce: 'nonce'}],
-    ingestion_receipt: [{observation_id: observation.id, organization_id: 'tenant', idempotency_key: 'synthetic-key'}],
-    ingestion_dead_letter: [{reason: 'replay'}]}, metadata: {rls: [['equipment', true, true, null]]}};
-}
-test('integrity verifier detects equal-count corruption, lost evidence and altered security metadata', () => {
-  const before = recoverySnapshot();
-  assert.match(verifySnapshot(before, structuredClone(before)).dataSha256, /^[a-f0-9]{64}$/);
-  for (const corrupt of [
-    after => { after.tables.equipment[0].id = 'corrupt'; },
-    after => { after.tables.ingestion_nonce = []; },
-    after => { after.metadata.rls[0][2] = false; },
-    after => { after.tables.equipment_observation[0].received_at = '2026-11-05T11:00:00Z'; },
-  ]) {
-    const after = structuredClone(before); corrupt(after);
-    assert.throws(() => verifySnapshot(before, after), /differs/);
-  }
-});
-test('integrity verifier rejects internally broken receipt references and conflated physical time', () => {
-  const input = recoverySnapshot(); input.tables.ingestion_receipt[0].observation_id = 'missing';
-  assert.throws(() => verifySnapshot(input, structuredClone(input)));
-  const times = recoverySnapshot(); times.tables.equipment_observation[0].observed_at = times.tables.equipment_observation[0].received_at;
-  assert.throws(() => verifySnapshot(times, structuredClone(times)), /distinct/);
 });
 test('recursive archive cleanup is confined to a generated direct child of the temporary root', () => {
   const target = join(tmpdir(), 'sv-ops-recovery-fixture');

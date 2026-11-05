@@ -2,8 +2,9 @@
 
 These scripts and runbooks prepare an owner to evaluate a deployment. They do not deploy,
 provision an account, issue a credential, assign grants, send alerts or establish service levels.
-The current main baseline is `5e1100cae690f001fa4964bb73f52479598f6e75`. Reconcile this record
-against the exact release commit: open feature PRs are not available contracts.
+The repair integrates main `9113df98c2601820f7a13c471b9d4c226458654c`, including equipment
+receipts, supplies, requests and location resolution. Reconcile the inventory against the exact
+release commit: new or missing migration files block the drill rather than being silently omitted.
 
 The runnable product is the loopback browser demo (`npm run dev`, port 4180). It stores
 synthetic equipment changes in the browser. `tools/serve.mjs` serves static files, not the
@@ -24,6 +25,7 @@ npm --version
 npm ci
 node ops/environment.mjs --profile demo
 node --test ops/tests/*.test.mjs
+node ops/recovery-inventory.mjs
 npm test
 npm run check
 npm run dev
@@ -49,6 +51,10 @@ test identities; run them only where that separate module's documented local set
 They were not run as an alternative route around permission stops for this task.
 See [auth setup](../services/api/auth/README.md), [DB lifecycle](../services/api/db/README.md),
 [equipment routes](../services/api/equipment/README.md), and [ingestion](../services/ingestion/README.md).
+The additive [supplies](../services/api/supplies/README.md), [requests](../services/api/requests/README.md)
+and [location-resolution](../services/ingestion/resolution/README.md) modules retain separate
+lifecycle and hosting contracts. The recovery inventory covers their merged migrations without
+claiming that any module is mounted or production-ready.
 Root tests can fail without the independent auth-local PGlite dependency. SV-019 owns that
 installation/test-loader repair, core seed/bootstrap and CI; this task does not install or
 reconstruct its fix. On Windows the core DB helper also assumes Unix executable paths.
@@ -68,6 +74,9 @@ Record actual failures/skips; do not interpret skipped database tests as recover
 aggregate metrics file; it is not a collector. `ops/recovery-drill.mjs` uses existing PostgreSQL
 clients and an existing marked local cluster, creates two uniquely named disposable databases,
 then removes them and its archive. None accepts a production service URL.
+`node ops/recovery-inventory.mjs` is read-only and needs no database: it checks the explicit
+seven-migration inventory against every `services/**/*.up.sql` file and prints source hashes
+and the expected 24-table count. A future migration requires an explicit reviewed fixture update.
 
 ## Deferred CI hook (SV-019)
 

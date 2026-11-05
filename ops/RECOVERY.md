@@ -44,21 +44,31 @@ integrity-comparison function is not a database backup/restore pass.
 ## What the script does
 
 1. Checks explicit opt-in, non-production mode, loopback routing and safe existing username/port.
+   Validates the explicit [migration inventory](recovery-inventory.mjs) against every
+   `services/**/*.up.sql` file; missing/new migrations fail before a database connection or write.
    Finds existing tools through `PG_BIN` or PATH; checks the server marker, PostgreSQL 16+,
    existing superuser and matching client major versions before creating a database.
 2. Creates `sv_ops_src_<random>` and `sv_ops_restore_<random>` using template0. All writes are
    confined to those generated databases. Applies unchanged core migration, synthetic seed,
-   auth migration and ingestion migration, then explicit synthetic observation/event/nonce/
-   receipt/dead-letter fixtures. Seed precedes forced RLS only inside this throwaway exercise;
+   auth, equipment receipt, supply, request, ingestion and location-resolution migrations.
+   A synthetic legacy event precedes the receipt migration to exercise its key backfill.
+   The remaining fixtures include a complete no-op response, two fractional stock transactions,
+   the real `claim_request_item` SQL function, and paired override/audit rows. All are disposable
+   SQL storage fixtures; they do not exercise HTTP or production identity. The policy values
+   are explicitly synthetic and establish no operational defaults. Seed precedes forced RLS only inside this throwaway exercise;
    this does not repair or prove the independent SV-019 bootstrap path.
 3. Captures every public table's complete rows in deterministic order and security/schema
    metadata. Makes a consistent custom-format `pg_dump` archive and restores into the separate
    empty target with `pg_restore --exit-on-error --single-transaction`. It preserves ownership
    and ACLs within that same disposable cluster; it does not use `--no-acl` or disable RLS.
-4. Compares full row contents, identities, counts, physical/receipt timestamps, observation-to-
-   receipt references, nonce/idempotency evidence, RLS flags/policies/table ACLs, constraints,
-   triggers and application function definitions. Runs rejected append-only mutations and
-   duplicate nonce/receipt inserts, then compares all data again. Outputs aggregate SHA-256
+4. Requires all 24 expected public tables and nonempty fixtures before archiving. Compares full
+   row contents, identities, counts, physical/receipt timestamps, legacy/no-op receipt links,
+   exact fractional stock-ledger/balance/version reconciliation, request assignments/events,
+   override audit identity/policy/expiry and nonce evidence. Security metadata includes RLS flags,
+   table ownership/ACLs, policies, all indexes (including partial active-assignment uniqueness),
+   constraints, triggers and function definitions/owners/ACLs/security settings. Runs rejected
+   append-only mutations, duplicate replay/assignment inserts, stock-conflict rollback and the
+   deferred override-audit FK check, then compares all data again. Outputs aggregate SHA-256
    digests and checks, never raw rows or connection errors.
 5. Drops both generated databases, deletes the temporary archive directory, then reports success.
    If ordinary cleanup fails, output identifies exact generated resources for the cluster owner;
@@ -71,6 +81,12 @@ security metadata survives; it does **not** prove runtime-role authorization, ma
 hardware ingestion, HTTP readiness, point-in-time recovery, or a production restore. Re-run
 unauthorized/cross-tenant HTTP tests using the actual unprivileged service before any cutover.
 It does not downgrade or change any production RLS/auth policy.
+
+The independent `node ops/recovery-inventory.mjs` command checks source coverage without any
+native tools. Focused tests corrupt both sides of a snapshot deliberately: equal-but-incomplete
+inventories, broken actor/key/reference links, stock balances, assignments and override bounds
+must fail even when a naive before/after equality comparison would pass. These are local logic
+tests, not evidence that the SQL fixtures, native dump/restore or cleanup have run successfully.
 
 ## Real backup policy and recovery gate
 

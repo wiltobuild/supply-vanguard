@@ -1,5 +1,57 @@
 # SV-017 validation record
 
+## Resumed repair on current main
+
+Reviewer rework was independently confirmed at live revision 148. Original-owner reclaim exited
+0 at revision **149**, agent `wil-sol-sv017-20261105-ops`, owner `wil`, on the same checkout/branch.
+Heartbeat before integration succeeded at revision 150. A normal non-force merge integrated
+main `9113df98c2601820f7a13c471b9d4c226458654c` as merge commit
+`70a39d453a5b9cc81d5253ebbbe03b540a7b2c7c`, with no conflicts or hand edits to shared files.
+All authored repair changes remain under `ops/`. SV-019 root/auth/core/bootstrap/CI ownership
+and all source migrations remain untouched.
+
+| Repair command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 15 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: all 7 current service migrations discovered and hashed; 24 expected public tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 seed task definitions validated |
+| Root suites excluding the previously denied board-race fixture, command below | Exit 1: 83 tests, 46 passed, 1 failed, 36 skipped. Auth import still lacks `@electric-sql/pglite`; no dependency repair/install performed |
+| Native client discovery (`findTools()` from `ops/recovery-drill.mjs`) | Exit 1: `psql`, `pg_dump`, `pg_restore` unavailable. No native connection or SQL execution |
+| `git diff --check` | Exit 0 |
+
+The resumed root verification used:
+
+```powershell
+$taskRootTests = Get-ChildItem tests -File -Filter '*.test.mjs' |
+  Where-Object { $_.Name -ne 'board-race.test.mjs' } |
+  Select-Object -ExpandProperty FullName
+node --test @taskRootTests
+```
+
+This does not claim a new full `npm test` pass. The previously denied board-race Git operation
+was excluded, rather than rerun in another directory/identity/execution route. The original full
+command result and exact denied target remain in the historical record below. The 36 current
+skips comprise missing PGlite coverage (audit/equipment/requests), core native DB and native
+request-race coverage. The independent auth-local import failure belongs to SV-019.
+
+The repair uses unchanged equipment receipt, supply, request and location-resolution migrations,
+including actual legacy-key backfill. Synthetic fixtures now cover all 24 tables. Focused tests
+reject matching-but-incomplete inventories, changed replay actor/key/response links, fractional
+ledger/projection mismatches, broken assignments/events, override partner/policy/expiry changes,
+cross-tenant evidence and weakened source RLS/index metadata. Snapshots additionally compare
+all indexes and function ownership/ACL/security settings. These are source/logic regressions;
+the new SQL fixtures and native post-restore assertions are **unrun**, not a restore pass.
+
+Native prerequisites remain missing: there is no `psql`/`pg_dump`/`pg_restore` on PATH and no
+supplied `PG_BIN`, `OPS_PGHOST`, `OPS_PGPORT` or existing `OPS_PGUSER` configuration. No approved
+marked disposable cluster was supplied or verified. No clients/cluster/credentials/grants were
+installed, started or created, and no previous native/filesystem denial was bypassed.
+[RECOVERY.md](RECOVERY.md#run-the-real-drill) contains the reproducible manual command for
+an owner-provided existing marked loopback cluster. Native backup/restore, SQL fixture execution,
+native cleanup, runtime-role authorization, hosted recovery and rollback remain unproven.
+
+## Initial submission (historical, before the repair)
+
 Baseline: main `5e1100cae690f001fa4964bb73f52479598f6e75`, isolated branch
 `task/sv-017-wil-sol-sv017-20261105-ops`. Normal claim exited 0 at live board revision 99
 on 2026-11-05; lease retained in this checkout's ignored `.claims/SV-017.json`.
@@ -48,9 +100,10 @@ bootstrap's temporary credentials, bypass existing native/loopback permission st
 RLS/auth policy. Missing auth-local setup remains SV-019's independent work; its blocked Library
 artifact was not copied, reconstructed or transferred.
 
-The synthetic recovery fixture loads only the pinned core/auth/ingestion migrations. Newly
-merged supply, request or equipment-command-receipt migrations are not exercised by that fixture;
-the release/DB owners must extend the fixture inventory against their actual chosen release.
+At initial submission the fixture loaded only core/auth/ingestion migrations. The resumed repair
+above extends source coverage to every currently merged service migration. Any future release
+still requires reconciling the explicit inventory and fixtures; actual native execution remains
+a separate unmet gate.
 
 ## Remaining operational gates
 
