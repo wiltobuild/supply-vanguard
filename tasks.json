@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 113,
-  "updatedAt": "2026-11-05T19:20:35.328Z",
+  "revision": 114,
+  "updatedAt": "2026-11-05T19:21:38.314Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -798,6 +798,13 @@
       "command": "claim",
       "agent": "cheich-agent-9",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-05T19:21:38.314Z",
+      "taskId": "SV-026",
+      "command": "heartbeat",
+      "agent": "wil-astra-ward-two-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1647,7 +1654,7 @@
         "owner": "wil",
         "leaseId": "33687aba-f104-4c0b-918e-7bfc27cebaf8",
         "claimedAt": "2026-11-05T18:57:08.811Z",
-        "expiresAt": "2026-11-05T20:57:08.811Z"
+        "expiresAt": "2026-11-05T21:21:38.314Z"
       }
     }
   ]
