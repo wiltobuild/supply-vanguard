@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 128,
-  "updatedAt": "2026-11-05T19:46:29.846Z",
+  "revision": 129,
+  "updatedAt": "2026-11-05T19:46:57.498Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -903,6 +903,13 @@
       "command": "rework",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:46:57.498Z",
+      "taskId": "SV-026",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1709,7 +1716,7 @@
     {
       "id": "SV-026",
       "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
-      "status": "review",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1748,7 +1755,9 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/21",
       "submittedBy": "wil-astra-ward-two-20261105",
-      "submittedAt": "2026-11-05T19:34:46.808Z"
+      "submittedAt": "2026-11-05T19:34:46.808Z",
+      "blockedReason": null,
+      "reviewNote": "Independent IAB review of PR21 exact head 9a6b11f confirms Enter on the filtered A1 IV pump replaces the focused list button and leaves document.activeElement=BODY. Preserve selected context/focus, add a keyboard regression, and verify 3D plus zero-canvas list workflow. Review https://github.com/wiltobuild/supply-vanguard/pull/21#pullrequestreview-5791062240. Original PCU owner should reclaim normally on existing branch; keep changes PCU-local and preserve independent PICU/shared-selector ownership. Both remain draft pending repaired-head and combined navigation verification."
     }
   ]
 }
