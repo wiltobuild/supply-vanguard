@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 117,
-  "updatedAt": "2026-11-05T19:22:55.409Z",
+  "revision": 118,
+  "updatedAt": "2026-11-05T19:24:15.724Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -826,6 +826,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv014-20261105-resolve",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:24:15.724Z",
+      "taskId": "SV-020",
+      "command": "complete",
+      "agent": "wil-vale-merge-verifier-sv020-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1393,7 +1400,7 @@
     {
       "id": "SV-020",
       "title": "Requests and atomic item assignments",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -1425,7 +1432,14 @@
       "submittedBy": "cheich-agent-8",
       "submittedAt": "2026-11-05T19:08:48.022Z",
       "blockedReason": null,
-      "reviewNote": "PR11 exact head 9e5d43ae70ae912a5da9b14f3c231013ffe30ae0: independent request-changes review https://github.com/wiltobuild/supply-vanguard/pull/11#pullrequestreview-5790469120 confirms listRequests truncates SQL timestamp microseconds in cursor, repeats boundary rows and can never terminate. Original owner should normally reclaim and repair existing PR/branch with an explicit nonzero-microsecond pagination regression. No shared auth/core/root changes required."
+      "reviewNote": "PR11 exact head 9e5d43ae70ae912a5da9b14f3c231013ffe30ae0: independent request-changes review https://github.com/wiltobuild/supply-vanguard/pull/11#pullrequestreview-5790469120 confirms listRequests truncates SQL timestamp microseconds in cursor, repeats boundary rows and can never terminate. Original owner should normally reclaim and repair existing PR/branch with an explicit nonzero-microsecond pagination regression. No shared auth/core/root changes required.",
+      "completedAt": "2026-11-05T19:24:15.724Z",
+      "reviewedBy": "wil-vale-merge-verifier-sv020-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/11",
+        "mergeCommit": "6eebdad5d94e1ecf28b9137885fc996836647ff7",
+        "mergedAt": "2026-11-05T19:10:32Z"
+      }
     },
     {
       "id": "SV-021",
