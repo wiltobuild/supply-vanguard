@@ -16,14 +16,16 @@ import {quantity, stockCommand} from '../../../../packages/domain/supplies/index
 
 const sql = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const A = randomUUID(), B = randomUUID(), user = randomUUID(), viewer = randomUUID(), operator = randomUUID();
-let cluster, admin, pool, dir, supplies, sku, otherSku, insertGate;
+let cluster, admin, pool, dir, supplies, sku, otherSku, insertGate, afterQuery;
 const authRequest = who => ({who});
 const runtimePool = {async connect() {
   const client = await pool.connect();
   await client.query('SET ROLE sv_supplies_test_runtime');
   return {query: async (statement, parameters) => {
     if (insertGate && statement.startsWith('INSERT INTO public.supply_stock_transaction')) await insertGate();
-    return client.query(statement, parameters);
+    const result = await client.query(statement, parameters);
+    if (afterQuery) await afterQuery(statement, parameters, result, client.processID);
+    return result;
   }, release: error => client.release(error)};
 }};
 const authorization = createAuthorization({pool: runtimePool, identityProvider: {verify: async request => {
@@ -136,6 +138,58 @@ test('16 concurrent identical requests commit exactly one SQL transaction', asyn
   assert.equal(rows.filter(row => !row.replayed).length, 1);
   assert.deepEqual(await balance(bin), {quantity: '10.000', version: 1});
   assert.equal((await supplies.history(manager, A, bin.id)).length, 1);
+});
+test('overlapping retry after an empty key lookup replays the committed transaction; changed payload still conflicts', async () => {
+  const server = createHttpServer(createSuppliesHandler({supplies}));
+  server.listen(0, '127.0.0.1'); await once(server, 'listening');
+  const url = `http://127.0.0.1:${server.address().port}/organizations/${A}/supplies/transactions`;
+  try {
+    for (const changedPayload of [false, true]) {
+      const bin = await newBin(), key = randomUUID();
+      let reached, release, pausedPid, winnerPid, intercepted = false, timer;
+      const paused = new Promise((resolve, reject) => {
+        reached = resolve;
+        timer = setTimeout(() => reject(new Error('Retry never reached empty SQL key lookup')), 15000);
+      });
+      const resume = new Promise(resolve => { release = resolve; });
+      afterQuery = async (statement, parameters, result, pid) => {
+        if (!statement.startsWith('SELECT * FROM public.supply_stock_transaction WHERE organization_id=') || parameters[1] !== key) return;
+        if (!intercepted) {
+          intercepted = true;
+          assert.equal(result.rows.length, 0);
+          pausedPid = pid;
+          clearTimeout(timer); reached();
+          await resume;
+        } else if (result.rows.length === 0) winnerPid = pid;
+      };
+      const command = {binId: bin.id, kind: 'restock', delta: '10', expectedVersion: 0, idempotencyKey: key,
+        source: 'synthetic-overlap', reason: 'Synthetic overlapping retry'};
+      const send = input => fetch(url, {method: 'POST', headers: {'x-synthetic-test-user': 'manager'},
+        body: JSON.stringify(input), signal: AbortSignal.timeout(20000)});
+      // B has executed a real empty lookup and remains in its own SQL transaction.
+      const pending = send({...command, delta: changedPayload ? '11' : '10'});
+      try {
+        await paused;
+        // A commits on another backend before B is allowed to read the balance.
+        const winner = await send(command);
+        assert.equal(winner.status, 201);
+        const saved = await winner.json();
+        assert.notEqual(pausedPid, winnerPid, 'competing requests must use separate native PostgreSQL sessions');
+        assert.deepEqual(await balance(bin), {quantity: '10.000', version: 1});
+        release();
+        const retry = await pending;
+        assert.equal(retry.status, changedPayload ? 409 : 200);
+        const replayed = await retry.json();
+        if (changedPayload) assert.equal(replayed.error, 'idempotency_conflict');
+        else { assert.equal(replayed.id, saved.id); assert.equal(replayed.replayed, true); }
+        assert.deepEqual(await balance(bin), {quantity: '10.000', version: 1});
+        assert.equal((await supplies.history(manager, A, bin.id)).length, 1);
+      } finally {
+        clearTimeout(timer); release(); afterQuery = null;
+        await pending.catch(() => {});
+      }
+    }
+  } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
 });
 test('concurrent distinct requests with same version yield one commit and one 409; explicit retry preserves both deltas', async () => {
   const bin = await newBin(); insertGate = rendezvous(2);

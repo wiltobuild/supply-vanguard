@@ -67,7 +67,13 @@ export function createSupplies({authorization}) {
         if (previous) return replay(previous, command, c.userId);
         const stock = (await c.query('SELECT quantity, version FROM public.supply_bin_stock WHERE organization_id=$1 AND bin_id=$2', [c.organizationId, command.binId])).rows[0];
         if (!stock) throw new SupplyError(404, 'bin_not_found');
-        if (stock.version !== command.expectedVersion) throw new SupplyError(409, 'stock_conflict');
+        if (stock.version !== command.expectedVersion) {
+          // A matching request may have committed between the empty key lookup and this read.
+          // At READ COMMITTED this new statement sees its ledger row before we reject the version.
+          const committed = await existing();
+          if (committed) return replay(committed, command, c.userId);
+          throw new SupplyError(409, 'stock_conflict');
+        }
         const inserted = await c.query(`INSERT INTO public.supply_stock_transaction
           (organization_id,bin_id,kind,delta,quantity_before,expected_version,actor_id,source,reason,correlation_id,idempotency_key)
           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
