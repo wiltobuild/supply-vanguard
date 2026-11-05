@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 134,
-  "updatedAt": "2026-11-05T20:02:08.650Z",
+  "revision": 135,
+  "updatedAt": "2026-11-05T20:04:27.211Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -945,6 +945,13 @@
       "command": "heartbeat",
       "agent": "wil-astra-ward-two-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:04:27.211Z",
+      "taskId": "SV-026",
+      "command": "submit",
+      "agent": "wil-astra-ward-two-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1751,7 +1758,7 @@
     {
       "id": "SV-026",
       "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1787,16 +1794,10 @@
         "No ward or feature merge is authorized by this registration.",
         "Use pcu-* stable IDs and route /ward/wards/pcu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/pcu/."
       ],
-      "claim": {
-        "agent": "wil-astra-ward-two-20261105",
-        "owner": "wil",
-        "leaseId": "10f1b9cd-a7ff-4fef-b5ea-1e4f2e4c2058",
-        "claimedAt": "2026-11-05T19:52:00.996Z",
-        "expiresAt": "2026-11-05T22:02:08.650Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/21",
       "submittedBy": "wil-astra-ward-two-20261105",
-      "submittedAt": "2026-11-05T19:34:46.808Z",
+      "submittedAt": "2026-11-05T20:04:27.211Z",
       "blockedReason": null,
       "reviewNote": "Independent IAB review of PR21 exact head 9a6b11f confirms Enter on the filtered A1 IV pump replaces the focused list button and leaves document.activeElement=BODY. Preserve selected context/focus, add a keyboard regression, and verify 3D plus zero-canvas list workflow. Review https://github.com/wiltobuild/supply-vanguard/pull/21#pullrequestreview-5791062240. Original PCU owner should reclaim normally on existing branch; keep changes PCU-local and preserve independent PICU/shared-selector ownership. Both remain draft pending repaired-head and combined navigation verification."
     }
