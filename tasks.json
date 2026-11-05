@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 50,
-  "updatedAt": "2026-11-05T16:38:44.292Z",
+  "revision": 51,
+  "updatedAt": "2026-11-05T16:40:52.946Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -354,6 +354,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv013-20261105-e6b1",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:40:52.946Z",
+      "taskId": "SV-013",
+      "command": "submit",
+      "agent": "wil-sol-sv013-20261105-e6b1",
+      "owner": null
     }
   ],
   "tasks": [
@@ -695,7 +702,7 @@
     {
       "id": "SV-013",
       "title": "Provider-neutral observation ingestion simulator",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -713,13 +720,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv013-20261105-e6b1",
-        "owner": "wil",
-        "leaseId": "a55481b7-5e0b-41ce-a43b-fd1a2c6b76ff",
-        "claimedAt": "2026-11-05T16:21:06.978Z",
-        "expiresAt": "2026-11-05T18:38:44.292Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/10",
+      "submittedBy": "wil-sol-sv013-20261105-e6b1",
+      "submittedAt": "2026-11-05T16:40:52.946Z"
     },
     {
       "id": "SV-014",
