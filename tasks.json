@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 64,
-  "updatedAt": "2026-11-05T17:07:59.436Z",
+  "revision": 65,
+  "updatedAt": "2026-11-05T17:10:46.934Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -453,6 +453,13 @@
       "taskId": "SV-019",
       "command": "heartbeat",
       "agent": "wil-vale-sv019-20261105-authfix",
+      "owner": null
+    },
+    {
+      "at": "2026-11-05T17:10:46.934Z",
+      "taskId": "SV-020",
+      "command": "heartbeat",
+      "agent": "cheich-agent-7",
       "owner": null
     }
   ],
@@ -1013,7 +1020,7 @@
         "owner": "cheich",
         "leaseId": "8e3745d2-1b6d-41c6-8d81-4aa7b7850042",
         "claimedAt": "2026-11-05T17:05:14.791Z",
-        "expiresAt": "2026-11-05T19:05:14.791Z"
+        "expiresAt": "2026-11-05T19:10:46.934Z"
       }
     },
     {
