@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 140,
-  "updatedAt": "2026-11-05T20:18:36.040Z",
+  "revision": 141,
+  "updatedAt": "2026-11-05T20:19:48.006Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -987,6 +987,13 @@
       "command": "heartbeat",
       "agent": "wil-astra-picu-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:19:48.006Z",
+      "taskId": "SV-025",
+      "command": "submit",
+      "agent": "wil-astra-picu-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1746,7 +1753,7 @@
     {
       "id": "SV-025",
       "title": "Build illustrative pediatric intensive care ward (PICU)",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1783,16 +1790,10 @@
         "No ward or feature merge is authorized by this registration.",
         "Use picu-* stable IDs and route /ward/wards/picu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/picu/."
       ],
-      "claim": {
-        "agent": "wil-astra-picu-20261105",
-        "owner": "wil",
-        "leaseId": "6504ba51-e9a9-4269-b56b-09cf57d1f356",
-        "claimedAt": "2026-11-05T20:12:56.941Z",
-        "expiresAt": "2026-11-05T22:18:36.040Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/20",
       "submittedBy": "wil-astra-picu-20261105",
-      "submittedAt": "2026-11-05T20:00:48.855Z",
+      "submittedAt": "2026-11-05T20:19:48.006Z",
       "blockedReason": null,
       "reviewNote": "Repaired head b628592 resolves original keyboard-focus and route findings; independent browser re-review found a further Back/history filter mismatch: after A1+IV pump then Equipment link and Back, controls retain A1/infusion but list/count show all55 and 3D highlights unrelated placements even after sceneReady=true. Synchronize post-history controls, results/count and highlights, add real Back regression in3D and list mode without focus loss. Review https://github.com/wiltobuild/supply-vanguard/pull/20#pullrequestreview-5791325356. Original PICU owner should reclaim normally; current-main integration/tests and27GLBs passed, but keepdraft until this correctness repair."
     },
