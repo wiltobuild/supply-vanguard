@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 61,
-  "updatedAt": "2026-11-05T17:04:16.689Z",
+  "revision": 62,
+  "updatedAt": "2026-11-05T17:05:14.791Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -433,6 +433,13 @@
       "command": "claim",
       "agent": "wil-vale-sv023-20261105-receipts-a81f",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-05T17:05:14.791Z",
+      "taskId": "SV-020",
+      "command": "claim",
+      "agent": "cheich-agent-7",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -960,7 +967,7 @@
     {
       "id": "SV-020",
       "title": "Requests and atomic item assignments",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -987,7 +994,13 @@
         "Cheich offered to take this first task after SV-006 merges. This migration does not claim or assign the task on his behalf.",
         "SV-007 remains unchanged and may run alongside SV-020 after its existing dependencies complete."
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-7",
+        "owner": "cheich",
+        "leaseId": "8e3745d2-1b6d-41c6-8d81-4aa7b7850042",
+        "claimedAt": "2026-11-05T17:05:14.791Z",
+        "expiresAt": "2026-11-05T19:05:14.791Z"
+      }
     },
     {
       "id": "SV-021",
