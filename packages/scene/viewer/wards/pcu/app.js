@@ -8,14 +8,18 @@ function selectEquipment(id){
  const room=LOCATIONS.find(r=>r.id===item.locationId),panel=$('selection');panel.replaceChildren();panel.hidden=false;
  panel.append(el('h3',item.name),el('code',item.id),el('p',room.name),el('p',item.provenance));
  if(viewer){const visit=el('button','Walk inside this room');visit.onclick=()=>viewer.visit(room);panel.append(visit);viewer.select(item);}
- renderEquipment();
+ // Keep result nodes intact so Enter/Space selection preserves keyboard focus and scroll.
+ for(const button of $('equipment-list').children)if(button.dataset.equipmentId)button.setAttribute('aria-pressed',String(selectedId===button.dataset.equipmentId));
+}
+function updateEquipmentSummary(matches){
+ $('result-count').textContent=`${matches.length} of ${EQUIPMENT.length} synthetic examples${viewer&&matches.length<EQUIPMENT.length?' · matches highlighted in 3D':''}`;
+ viewer?.highlight(matches.map(e=>e.id));
 }
 function renderEquipment(){
  const matches=filterEquipment($('equipment-search').value,$('equipment-kind').value),list=$('equipment-list');list.replaceChildren();
- $('result-count').textContent=`${matches.length} of ${EQUIPMENT.length} synthetic examples${viewer&&matches.length<EQUIPMENT.length?' · matches highlighted in 3D':''}`;
- for(const item of matches){const room=LOCATIONS.find(r=>r.id===item.locationId),button=el('button',undefined,'equipment-item');button.append(el('span',item.name),el('small',`${room.short} · ${item.id}`));button.setAttribute('aria-pressed',String(selectedId===item.id));button.onclick=()=>selectEquipment(item.id);list.append(button);}
+ for(const item of matches){const room=LOCATIONS.find(r=>r.id===item.locationId),button=el('button',undefined,'equipment-item');button.dataset.equipmentId=item.id;button.append(el('span',item.name),el('small',`${room.short} · ${item.id}`));button.setAttribute('aria-pressed',String(selectedId===item.id));button.onclick=()=>selectEquipment(item.id);list.append(button);}
  if(!matches.length)list.append(el('p','No matching examples. Try another room or equipment name.'));
- viewer?.highlight(matches.map(e=>e.id));
+ updateEquipmentSummary(matches);
 }
 for(const room of LOCATIONS){const button=el('button',room.short);button.setAttribute('aria-label',`Visit ${room.name}`);button.disabled=true;button.dataset.room=room.id;button.onclick=()=>viewer?.visit(room);$('room-list').append(button);}
 for(const source of SOURCES){const link=el('a',source.title);link.href=source.url;link.target='_blank';link.rel='noreferrer';$('source-list').append(link,el('p',source.supports));}
@@ -32,6 +36,6 @@ else{
  $('overview').onclick=()=>viewer.overview();$('walk').onclick=()=>viewer.walk();$('reset').onclick=()=>viewer.overview();$('save-view').onclick=()=>viewer.saveView();
  let cutaway=true;$('cutaway').onclick=()=>{cutaway=!cutaway;viewer.cutaway(cutaway);$('cutaway').setAttribute('aria-pressed',String(cutaway));$('cutaway').textContent=`Cutaway ${cutaway?'on':'off'}`;};
  for(const button of document.querySelectorAll('[data-move]')){button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);viewer.moveKey(button.dataset.move,true);};button.onpointerup=button.onpointercancel=()=>viewer.moveKey(button.dataset.move,false);button.onkeydown=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();viewer.moveKey(button.dataset.move,true);}};button.onkeyup=e=>{if(e.code==='Space'||e.code==='Enter'){e.preventDefault();viewer.moveKey(button.dataset.move,false);}};button.onblur=()=>viewer.moveKey(button.dataset.move,false);}
- renderEquipment();document.body.dataset.sceneReady=WARD.id;
+ updateEquipmentSummary(filterEquipment($('equipment-search').value,$('equipment-kind').value));if(selectedId)selectEquipment(selectedId);document.body.dataset.sceneReady=WARD.id;
  }catch(error){console.error('PCU 3D view unavailable',error);fallback('3D graphics are unavailable. Search and select equipment in the adjacent list, or read the source notes.');}
 }

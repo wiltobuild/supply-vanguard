@@ -6,7 +6,7 @@ Story: open the standalone PCU preview, inspect the illustrative section, find a
 
 | Check | Observed result |
 | --- | --- |
-| Ward suite: `node --import ./packages/scene/viewer/wards/pcu/tests/register.mjs --test packages/scene/viewer/wards/pcu/tests/pcu.test.mjs` | 6 passed, 0 failed. Unique PCU identities, existing model reuse/finite bounds, every room/support entry point connected to the corridor, wall/boundary collision and anti-tunneling, search semantics, standalone return/fallback routes |
+| Ward suite: `node --import ./packages/scene/viewer/wards/pcu/tests/register.mjs --test packages/scene/viewer/wards/pcu/tests/*.test.mjs` | 7 passed, 0 failed. Unique PCU identities, existing model reuse/finite bounds, every room/support entry point connected to the corridor, wall/boundary collision and anti-tunneling, search semantics, standalone return/fallback routes, selection focus/context regression |
 | `npm test` | 45 passed, 0 failed, 6 skipped. Native PostgreSQL is unavailable; its six existing database checks did not run |
 | `npm run check` | JavaScript syntax, all 12 original GLB containers and 19 seed task definitions validated. The live board is separate from the seed |
 | Scope preservation | New files only under `packages/scene/viewer/wards/pcu/`; original NICU, model sources, shared entry/app/navigation/registry/manifests, dependencies, APIs and plan unchanged |
@@ -43,6 +43,18 @@ All pictures show the authored concept, not an authenticated hospital floor plan
 The final overview export and app-context overview include the supply-workstation clearance correction. The interior rendering shows the final bay geometry.
 
 ## Coordination and limits
+
+### PR #21 keyboard rework
+
+Normal reclaim of SV-026 confirmed at board revision 131 on the same branch and agent. Reproduced the reviewer's defect on the original head: filter `bay A1`, Tab from the search through equipment type to the pump, then Enter. Selection appeared but focus fell to BODY because the result list was rebuilt.
+
+Selection now updates the existing rows' pressed state in place. Asynchronous 3D initialization also retains the rows and restores any selection made while the viewer loaded. Filtering continues to rebuild results when the user changes the search/type.
+
+The new `keyboard-regression.test.mjs` executes the actual list-only app in a minimal DOM fixture with focus-on-removal behavior. It failed before the fix and passes afterward, checking focused-node identity, result identity, scroll/query preservation, repeated selection, next-row selection, pressed states and graphics-free mode. It is not a substitute for native keyboard testing.
+
+Native IAB testing on the repaired code confirmed in both 3D and `?view=list`: Enter selects A1's IV pump with `document.activeElement` still that BUTTON; repeated Enter and Space retain focus; Tab reaches the A1 monitor and Space selects it, clearing the pump's pressed state. The query remains `bay A1`, the selected detail matches the monitor, and exactly one row is pressed. The 3D view had one canvas and `data-scene-ready=pcu-bloomberg-9n`; list mode had zero canvases. [3D keyboard evidence](evidence/keyboard-3d.jpg) and [graphics-free keyboard evidence](evidence/keyboard-list.jpg) show the resulting focused selection. A browser-tool timeout interrupted the first fallback batch; inspecting the existing page confirmed pump selection before the remaining checks continued.
+
+After the repair: all seven ward tests passed; `npm test` again passed 45 with the six existing native PostgreSQL skips; `npm run check` passed. PCU route and `body[data-ward="pcu"]` remain compatible with SV-025's availability probe. Shared selector ownership remains with SV-025; combined navigation requires that integration review and is not claimed here.
 
 Base: main `5e1100ca`. Normal SV-026 claim confirmed at live board revision 94, owner `wil`, agent `wil-astra-ward-two-20261105`; retained claim renewed at revisions 114 and 123 before finalization. Work branch: `task/sv-026-wil-astra-ward-two-20261105`. Draft PR only; no merge or deployment is part of this task.
 
