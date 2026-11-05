@@ -4,6 +4,7 @@ import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {THREE,createAsset,createWard,ASSET_TYPES} from '../tools/scene-assets-runtime.mjs';
 import {encodeSceneGlb} from '../tools/scene-glb.mjs';
+import {assertEquivalentKitGlbs} from './helpers/glb-equivalence.mjs';
 import {ADDITIONAL_ASSET_TYPES,ADDITIONAL_PLACEMENTS} from '../packages/scene/viewer/additional-assets.js';
 import {ROOMS,INITIAL_LOCATIONS,ASSET_LABELS} from '../packages/scene/viewer/data.js';
 import {isWalkable,findPath} from '../packages/scene/viewer/nav.js';
@@ -16,13 +17,13 @@ test('all twelve original GLBs are preserved byte for byte',()=>{
  assert.equal(Object.keys(hashes).length,12);
  for(const [name,hash] of Object.entries(hashes))assert.equal(createHash('sha256').update(readFileSync(new URL(name,assets))).digest('hex'),hash,name);
 });
-test('fifteen procedural models and deterministic GLBs have finite matching bounds and provenance',()=>{
+test('fifteen procedural models and GLBs have equivalent geometry, finite bounds and provenance',()=>{
  assert.equal(ADDITIONAL_ASSET_TYPES.length,15);assert.equal(ASSET_TYPES.length,25);
  for(const kind of ADDITIONAL_ASSET_TYPES){
   const model=createAsset(kind),bounds=new THREE.Box3().setFromObject(model),record=manifest.assets.find(a=>a.id===kind),file=readFileSync(new URL(`${kind}.glb`,assets));
   assert.ok(ASSET_LABELS[kind]);assert.equal(model.userData.tracked,false);assert.equal(model.userData.units,'meters');assert.equal(model.userData.upAxis,'Y');
   assert.ok(!bounds.isEmpty());assert.ok([...bounds.min.toArray(),...bounds.max.toArray()].every(Number.isFinite));assert.ok(bounds.min.y>=-.00001);
-  assert.ok(bounds.getSize(new THREE.Vector3()).length()<3,kind);assert.deepEqual(file,encodeSceneGlb(model),`${kind} export is current`);
+  assert.ok(bounds.getSize(new THREE.Vector3()).length()<3,kind);assertEquivalentKitGlbs(file,encodeSceneGlb(model),`${kind} export is current`);
   assert.equal(record.bytes,file.length);assert.equal(record.role,'static-decoration');
   const json=JSON.parse(file.toString('utf8',20,20+file.readUInt32LE(12)));assert.equal(json.asset.version,'2.0');assert.equal(json.nodes[0].extras.tracked,false);
   for(const accessor of json.accessors){assert.ok(accessor.count>0);assert.ok([...accessor.min,...accessor.max].every(Number.isFinite));}

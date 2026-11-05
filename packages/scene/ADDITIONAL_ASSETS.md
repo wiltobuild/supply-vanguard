@@ -39,7 +39,7 @@ npm test
 npm run check
 ```
 
-The exporter uses the repository's vendored Three.js and a deterministic, texture-free GLB writer; no application dependencies were added. It regenerates only the fifteen additions and their manifest records. The original full/cutaway ward GLBs are preserved baseline snapshots; the live procedural ward includes the additions. The download button is labeled **Original ward GLB** to make that distinction visible.
+The exporter uses the repository's vendored Three.js and a texture-free GLB writer; no application dependencies were added. It regenerates only the fifteen additions and their manifest records. Export checks compare structure, metadata and indices exactly, and compare geometry, transforms and materials within `1e-7 + 1e-6 × magnitude` to accommodate cross-platform floating-point roundoff. They still reject meaningful changes to vertices, normals, UVs, transforms, materials and bounds. The original twelve GLB hashes remain exact. The original full/cutaway ward GLBs are preserved baseline snapshots; the live procedural ward includes the additions. The download button is labeled **Original ward GLB** to make that distinction visible.
 
 For independent Khronos validation and GLTFLoader round-trip checks, install optional QA tools in a directory outside the repository:
 
