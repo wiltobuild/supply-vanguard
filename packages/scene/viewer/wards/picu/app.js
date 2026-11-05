@@ -1,17 +1,25 @@
 import {WARD,ROOMS,EQUIPMENT,LABELS,filterEquipment,moveSafely,validateConfig} from './config.js';
 const $=id=>document.getElementById(id);
-let sceneApi=null,selected=null,results=EQUIPMENT;
+let sceneApi=null,selected=null,results=EQUIPMENT,renderedFilters=null;
 for(const [kind,label] of Object.entries(LABELS)){const o=document.createElement('option');o.value=kind;o.textContent=label;$('kind').append(o);}
 function choose(id){selected=EQUIPMENT.find(e=>e.id===id);if(!selected)return;$('selection').hidden=false;$('selected-name').textContent=LABELS[selected.kind];$('selected-detail').textContent=`${selected.location} · ${selected.id}. Illustrative, untracked placement.`;updateSelection();sceneApi?.highlight(results,selected.id);sceneApi?.focus(selected);}
 // Selection keeps the existing controls (and keyboard focus/scroll position) intact.
 function updateSelection(){for(const button of $('equipment-list').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.equipmentId===selected?.id));}
 function renderList(){
+ const filters=JSON.stringify([$('search').value,$('kind').value]);
+ if(filters===renderedFilters){updateSelection();sceneApi?.highlight(results,selected?.id);return;}
+ renderedFilters=filters;
  results=filterEquipment($('search').value,$('kind').value);$('count').textContent=`${results.length} illustrative placement${results.length===1?'':'s'} shown`;
+ if(selected&&!results.some(e=>e.id===selected.id)){selected=null;$('selection').hidden=true;}
  const entries=results.map(e=>{const li=document.createElement('li'),button=document.createElement('button'),small=document.createElement('small');button.type='button';button.dataset.equipmentId=e.id;button.textContent=LABELS[e.kind];button.setAttribute('aria-pressed',String(e.id===selected?.id));button.setAttribute('aria-label',`${LABELS[e.kind]}, ${e.location}, ${e.id}`);small.textContent=`${e.location} · ${e.id.replace('picu-room-','')}`;button.append(small);button.onclick=()=>choose(e.id);li.append(button);return li;});
  if(!entries.length){const li=document.createElement('li');li.textContent='No matching display placements. Try a different name or room.';entries.push(li);}
  $('equipment-list').replaceChildren(...entries);sceneApi?.highlight(results,selected?.id);
 }
 $('search').addEventListener('input',renderList);$('kind').addEventListener('change',renderList);
+// Persisted form values can be restored after pageshow/popstate, without input
+// events. Read them on the next task, including back-forward cache restores.
+const restoreFilters=()=>setTimeout(renderList,0);
+window.addEventListener('pageshow',restoreFilters);window.addEventListener('popstate',restoreFilters);
 $('show-type').onclick=()=>{if(!selected)return;const moveFocus=document.activeElement===$('show-type');$('kind').value=selected.kind;$('search').value='';selected=null;$('selection').hidden=true;renderList();sceneApi?.overview();if(moveFocus)$('kind').focus();};
 for(const r of ROOMS){const button=document.createElement('button');button.textContent=r.name.replace('Demo room ','Room ');button.setAttribute('aria-label',`View ${r.name} interior`);button.disabled=true;button.onclick=()=>sceneApi?.room(r);$('room-views').append(button);}
 renderList();
@@ -36,7 +44,7 @@ async function start(){
  function enter(point=[-11.1,1.65,0],angle=Math.PI/2,title='Inside the demo corridor'){setMode('walk');setCutaway(false);camera.position.fromArray(point);yaw=angle;pitch=0;orient();$('view-title').textContent=title;}
  function room(r){enter(r.view,Math.atan2(r.x+.5-r.view[0],r.view[2]-r.side*6.4),`${r.name} · illustrative interior`);pitch=-.08;orient();}
  function focus(e){const r=ROOMS.find(r=>r.id===e.roomId);if(r)room(r);else enter([8.7,1.65,0],Math.PI/2,e.location);highlight(results,e.id);}
- function highlight(matches,id){for(const helper of helpers){scene.remove(helper);helper.geometry.dispose();helper.material.dispose();}helpers=[];const filtered=$('search').value.trim()||$('kind').value!=='all';for(const e of matches){if(!filtered&&e.id!==id)continue;const h=new THREE.BoxHelper(ward.items.get(e.id),e.id===id?'#b33e29':'#d25538');h.material.depthTest=false;h.renderOrder=10;scene.add(h);helpers.push(h);}}
+ function highlight(matches,id){for(const helper of helpers){scene.remove(helper);helper.geometry.dispose();helper.material.dispose();}helpers=[];const highlighted=[],filtered=$('search').value.trim()||$('kind').value!=='all';for(const e of matches){if(!filtered&&e.id!==id)continue;const h=new THREE.BoxHelper(ward.items.get(e.id),e.id===id?'#b33e29':'#d25538');h.material.depthTest=false;h.renderOrder=10;scene.add(h);helpers.push(h);highlighted.push(`${LABELS[e.kind]} in ${e.location}`);}canvas.setAttribute('aria-description',highlighted.length?`${highlighted.length} highlighted placement${highlighted.length===1?'':'s'}: ${highlighted.join('; ')}.`:'No highlighted placements.');}
  sceneApi={overview,room,focus,highlight};
  function step(forward,side=0,distance=.16){const dx=(Math.sin(yaw)*forward+Math.cos(yaw)*side)*distance,dz=(-Math.cos(yaw)*forward+Math.sin(yaw)*side)*distance;const [x,z]=moveSafely([camera.position.x,camera.position.z],dx,dz);camera.position.set(x,1.65,z);orient();}
  $('overview').onclick=overview;$('walk').onclick=()=>enter();$('cutaway').onclick=()=>setCutaway(!cutaway);
@@ -47,7 +55,7 @@ async function start(){
  canvas.addEventListener('pointerup',e=>{const click=down&&!down.moved;down=null;if(!click)return;const rect=canvas.getBoundingClientRect();pointer.set((e.clientX-rect.left)/rect.width*2-1,-(e.clientY-rect.top)/rect.height*2+1);raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects([...ward.items.values()],true);if(hits.length){let obj=hits[0].object;while(obj&&!obj.userData.equipmentId)obj=obj.parent;if(obj)choose(obj.userData.equipmentId);}});canvas.addEventListener('pointercancel',()=>{down=null;});
  $('capture').onclick=()=>{renderer.render(scene,camera);const output=document.createElement('canvas');output.width=canvas.width;output.height=canvas.height+62;const ctx=output.getContext('2d');ctx.drawImage(canvas,0,0);ctx.fillStyle='#fff';ctx.fillRect(0,canvas.height,output.width,62);ctx.fillStyle='#172531';ctx.font='bold 15px Arial';ctx.fillText(`Supply Vanguard · PICU · ${$('view-title').textContent}`,18,canvas.height+24);ctx.font='12px Arial';ctx.fillText('Illustrative geometry and synthetic placements. Not a verified hospital floor plan.',18,canvas.height+45);output.toBlob(blob=>{if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`picu-${mode}.png`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});};
  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();renderer.setAnimationLoop(null);sceneApi=null;unavailable('3D rendering was interrupted. Reload to retry, or continue with the equipment list.');});
- const resize=()=>{const {width,height}=host.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();};new ResizeObserver(resize).observe(host);resize();overview();highlight(results,selected?.id);
+ const resize=()=>{const {width,height}=host.getBoundingClientRect();renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();};new ResizeObserver(resize).observe(host);resize();overview();renderList();
  document.querySelectorAll('.toolbar button,#room-views button').forEach(b=>b.disabled=false);$('scene-state').hidden=true;document.body.dataset.sceneReady='true';
  renderer.setAnimationLoop(now=>{const dt=Math.min((now-last)/1000,.05);last=now;if(mode==='overview')controls.update();else{if(keys.has('KeyQ')||keys.has('ArrowLeft'))yaw-=dt*1.5;if(keys.has('KeyE')||keys.has('ArrowRight'))yaw+=dt*1.5;const f=(keys.has('KeyW')||keys.has('ArrowUp')?1:0)-(keys.has('KeyS')||keys.has('ArrowDown')?1:0),s=(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0);if(f||s)step(f,s,dt*2.4/(f&&s?Math.SQRT2:1));else orient();}if(mode==='overview'){for(const {r,el} of labels){const v=new THREE.Vector3(r.x,.25,r.z).project(camera);el.hidden=v.z>1||Math.abs(v.x)>1||Math.abs(v.y)>1;el.style.left=`${(v.x*.5+.5)*host.clientWidth}px`;el.style.top=`${(-v.y*.5+.5)*host.clientHeight}px`;}}renderer.render(scene,camera);});
 }

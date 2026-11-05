@@ -33,7 +33,7 @@ Story: NICU ward link → PICU static page/config → reused Three.js models →
 
 | Check | Evidence |
 | --- | --- |
-| Ward tests | 10 passed: the original seven geometry/search/navigation/provenance tests plus focused selection retaining its button and scroll, focus transfer after show-type, and the supported equipment workspace route |
+| Ward tests | 13 passed: the original seven geometry/search/navigation/provenance tests plus focus/list identity, show-type focus transfer, supported equipment route, delayed history restoration with late scene initialization, unchanged cached-page focus, and unchanged-filter selection clearing |
 | Root tests | 45 passed, 6 skipped (native PostgreSQL unavailable to the repository test harness). No failures after installing the declared locked PGlite test dependency and running with normal temp-directory access |
 | Repository check | Passed: JavaScript syntax, 12 original GLB containers, existing task definitions |
 | Browser rendering | IAB overview, A2 room interior and corridor rendered; final renderer log had no errors or warnings. A deprecated soft-shadow mode was replaced with the vendored module's supported PCF mode |
@@ -56,6 +56,18 @@ Selection updates the existing list buttons' pressed state, preserving the activ
 Browser regression sequence repeated in both ordinary 3D (one canvas) and `?view=list` (zero canvases): press Enter on the A1 pump, verify the pump remains the active/pressed button, press Tab to reach the A1 monitor, and press Enter again to verify monitor focus/selection. In fallback, activate show-type and verify focus reaches the type filter and nine monitors remain. Follow Equipment workspace, verify the Equipment page/title at `/#/equipment`, then use Back and verify the PICU page returns. Actual focused controls are captured in `evidence/keyboard-selection.jpg` and `evidence/keyboard-fallback.jpg`.
 
 `selection.test.mjs` executes the actual list-only entry point in a small DOM fixture which resets focus when a focused node is detached. It covers the selection-handler regression and list identity; native Enter/Tab behavior is verified by the browser sequence above. Root tests and repository check were rerun after these corrections. The shared selector and PCU-local files remain unchanged.
+
+### Browser history restoration
+
+Browsers can restore search/type controls after `pageshow` without sending input events. The page now recomputes results on the next task after `pageshow` or `popstate`, and rereads the controls when the asynchronous scene becomes ready. The count, list and highlight function receive the same result set. Unchanged filters retain their existing buttons and focus; a selection outside the new results is cleared. The canvas description lists the placements actually outlined, providing a textual equivalent of the highlights.
+
+Real IAB Back/Forward regression, 2026-11-05:
+
+1. Filter A1 + IV pump, follow Equipment workspace, verify the Equipment page, then Back: A1/infusion controls, one result (`picu-room-a1-infusion`), one outlined A1 pump, scene ready.
+2. Forward to Equipment, open another PICU history entry, filter B2 + Monitor, then Back to Equipment and Forward into PICU: B2/monitor controls, one result (`picu-room-b2-monitor`), one matching outline. Enter retains focus on that monitor.
+3. Open `?view=list`, filter A1 + IV pump, follow Equipment and Back, then Back to the preceding 3D page and Forward into list mode: A1/infusion controls and exactly one pump in both restorations; zero canvases throughout list mode. Enter retains pump focus.
+
+The observed DOM results are saved in [history-restoration.json](evidence/history-restoration.json); browser renders are in [history-back-3d.jpg](evidence/history-back-3d.jpg) and [history-back-list.jpg](evidence/history-back-list.jpg). The fallback image was captured after the Forward return. No console errors/warnings were recorded. A stopped preview server was restarted before these checks; its stale connection-error tab was replaced with a fresh valid preview tab. The cached-page event case is also covered by the DOM fixture; no claim is made that the browser used its back-forward cache on every navigation.
 
 ![Overview](evidence/overview.jpg)
 
