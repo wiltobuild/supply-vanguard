@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 48,
-  "updatedAt": "2026-11-05T16:31:55.340Z",
+  "revision": 49,
+  "updatedAt": "2026-11-05T16:33:10.249Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -340,6 +340,13 @@
       "command": "submit",
       "agent": "cheich-agent-5",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:33:10.249Z",
+      "taskId": "SV-009",
+      "command": "submit",
+      "agent": "wil-sol-sv009-20261105-c4d8",
+      "owner": null
     }
   ],
   "tasks": [
@@ -586,7 +593,7 @@
     {
       "id": "SV-009",
       "title": "Supply ledger and bin inventory",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-004",
@@ -604,13 +611,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv009-20261105-c4d8",
-        "owner": "wil",
-        "leaseId": "47a0f13e-c3e9-43c2-b229-98cdd8c5835a",
-        "claimedAt": "2026-11-05T16:20:38.929Z",
-        "expiresAt": "2026-11-05T18:31:40.653Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/9",
+      "submittedBy": "wil-sol-sv009-20261105-c4d8",
+      "submittedAt": "2026-11-05T16:33:10.249Z"
     },
     {
       "id": "SV-010",
