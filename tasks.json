@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 129,
-  "updatedAt": "2026-11-05T19:46:57.498Z",
+  "revision": 130,
+  "updatedAt": "2026-11-05T19:51:03.353Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -910,6 +910,13 @@
       "command": "rework",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:51:03.353Z",
+      "taskId": "SV-025",
+      "command": "claim",
+      "agent": "wil-astra-picu-20261105",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1669,7 +1676,7 @@
     {
       "id": "SV-025",
       "title": "Build illustrative pediatric intensive care ward (PICU)",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1706,7 +1713,13 @@
         "No ward or feature merge is authorized by this registration.",
         "Use picu-* stable IDs and route /ward/wards/picu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/picu/."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-astra-picu-20261105",
+        "owner": "wil",
+        "leaseId": "6533fc00-e546-416c-bb54-7756fc6a5a36",
+        "claimedAt": "2026-11-05T19:51:03.353Z",
+        "expiresAt": "2026-11-05T21:51:03.353Z"
+      },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/20",
       "submittedBy": "wil-astra-picu-20261105",
       "submittedAt": "2026-11-05T19:33:53.803Z",
