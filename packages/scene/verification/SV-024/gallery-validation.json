@@ -1,0 +1,12 @@
+{
+  "layout": {
+    "width": 390,
+    "scrollWidth": 390,
+    "images": 15,
+    "canvases": 0,
+    "minimumLinkHeight": 44
+  },
+  "webglUnavailableDownloadLinks": 15,
+  "desktopContactSheet": "asset-gallery.png",
+  "rendererStrategy": "One offscreen renderer creates static images, then disposes its context"
+}

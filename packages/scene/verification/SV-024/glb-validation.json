@@ -1,0 +1,186 @@
+{
+  "validator": "Khronos glTF Validator",
+  "loader": "Three.js GLTFLoader",
+  "assets": [
+    {
+      "id": "neonatal-ventilator",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 26,
+      "sizeMeters": [
+        0.68,
+        1.434,
+        0.7675
+      ]
+    },
+    {
+      "id": "cpap-stand",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 26,
+      "sizeMeters": [
+        0.6267,
+        1.5914,
+        0.7063
+      ]
+    },
+    {
+      "id": "phototherapy-light",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 20,
+      "sizeMeters": [
+        0.61,
+        1.775,
+        0.875
+      ]
+    },
+    {
+      "id": "ultrasound-cart",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 19,
+      "sizeMeters": [
+        0.738,
+        1.565,
+        0.65
+      ]
+    },
+    {
+      "id": "portable-xray",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 19,
+      "sizeMeters": [
+        0.68,
+        1.865,
+        1.1617
+      ]
+    },
+    {
+      "id": "transport-incubator",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 27,
+      "sizeMeters": [
+        0.64,
+        1.2986,
+        1.304
+      ]
+    },
+    {
+      "id": "infant-scale",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 20,
+      "sizeMeters": [
+        0.7607,
+        1.0432,
+        0.5275
+      ]
+    },
+    {
+      "id": "feeding-pump-stand",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 20,
+      "sizeMeters": [
+        0.5449,
+        1.6605,
+        0.6036
+      ]
+    },
+    {
+      "id": "portable-suction",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 24,
+      "sizeMeters": [
+        0.5616,
+        0.9414,
+        0.4484
+      ]
+    },
+    {
+      "id": "resuscitation-cart",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 20,
+      "sizeMeters": [
+        0.9151,
+        1.07,
+        0.547
+      ]
+    },
+    {
+      "id": "milk-refrigerator",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 21,
+      "sizeMeters": [
+        0.64,
+        1.56,
+        0.676
+      ]
+    },
+    {
+      "id": "milk-preparation-counter",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 13,
+      "sizeMeters": [
+        1.32,
+        1.089,
+        0.625
+      ]
+    },
+    {
+      "id": "equipment-charging-station",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 15,
+      "sizeMeters": [
+        0.99,
+        1.51,
+        0.4615
+      ]
+    },
+    {
+      "id": "soiled-equipment-rack",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 15,
+      "sizeMeters": [
+        0.68,
+        1.5214,
+        0.46
+      ]
+    },
+    {
+      "id": "wall-ppe-dispenser",
+      "loaded": true,
+      "errors": 0,
+      "warnings": 0,
+      "info": 14,
+      "sizeMeters": [
+        0.57,
+        0.73,
+        0.1985
+      ]
+    }
+  ]
+}
