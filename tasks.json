@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 44,
-  "updatedAt": "2026-11-05T16:27:53.525Z",
+  "revision": 45,
+  "updatedAt": "2026-11-05T16:30:38.990Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -311,6 +311,13 @@
       "taskId": "SV-006",
       "command": "heartbeat",
       "agent": "cheich-agent-5",
+      "owner": null
+    },
+    {
+      "at": "2026-11-05T16:30:38.990Z",
+      "taskId": "SV-013",
+      "command": "heartbeat",
+      "agent": "wil-sol-sv013-20261105-e6b1",
       "owner": null
     }
   ],
@@ -682,7 +689,7 @@
         "owner": "wil",
         "leaseId": "a55481b7-5e0b-41ce-a43b-fd1a2c6b76ff",
         "claimedAt": "2026-11-05T16:21:06.978Z",
-        "expiresAt": "2026-11-05T18:22:08.242Z"
+        "expiresAt": "2026-11-05T18:30:38.990Z"
       }
     },
     {
