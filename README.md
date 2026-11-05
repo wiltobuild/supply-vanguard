@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 116. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 117. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -18,7 +18,7 @@ Revision 116. Live state is on the task-board branch. Use npm run board -- claim
 | SV-011 Equipment cleaning and maintenance workflows | ready | — | — | SV-006, SV-007 | apps/web/maintenance, services/api/maintenance |
 | SV-012 Audit search and permission-scoped export | claimed | cheich / cheich-agent-9 | 2026-11-05T21:20:35.328Z | SV-006, SV-009 | apps/web/audit, services/api/audit |
 | SV-013 Provider-neutral observation ingestion simulator | done | — | — | SV-001, SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/10) |
-| SV-014 Location confidence and RTLS adapter boundary | claimed | wil / wil-sol-sv014-20261105-resolve | 2026-11-05T21:19:04.250Z | SV-006, SV-013 | services/ingestion/resolution, packages/domain/location |
+| SV-014 Location confidence and RTLS adapter boundary | claimed | wil / wil-sol-sv014-20261105-resolve | 2026-11-05T21:22:55.409Z | SV-006, SV-013 | services/ingestion/resolution, packages/domain/location |
 | SV-015 Validate ward reference geometry | blocked | — | — | SV-002 | packages/scene/references |
 | SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e, tools/benchmarks |
 | SV-017 Deployment and operational readiness | claimed | wil / wil-sol-sv017-20261105-ops | 2026-11-05T21:22:34.140Z | SV-006, SV-013 | ops, .github/workflows |
