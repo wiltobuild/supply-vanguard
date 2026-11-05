@@ -1,8 +1,10 @@
 import * as THREE from 'three';
+import {additionalBuilders} from './additional-models.js';
+import {ADDITIONAL_ASSET_TYPES,DECORATION_PROVENANCE} from './additional-assets.js';
 
 // Original procedural equipment. Representative clinical forms, not manufacturer replicas.
 // Coordinates: meters, Y up, +Z front. Every returned asset has a floor-level origin.
-export const ASSET_TYPES = ['incubator', 'warmer', 'monitor', 'infusion', 'recliner', 'supply-cabinet', 'supply-cart', 'workstation', 'sink', 'stool'];
+export const ASSET_TYPES = ['incubator', 'warmer', 'monitor', 'infusion', 'recliner', 'supply-cabinet', 'supply-cart', 'workstation', 'sink', 'stool', ...ADDITIONAL_ASSET_TYPES];
 const mat = (color, roughness = .55, metalness = 0, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness, metalness, ...extra });
 const M = {
   white: mat('#e8eceb', .48), ivory: mat('#f4f1e7', .64), steel: mat('#aabac0', .28, .72), chrome: mat('#c4d5d8', .22, .8),
@@ -273,7 +275,8 @@ function stool(g) {
   cyl(g, .19, .02, 0, .455, 0, M.dark, 20);
   bar(g, [.04, .43, 0], [.19, .43, .04], .008, M.dark);
 }
-const builders = { incubator, warmer, monitor, infusion, recliner, 'supply-cabinet': cabinet, 'supply-cart': cart, workstation, sink, stool };
+const builders = { incubator, warmer, monitor, infusion, recliner, 'supply-cabinet': cabinet, 'supply-cart': cart, workstation, sink, stool,
+  ...additionalBuilders({M,mat,box,rawbox,cyl,bar,tube,ring,wheel,mobileBase,controlPanel,monitorHead}) };
 // Batch opaque meshes per material, but retain each semantic bin Group for interaction.
 // No addon dependency, canvas, or textures; these geometries export cleanly to GLB.
 function batchOpaque(group) {
@@ -312,6 +315,7 @@ export function createAsset(kind) {
   if (!assetTemplates.has(kind)) {
     const g = new THREE.Group(); g.name = kind;
     g.userData = { assetType: kind, units: 'meters', front: '+Z', provenance: 'Original representative model; equipment make and exact Hopkins placement unverified.' };
+    if(ADDITIONAL_ASSET_TYPES.includes(kind))Object.assign(g.userData,{role:'static-decoration',tracked:false,upAxis:'Y',provenance:DECORATION_PROVENANCE});
     builders[kind](g); batchOpaque(g); assetTemplates.set(kind, g);
   }
   // Object3D.clone duplicates the node hierarchy and userData while retaining shared

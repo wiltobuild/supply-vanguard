@@ -249,13 +249,359 @@
       "pivot": "floor origin",
       "front": "+Z",
       "provenance": "Original representative equipment; make/model unverified."
+    },
+    {
+      "id": "neonatal-ventilator",
+      "label": "Neonatal ventilator",
+      "file": "neonatal-ventilator.glb",
+      "sizeMeters": [
+        0.68,
+        1.434,
+        0.7675
+      ],
+      "boundsMin": [
+        -0.31,
+        0,
+        -0.28
+      ],
+      "triangles": 8044,
+      "bytes": 749456,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "cpap-stand",
+      "label": "CPAP stand",
+      "file": "cpap-stand.glb",
+      "sizeMeters": [
+        0.6267,
+        1.5914,
+        0.7063
+      ],
+      "boundsMin": [
+        -0.3147,
+        0,
+        -0.3113
+      ],
+      "triangles": 6040,
+      "bytes": 519768,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "phototherapy-light",
+      "label": "Phototherapy light",
+      "file": "phototherapy-light.glb",
+      "sizeMeters": [
+        0.61,
+        1.775,
+        0.875
+      ],
+      "boundsMin": [
+        -0.305,
+        0,
+        -0.295
+      ],
+      "triangles": 4940,
+      "bytes": 486092,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "ultrasound-cart",
+      "label": "Portable ultrasound cart",
+      "file": "ultrasound-cart.glb",
+      "sizeMeters": [
+        0.738,
+        1.565,
+        0.65
+      ],
+      "boundsMin": [
+        -0.369,
+        0,
+        -0.325
+      ],
+      "triangles": 14252,
+      "bytes": 1375788,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "portable-xray",
+      "label": "Portable X-ray",
+      "file": "portable-xray.glb",
+      "sizeMeters": [
+        0.68,
+        1.865,
+        1.1617
+      ],
+      "boundsMin": [
+        -0.34,
+        0,
+        -0.5367
+      ],
+      "triangles": 6828,
+      "bytes": 666328,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "transport-incubator",
+      "label": "Transport incubator",
+      "file": "transport-incubator.glb",
+      "sizeMeters": [
+        0.64,
+        1.2986,
+        1.304
+      ],
+      "boundsMin": [
+        -0.32,
+        0,
+        -0.652
+      ],
+      "triangles": 6896,
+      "bytes": 641840,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "infant-scale",
+      "label": "Infant scale",
+      "file": "infant-scale.glb",
+      "sizeMeters": [
+        0.7607,
+        1.0432,
+        0.5275
+      ],
+      "boundsMin": [
+        -0.3804,
+        0,
+        -0.245
+      ],
+      "triangles": 5544,
+      "bytes": 545024,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "feeding-pump-stand",
+      "label": "Feeding-pump stand",
+      "file": "feeding-pump-stand.glb",
+      "sizeMeters": [
+        0.5449,
+        1.6605,
+        0.6036
+      ],
+      "boundsMin": [
+        -0.2429,
+        0,
+        -0.3018
+      ],
+      "triangles": 4976,
+      "bytes": 491536,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "portable-suction",
+      "label": "Portable suction",
+      "file": "portable-suction.glb",
+      "sizeMeters": [
+        0.5616,
+        0.9414,
+        0.4484
+      ],
+      "boundsMin": [
+        -0.25,
+        0,
+        -0.22
+      ],
+      "triangles": 7024,
+      "bytes": 627988,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "resuscitation-cart",
+      "label": "Resuscitation cart",
+      "file": "resuscitation-cart.glb",
+      "sizeMeters": [
+        0.9151,
+        1.07,
+        0.547
+      ],
+      "boundsMin": [
+        -0.4171,
+        0,
+        -0.26
+      ],
+      "triangles": 6192,
+      "bytes": 603044,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "milk-refrigerator",
+      "label": "Breast-milk refrigerator",
+      "file": "milk-refrigerator.glb",
+      "sizeMeters": [
+        0.64,
+        1.56,
+        0.676
+      ],
+      "boundsMin": [
+        -0.32,
+        0,
+        -0.295
+      ],
+      "triangles": 8820,
+      "bytes": 858308,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "milk-preparation-counter",
+      "label": "Milk-preparation counter",
+      "file": "milk-preparation-counter.glb",
+      "sizeMeters": [
+        1.32,
+        1.089,
+        0.625
+      ],
+      "boundsMin": [
+        -0.66,
+        0,
+        -0.3105
+      ],
+      "triangles": 5884,
+      "bytes": 571680,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "equipment-charging-station",
+      "label": "Equipment charging station",
+      "file": "equipment-charging-station.glb",
+      "sizeMeters": [
+        0.99,
+        1.51,
+        0.4615
+      ],
+      "boundsMin": [
+        -0.495,
+        0,
+        -0.2285
+      ],
+      "triangles": 17112,
+      "bytes": 1651000,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "soiled-equipment-rack",
+      "label": "Soiled-equipment rack",
+      "file": "soiled-equipment-rack.glb",
+      "sizeMeters": [
+        0.68,
+        1.5214,
+        0.46
+      ],
+      "boundsMin": [
+        -0.34,
+        0,
+        -0.23
+      ],
+      "triangles": 5504,
+      "bytes": 537064,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
+    },
+    {
+      "id": "wall-ppe-dispenser",
+      "label": "Wall PPE dispenser",
+      "file": "wall-ppe-dispenser.glb",
+      "sizeMeters": [
+        0.57,
+        0.73,
+        0.1985
+      ],
+      "boundsMin": [
+        -0.285,
+        1.05,
+        -0.0175
+      ],
+      "triangles": 4136,
+      "bytes": 388176,
+      "pivot": "floor-reference origin",
+      "front": "+Z",
+      "upAxis": "Y",
+      "role": "static-decoration",
+      "tracked": false,
+      "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
     }
   ],
   "ward": {
     "file": "nicu-ward.glb",
     "bytes": 7942568,
     "cutawayFile": "nicu-ward-cutaway.glb",
-    "cutawayBytes": 7906696
+    "cutawayBytes": 7906696,
+    "snapshotNote": "The two original ward GLBs are preserved baseline snapshots. The live procedural ward includes the fifteen additional decorative models; download those individually."
   },
   "integration": {
     "locations": "locations.json",
@@ -264,6 +610,119 @@
       "supply-sentry:location-select",
       "supply-sentry:inventory-change",
       "supply-sentry:navigation-complete"
-    ]
+    ],
+    "navigationNote": "navigation.json accompanies the preserved baseline ward exports. The live procedural ward adds collision bounds from additionalCollection.placements and each model."
+  },
+  "additionalCollection": {
+    "version": "1.0.0",
+    "source": "../additional-models.js",
+    "placements": [
+      {
+        "kind": "neonatal-ventilator",
+        "roomId": "room-101",
+        "x": 0.55,
+        "z": -4.35,
+        "rotation": 0
+      },
+      {
+        "kind": "cpap-stand",
+        "roomId": "room-102",
+        "x": 5.6,
+        "z": -4.35,
+        "rotation": 0
+      },
+      {
+        "kind": "phototherapy-light",
+        "roomId": "room-104",
+        "x": 0.5,
+        "z": 4.25,
+        "rotation": 3.141592653589793
+      },
+      {
+        "kind": "ultrasound-cart",
+        "roomId": "room-105",
+        "x": 5.6,
+        "z": 4.3,
+        "rotation": 3.141592653589793
+      },
+      {
+        "kind": "portable-xray",
+        "roomId": "room-103",
+        "x": 7.35,
+        "z": -3.7,
+        "rotation": 0
+      },
+      {
+        "kind": "transport-incubator",
+        "roomId": "room-106",
+        "x": 7.35,
+        "z": 3.8,
+        "rotation": 3.141592653589793
+      },
+      {
+        "kind": "infant-scale",
+        "roomId": "room-102",
+        "x": 2.25,
+        "z": -3.65,
+        "rotation": 0
+      },
+      {
+        "kind": "feeding-pump-stand",
+        "roomId": "room-103",
+        "x": 10.55,
+        "z": -4.35,
+        "rotation": 0
+      },
+      {
+        "kind": "portable-suction",
+        "roomId": "room-106",
+        "x": 10.6,
+        "z": 4.35,
+        "rotation": 3.141592653589793
+      },
+      {
+        "kind": "resuscitation-cart",
+        "roomId": "room-104",
+        "x": -2.7,
+        "z": 3.5,
+        "rotation": 3.141592653589793
+      },
+      {
+        "kind": "milk-refrigerator",
+        "roomId": "staff-base",
+        "x": -6.95,
+        "z": -6.4,
+        "rotation": 0
+      },
+      {
+        "kind": "milk-preparation-counter",
+        "roomId": "staff-base",
+        "x": -6.95,
+        "z": -3.6,
+        "rotation": 1.5707963267948966
+      },
+      {
+        "kind": "equipment-charging-station",
+        "roomId": "equipment-store",
+        "x": -8.55,
+        "z": 1.82,
+        "rotation": 0
+      },
+      {
+        "kind": "soiled-equipment-rack",
+        "roomId": "equipment-store",
+        "x": -8.05,
+        "z": 4.35,
+        "rotation": -1.5707963267948966
+      },
+      {
+        "kind": "wall-ppe-dispenser",
+        "roomId": "room-101",
+        "x": -3.412,
+        "z": -2.65,
+        "rotation": 1.5707963267948966
+      }
+    ],
+    "provenance": "Original illustrative static decoration; not tracked inventory. Dimensions, equipment makes and Hopkins placement are unverified. Not for clinical planning."
   }
 }

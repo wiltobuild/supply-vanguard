@@ -1,0 +1,125 @@
+{
+  "browser": "141.0.7390.37",
+  "viewport": {
+    "width": 1200,
+    "height": 800
+  },
+  "deviceScaleFactor": 0.4,
+  "renderer": "SwiftShader software rendering; not a performance benchmark",
+  "webgl": true,
+  "catalogEntries": 25,
+  "newModelsInspected": [
+    "neonatal-ventilator",
+    "cpap-stand",
+    "phototherapy-light",
+    "ultrasound-cart",
+    "portable-xray",
+    "transport-incubator",
+    "infant-scale",
+    "feeding-pump-stand",
+    "portable-suction",
+    "resuscitation-cart",
+    "milk-refrigerator",
+    "milk-preparation-counter",
+    "equipment-charging-station",
+    "soiled-equipment-rack",
+    "wall-ppe-dispenser"
+  ],
+  "decorationInstances": [
+    {
+      "name": "decoration-neonatal-ventilator",
+      "tracked": false,
+      "roomId": "room-101"
+    },
+    {
+      "name": "decoration-cpap-stand",
+      "tracked": false,
+      "roomId": "room-102"
+    },
+    {
+      "name": "decoration-phototherapy-light",
+      "tracked": false,
+      "roomId": "room-104"
+    },
+    {
+      "name": "decoration-ultrasound-cart",
+      "tracked": false,
+      "roomId": "room-105"
+    },
+    {
+      "name": "decoration-portable-xray",
+      "tracked": false,
+      "roomId": "room-103"
+    },
+    {
+      "name": "decoration-transport-incubator",
+      "tracked": false,
+      "roomId": "room-106"
+    },
+    {
+      "name": "decoration-infant-scale",
+      "tracked": false,
+      "roomId": "room-102"
+    },
+    {
+      "name": "decoration-feeding-pump-stand",
+      "tracked": false,
+      "roomId": "room-103"
+    },
+    {
+      "name": "decoration-portable-suction",
+      "tracked": false,
+      "roomId": "room-106"
+    },
+    {
+      "name": "decoration-resuscitation-cart",
+      "tracked": false,
+      "roomId": "room-104"
+    },
+    {
+      "name": "decoration-milk-refrigerator",
+      "tracked": false,
+      "roomId": "staff-base"
+    },
+    {
+      "name": "decoration-milk-preparation-counter",
+      "tracked": false,
+      "roomId": "staff-base"
+    },
+    {
+      "name": "decoration-equipment-charging-station",
+      "tracked": false,
+      "roomId": "equipment-store"
+    },
+    {
+      "name": "decoration-soiled-equipment-rack",
+      "tracked": false,
+      "roomId": "equipment-store"
+    },
+    {
+      "name": "decoration-wall-ppe-dispenser",
+      "tracked": false,
+      "roomId": "room-101"
+    }
+  ],
+  "completedRoute": {
+    "events": [
+      {
+        "destination": "Equipment staging"
+      }
+    ],
+    "state": {
+      "mode": "walk",
+      "assetKind": null,
+      "selected": "EQ-A",
+      "camera": [
+        -9.600000000000001,
+        1.63,
+        4.6
+      ],
+      "routeRemaining": 0
+    }
+  },
+  "galleryFallbackDownloads": 15,
+  "errors": []
+}
