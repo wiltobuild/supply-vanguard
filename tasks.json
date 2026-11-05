@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 27,
-  "updatedAt": "2026-11-05T15:06:19.933Z",
+  "revision": 28,
+  "updatedAt": "2026-11-05T15:06:34.101Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -192,6 +192,13 @@
       "command": "complete",
       "agent": "wil-sol-sv005-20261105-a7f3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T15:06:34.101Z",
+      "taskId": "SV-005",
+      "command": "claim",
+      "agent": "wil-sol-sv005-20261105-a7f3",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -336,7 +343,7 @@
     {
       "id": "SV-005",
       "title": "Authentication and role authorization",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-004"
@@ -352,7 +359,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-sol-sv005-20261105-a7f3",
+        "owner": "wil",
+        "leaseId": "041ac1d2-5268-4e52-a43d-7dd63d7e9098",
+        "claimedAt": "2026-11-05T15:06:34.101Z",
+        "expiresAt": "2026-11-05T17:06:34.101Z"
+      }
     },
     {
       "id": "SV-006",
