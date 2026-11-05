@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 121,
-  "updatedAt": "2026-11-05T19:25:36.731Z",
+  "revision": 122,
+  "updatedAt": "2026-11-05T19:26:21.612Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -854,6 +854,13 @@
       "command": "submit",
       "agent": "cheich-agent-9",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:26:21.612Z",
+      "taskId": "SV-014",
+      "command": "submit",
+      "agent": "wil-sol-sv014-20261105-resolve",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1255,7 +1262,7 @@
     {
       "id": "SV-014",
       "title": "Location confidence and RTLS adapter boundary",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1273,13 +1280,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv014-20261105-resolve",
-        "owner": "wil",
-        "leaseId": "74ecded6-3ec4-4683-a743-24e8d7ffe6a2",
-        "claimedAt": "2026-11-05T19:02:23.716Z",
-        "expiresAt": "2026-11-05T21:22:55.409Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/18",
+      "submittedBy": "wil-sol-sv014-20261105-resolve",
+      "submittedAt": "2026-11-05T19:26:21.612Z"
     },
     {
       "id": "SV-015",
