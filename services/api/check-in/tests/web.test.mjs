@@ -49,6 +49,38 @@ function camera(overrides={}) {
  const environment={isSecureContext:true,BarcodeDetector:Detector,navigator:{mediaDevices:{async getUserMedia(){asked++;return {getTracks:()=>[{stop(){stopped++;}}]};}}},setTimeout:()=>0,clearTimeout(){},...overrides};
  return {video,labels,environment,get asked(){return asked;},get stopped(){return stopped;}};
 }
+async function prefixedCameraUI(post) {
+ const c=camera(),u=await ui(post,c.environment);
+ u.root.querySelector('video').play=async()=>{};
+ u.fill();u.id.value='SV1:EQ-001';u.source.value='qr';
+ const scan=async(value='SV1:EQ-001')=>{c.labels.splice(0,c.labels.length,{rawValue:value,format:'qr_code'});u.button('Start camera').click();await flush();};
+ return {...u,scan};
+}
+test('equivalent prefixed camera rescan after success retains the saved attempt',async()=>{
+ const u=await prefixedCameraUI();
+ try {
+  u.submit();await flush();assert.equal(u.calls.length,1);assert.equal(JSON.parse(u.calls[0].body).equipmentId,'EQ-001');
+  await u.scan();assert.equal(u.id.value,'EQ-001');assert.equal(u.source.value,'qr');assert.equal(u.calls.length,1,'camera scan requires explicit confirmation');
+  u.submit();await flush();assert.equal(u.calls.length,1,'equivalent normalized equipment/location/source must not create another POST');assert.match(u.root.textContent,/already saved/);
+ } finally {u.view.destroy();}
+});
+test('equivalent prefixed camera rescan after interrupted response preserves the retry key and observed time',async()=>{
+ let interrupted=true;
+ const u=await prefixedCameraUI(async(_,options)=>{if(interrupted){interrupted=false;throw Error('response lost after possible commit');}return saved(JSON.parse(options.body));});
+ try {
+  u.submit();await flush();assert.equal(u.calls.length,1);assert.match(u.root.textContent,/may have reached the server/);
+  const original=u.calls[0];await u.scan();assert.equal(u.id.value,'EQ-001');assert.equal(u.calls.length,1);
+  u.submit();await flush();assert.equal(u.calls.length,2);assert.equal(u.calls[1].headers['Idempotency-Key'],original.headers['Idempotency-Key']);assert.equal(u.calls[1].body,original.body,'normalized target, source, location and observedAt remain unchanged');
+ } finally {u.view.destroy();}
+});
+test('camera rescan of a changed equipment target creates a new attempt on confirmation',async()=>{
+ const u=await prefixedCameraUI();
+ try {
+  u.submit();await flush();const original=u.calls[0];
+  await u.scan('SV1:EQ-002');assert.equal(u.id.value,'EQ-002');assert.equal(u.calls.length,1);
+  u.submit();await flush();assert.equal(u.calls.length,2);assert.equal(JSON.parse(u.calls[1].body).equipmentId,'EQ-002');assert.notEqual(u.calls[1].headers['Idempotency-Key'],original.headers['Idempotency-Key']);
+ } finally {u.view.destroy();}
+});
 test('camera permission is requested only on start; denial leaves manual fallback available',async()=>{
  const c=camera({navigator:{mediaDevices:{async getUserMedia(){throw new Error('denied');}}}});let message='';const scanner=createScanner({video:c.video,environment:c.environment,onScan(){assert.fail();},onError:m=>message=m});assert.equal(c.video.srcObject,null);await scanner.start();assert.match(message,/denied or unavailable/);assert.equal(c.video.hidden,true);
 });

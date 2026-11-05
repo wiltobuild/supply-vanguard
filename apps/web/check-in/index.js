@@ -30,7 +30,7 @@ export function mountCheckIn(root,{organizationId,request,onCommitted=()=>{},env
  const showError=message=>{error.textContent=message;};
  const scanner=createScanner({video,environment,onError:showError,onScan:(value,kind)=>{
   if(busy||disposed)return;
-  if(id.value!==value||source.value!==kind)attempt=null;
+  // Submission compares normalized fields; an equivalent prefixed rescan must retain its retry key.
   id.value=value;source.value=kind;status.textContent='Label read. Choose the observed location, then confirm check-in.';id.focus();
  }});
  const edit=()=>{if(!busy){status.textContent='Review the equipment and observed location before confirming.';id.removeAttribute('aria-invalid');location.removeAttribute('aria-invalid');showError('');}};
