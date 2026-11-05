@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 160,
-  "updatedAt": "2026-11-05T23:29:33.536Z",
+  "revision": 161,
+  "updatedAt": "2026-11-05T23:30:06.183Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1127,6 +1127,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T23:30:06.183Z",
+      "taskId": "SV-007",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1335,7 +1342,7 @@
     {
       "id": "SV-007",
       "title": "Connect web client to shared equipment API",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-003",
@@ -1357,7 +1364,14 @@
       "submittedBy": "wil-sol-sv007-20261105-9f2a",
       "submittedAt": "2026-11-05T23:10:56.056Z",
       "blockedReason": null,
-      "reviewNote": "Resolve independently reviewed stale synchronization/freshness behavior and align task-local API fixtures with PR #12 receipt migration before combined-green claims."
+      "reviewNote": "Resolve independently reviewed stale synchronization/freshness behavior and align task-local API fixtures with PR #12 receipt migration before combined-green claims.",
+      "completedAt": "2026-11-05T23:30:06.183Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/13",
+        "mergeCommit": "94d2f97978ee0e0d13dbfe1918785111481e7058",
+        "mergedAt": "2026-11-05T23:29:42Z"
+      }
     },
     {
       "id": "SV-008",
