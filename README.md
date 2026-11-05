@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 52. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 53. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -24,3 +24,6 @@ Revision 52. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-017 Deployment and operational readiness | ready | — | — | SV-006, SV-013 | ops, .github/workflows |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
 | SV-019 Repair auth bootstrap and clean test setup | claimed | wil / wil-vale-sv019-20261105-authfix | 2026-11-05T18:41:14.233Z | SV-005 | services/api/db bootstrap/seed, task-specific auth tests/dependency wiring, root package/test-loader and CI changes required for the two regressions only |
+| SV-020 Requests and atomic item assignments | ready | — | — | SV-006 | packages/domain/requests, services/api/requests |
+| SV-021 Independent stacked equipment holds | ready | — | — | SV-006, SV-020 | packages/domain/holds, services/api/holds, Task-local assignment-eligibility integration |
+| SV-022 Partial fulfillment and safe returns | ready | — | — | SV-020, SV-021 | Task-local request fulfillment lifecycle, Task-local return lifecycle integration |

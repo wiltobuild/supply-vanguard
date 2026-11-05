@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 52,
-  "updatedAt": "2026-11-05T16:41:14.233Z",
+  "revision": 53,
+  "updatedAt": "2026-11-05T16:48:38.330Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -368,6 +368,14 @@
       "command": "heartbeat",
       "agent": "wil-vale-sv019-20261105-authfix",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:48:38.330Z",
+      "taskId": "SV-020,SV-021,SV-022",
+      "command": "migration-add-tasks",
+      "agent": "wil-sol-board-coordinator-20261105-a7f3",
+      "owner": null,
+      "reason": "Explicitly coordinated migration for the user's 2026-11-05 request to add multi-item requests/atomic assignment, independently stacked holds, and partial fulfillment/safe returns. Scope is limited to the pasted requirements; full Claude artifact details remain unverified. No existing task, dependency, claim, lease, history or evidence is changed."
     }
   ],
   "tasks": [
@@ -882,6 +890,98 @@
         "claimedAt": "2026-11-05T16:30:45.088Z",
         "expiresAt": "2026-11-05T18:41:14.233Z"
       }
+    },
+    {
+      "id": "SV-020",
+      "title": "Requests and atomic item assignments",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-006"
+      ],
+      "scope": [
+        "packages/domain/requests",
+        "services/api/requests"
+      ],
+      "acceptance": [
+        "A request contains several items. When two coordinators concurrently claim the same item, exactly one wins (user-referenced PRD test 1).",
+        "Transactions preserve the existing tenant, audit and version boundaries from the implementation plan."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Deterministic native PostgreSQL multi-session exactly-one-winner test"
+      ],
+      "sourceNotes": [
+        "Criteria come from the user's 2026-11-05 pasted request (message Sentinel_2350f562f310819180941f4a4abf751f), including the explicitly referenced PRD test numbers.",
+        "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
+        "Continue using the existing generated NICU and assets; additive assets are allowed."
+      ],
+      "coordinationNotes": [
+        "Cheich offered to take this first task after SV-006 merges. This migration does not claim or assign the task on his behalf.",
+        "SV-007 remains unchanged and may run alongside SV-020 after its existing dependencies complete."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-021",
+      "title": "Independent stacked equipment holds",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-006",
+        "SV-020"
+      ],
+      "scope": [
+        "packages/domain/holds",
+        "services/api/holds",
+        "Task-local assignment-eligibility integration"
+      ],
+      "acceptance": [
+        "Dirty, fault, maintenance and unknown holds stack independently. Any active hold blocks assignment. Only the matching role can clear its own hold (user-referenced PRD test 2).",
+        "Do not invent role names or administrator exceptions while full artifact details remain unverified."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Stacked-hold and role-isolation tests",
+        "Transactional assignment-blocking tests"
+      ],
+      "sourceNotes": [
+        "Criteria come from the user's 2026-11-05 pasted request (message Sentinel_2350f562f310819180941f4a4abf751f), including the explicitly referenced PRD test numbers.",
+        "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
+        "Continue using the existing generated NICU and assets; additive assets are allowed."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-022",
+      "title": "Partial fulfillment and safe returns",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-020",
+        "SV-021"
+      ],
+      "scope": [
+        "Task-local request fulfillment lifecycle",
+        "Task-local return lifecycle integration"
+      ],
+      "acceptance": [
+        "Request three items, deliver two, cancel the rest, return one dirty and report one missing (user-referenced PRD test 4). Cancelling must never make dispatched equipment available.",
+        "Preserve per-item state and history and active holds during cancellation and returns. Use synthetic data only."
+      ],
+      "verification": [
+        "npm test",
+        "npm run check",
+        "Complete deterministic user scenario, including no dispatched asset becoming available on cancellation"
+      ],
+      "sourceNotes": [
+        "Criteria come from the user's 2026-11-05 pasted request (message Sentinel_2350f562f310819180941f4a4abf751f), including the explicitly referenced PRD test numbers.",
+        "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
+        "Continue using the existing generated NICU and assets; additive assets are allowed."
+      ],
+      "claim": null
     }
   ]
 }
