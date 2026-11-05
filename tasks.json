@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 124,
-  "updatedAt": "2026-11-05T19:30:54.665Z",
+  "revision": 125,
+  "updatedAt": "2026-11-05T19:33:14.095Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -875,6 +875,13 @@
       "command": "heartbeat",
       "agent": "wil-astra-picu-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:33:14.095Z",
+      "taskId": "SV-014",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1276,7 +1283,7 @@
     {
       "id": "SV-014",
       "title": "Location confidence and RTLS adapter boundary",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1297,7 +1304,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/18",
       "submittedBy": "wil-sol-sv014-20261105-resolve",
-      "submittedAt": "2026-11-05T19:26:21.612Z"
+      "submittedAt": "2026-11-05T19:26:21.612Z",
+      "completedAt": "2026-11-05T19:33:14.095Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/18",
+        "mergeCommit": "80c85883044d07a6b79b89d31be2e4fffd0610c9",
+        "mergedAt": "2026-11-05T19:32:56Z"
+      }
     },
     {
       "id": "SV-015",
