@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 104,
-  "updatedAt": "2026-11-05T19:04:52.990Z",
+  "revision": 105,
+  "updatedAt": "2026-11-05T19:06:25.779Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -735,6 +735,13 @@
       "command": "claim",
       "agent": "wil-astra-assets-20261105",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-05T19:06:25.779Z",
+      "taskId": "SV-023",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1386,7 +1393,7 @@
     {
       "id": "SV-023",
       "title": "Repair equipment replay and concurrency",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -1424,7 +1431,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/12",
       "submittedBy": "wil-vale-sv023-20261105-receipts-a81f",
-      "submittedAt": "2026-11-05T17:21:38.002Z"
+      "submittedAt": "2026-11-05T17:21:38.002Z",
+      "completedAt": "2026-11-05T19:06:25.779Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/12",
+        "mergeCommit": "2228deff7c3481919bd37d8ce47845c76d0fc869",
+        "mergedAt": "2026-11-05T19:06:13Z"
+      }
     },
     {
       "id": "SV-024",
