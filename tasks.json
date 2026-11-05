@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 127,
-  "updatedAt": "2026-11-05T19:34:46.808Z",
+  "revision": 128,
+  "updatedAt": "2026-11-05T19:46:29.846Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -896,6 +896,13 @@
       "command": "submit",
       "agent": "wil-astra-ward-two-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T19:46:29.846Z",
+      "taskId": "SV-025",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1655,7 +1662,7 @@
     {
       "id": "SV-025",
       "title": "Build illustrative pediatric intensive care ward (PICU)",
-      "status": "review",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1695,7 +1702,9 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/20",
       "submittedBy": "wil-astra-picu-20261105",
-      "submittedAt": "2026-11-05T19:33:53.803Z"
+      "submittedAt": "2026-11-05T19:33:53.803Z",
+      "blockedReason": null,
+      "reviewNote": "Independent exact-head browser review of PR20 8059876: keyboard Enter selection removes the focused list button and leaves document.activeElement=BODY in both 3D and zero-canvas list mode; preserve focus and add keyboard regression. Header Equipment workspace href /#ward is unrecognized and opens Department workspace; use /#/equipment and verify navigation/Back. Review https://github.com/wiltobuild/supply-vanguard/pull/20#pullrequestreview-5791058503. Original PICU owner should normally reclaim existing branch; preserve PCU independence, source provenance and asset PR16 index hunks."
     },
     {
       "id": "SV-026",
