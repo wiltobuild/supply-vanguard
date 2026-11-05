@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 36,
-  "updatedAt": "2026-11-05T15:18:04.069Z",
+  "revision": 37,
+  "updatedAt": "2026-11-05T16:16:58.194Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -255,6 +255,13 @@
       "command": "submit",
       "agent": "wil-sol-sv005-20261105-a7f3",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:16:58.194Z",
+      "taskId": "SV-005",
+      "command": "complete",
+      "agent": "wil-sol-merge-verifier-20261105-a7f3",
+      "owner": null
     }
   ],
   "tasks": [
@@ -399,7 +406,7 @@
     {
       "id": "SV-005",
       "title": "Authentication and role authorization",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-004"
@@ -418,7 +425,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/7",
       "submittedBy": "wil-sol-sv005-20261105-a7f3",
-      "submittedAt": "2026-11-05T15:18:04.069Z"
+      "submittedAt": "2026-11-05T15:18:04.069Z",
+      "completedAt": "2026-11-05T16:16:58.194Z",
+      "reviewedBy": "wil-sol-merge-verifier-20261105-a7f3",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/7",
+        "mergeCommit": "a4c9517e32b57b4865843c8d2000e1cff78e797f",
+        "mergedAt": "2026-11-05T16:10:03Z"
+      }
     },
     {
       "id": "SV-006",
