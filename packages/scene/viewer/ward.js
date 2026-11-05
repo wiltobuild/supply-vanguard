@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {createAsset} from './models.js';
 import {ROOMS,INITIAL_LOCATIONS} from './data.js';
+import {ADDITIONAL_PLACEMENTS,DECORATION_PROVENANCE} from './additional-assets.js';
 export function createWard(){
  const root=new THREE.Group();root.name='SupplySentry_NICU_Reference_Section';root.userData={units:'meters',accuracy:'Inferred section layout. See manifest.json.'};
  const walls=[],ceilings=[],obstacles=[],locationObjects=new Map(),assetInstances=[];
@@ -75,6 +76,14 @@ export function createWard(){
  // Corridor wall protectors, doorway plaques and distributed charting ledges.
  for(const r of ROOMS){box('room_plaque',.25,.18,.04,r.doorX-.9,1.5,r.side*1.41,new THREE.MeshStandardMaterial({color:r.number?0x628b83:0xb6a565}));}
  for(const s of [-1,1])for(const x of [4.6,9.6]){box('charting_ledge',1.05,.07,.32,x,.99,s*1.22,mats.oak);barrier(x,s*1.22,1.05,.32);}
+ // Static illustrative additions are deliberately separate from location and equipment identity maps.
+ for(const p of ADDITIONAL_PLACEMENTS){
+  const a=asset(p.kind,p.x,p.z,p.rotation);a.name=`decoration-${p.kind}`;
+  Object.assign(a.userData,{role:'static-decoration',tracked:false,roomId:p.roomId,provenance:DECORATION_PROVENANCE});
+  a.updateMatrixWorld(true);const bounds=new THREE.Box3().setFromObject(a),size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
+  // Include wall-mounted case footprint too: walking underneath would intersect a person's torso.
+  barrier(center.x,center.z,size.x,size.z);
+ }
  root.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
  function setCutaway(on){for(const w of walls)w.scale.y=on?.38:1;for(const c of ceilings)c.visible=!on;}
  setCutaway(true);
