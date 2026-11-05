@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 71,
-  "updatedAt": "2026-11-05T17:20:10.155Z",
+  "revision": 72,
+  "updatedAt": "2026-11-05T17:21:38.002Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -502,6 +502,13 @@
       "taskId": "SV-007",
       "command": "heartbeat",
       "agent": "wil-sol-sv007-20261105-9f2a",
+      "owner": null
+    },
+    {
+      "at": "2026-11-05T17:21:38.002Z",
+      "taskId": "SV-023",
+      "command": "submit",
+      "agent": "wil-vale-sv023-20261105-receipts-a81f",
       "owner": null
     }
   ],
@@ -1131,7 +1138,7 @@
     {
       "id": "SV-023",
       "title": "Repair equipment replay and concurrency",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -1166,13 +1173,10 @@
         "Keep the existing generated NICU and assets in use; additive assets are allowed.",
         "This migration does not claim or assign SV-023 or SV-020, and leaves the SV-019 Library materialization stop intact."
       ],
-      "claim": {
-        "agent": "wil-vale-sv023-20261105-receipts-a81f",
-        "owner": "wil",
-        "leaseId": "4392e65b-ae15-4c43-b4e4-77b5f25ee814",
-        "claimedAt": "2026-11-05T17:04:16.689Z",
-        "expiresAt": "2026-11-05T19:19:09.473Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/12",
+      "submittedBy": "wil-vale-sv023-20261105-receipts-a81f",
+      "submittedAt": "2026-11-05T17:21:38.002Z"
     }
   ]
 }

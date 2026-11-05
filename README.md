@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 71. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 72. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -27,4 +27,4 @@ Revision 71. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-020 Requests and atomic item assignments | review | — | — | SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/11) |
 | SV-021 Independent stacked equipment holds | ready | — | — | SV-006, SV-020 | packages/domain/holds, services/api/holds, Task-local assignment-eligibility integration |
 | SV-022 Partial fulfillment and safe returns | ready | — | — | SV-020, SV-021 | Task-local request fulfillment lifecycle, Task-local return lifecycle integration |
-| SV-023 Repair equipment replay and concurrency | claimed | wil / wil-vale-sv023-20261105-receipts-a81f | 2026-11-05T19:19:09.473Z | SV-006 | services/api/equipment, services/api/equipment task-local migrations, tests and documentation only |
+| SV-023 Repair equipment replay and concurrency | review | — | — | SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/12) |
