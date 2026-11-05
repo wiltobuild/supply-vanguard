@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 60,
-  "updatedAt": "2026-11-05T17:01:02.155Z",
+  "revision": 61,
+  "updatedAt": "2026-11-05T17:04:16.689Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -426,6 +426,13 @@
       "agent": "wil-sol-board-coordinator-20261105-a7f3",
       "owner": null,
       "reason": "Explicitly coordinated follow-up for the user-requested operator replay behavior in already-merged PR #8 and the independently reproduced native PostgreSQL observation locking regression. Only a new task is added; existing tasks, claims, leases, dependencies, history and merge evidence remain unchanged. No fix completion or new merge authority is implied."
+    },
+    {
+      "at": "2026-11-05T17:04:16.689Z",
+      "taskId": "SV-023",
+      "command": "claim",
+      "agent": "wil-vale-sv023-20261105-receipts-a81f",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1045,7 +1052,7 @@
     {
       "id": "SV-023",
       "title": "Repair equipment replay and concurrency",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-006"
@@ -1080,7 +1087,13 @@
         "Keep the existing generated NICU and assets in use; additive assets are allowed.",
         "This migration does not claim or assign SV-023 or SV-020, and leaves the SV-019 Library materialization stop intact."
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-vale-sv023-20261105-receipts-a81f",
+        "owner": "wil",
+        "leaseId": "4392e65b-ae15-4c43-b4e4-77b5f25ee814",
+        "claimedAt": "2026-11-05T17:04:16.689Z",
+        "expiresAt": "2026-11-05T19:04:16.689Z"
+      }
     }
   ]
 }
