@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 56,
-  "updatedAt": "2026-11-05T16:56:30.794Z",
+  "revision": 57,
+  "updatedAt": "2026-11-05T16:58:10.620Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -397,6 +397,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv009-20261105-c4d8",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:58:10.620Z",
+      "taskId": "SV-006",
+      "command": "complete",
+      "agent": "wil-vale-merge-verifier-sv006-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -572,7 +579,7 @@
     {
       "id": "SV-006",
       "title": "Equipment API and immutable audit transactions",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -593,7 +600,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/8",
       "submittedBy": "cheich-agent-5",
-      "submittedAt": "2026-11-05T16:31:55.340Z"
+      "submittedAt": "2026-11-05T16:31:55.340Z",
+      "completedAt": "2026-11-05T16:58:10.620Z",
+      "reviewedBy": "wil-vale-merge-verifier-sv006-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/8",
+        "mergeCommit": "149f62a26e3fba004b1f5ac776c64b4193b9e8f0",
+        "mergedAt": "2026-11-05T16:54:14Z"
+      }
     },
     {
       "id": "SV-007",
