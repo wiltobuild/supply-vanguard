@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 23,
-  "updatedAt": "2026-11-05T13:06:38.644Z",
+  "revision": 24,
+  "updatedAt": "2026-11-05T15:05:36.660Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -164,6 +164,13 @@
       "command": "submit",
       "agent": "cheich-agent-4",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T15:05:36.660Z",
+      "taskId": "SV-001",
+      "command": "complete",
+      "agent": "wil-sol-sv005-20261105-a7f3",
+      "owner": null
     }
   ],
   "tasks": [
@@ -192,7 +199,7 @@
     {
       "id": "SV-001",
       "title": "Define equipment and event contracts",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -209,7 +216,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/2",
       "submittedBy": "cheich-agent-1",
-      "submittedAt": "2026-11-05T09:15:25.569Z"
+      "submittedAt": "2026-11-05T09:15:25.569Z",
+      "completedAt": "2026-11-05T15:05:36.660Z",
+      "reviewedBy": "wil-sol-sv005-20261105-a7f3",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/2",
+        "mergeCommit": "70956467bb4ef85354a6d95eb51b0f3f839ed164",
+        "mergedAt": "2026-11-05T14:52:29Z"
+      }
     },
     {
       "id": "SV-002",
