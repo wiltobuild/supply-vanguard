@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 142,
-  "updatedAt": "2026-11-05T20:20:43.016Z",
+  "revision": 143,
+  "updatedAt": "2026-11-05T20:23:32.659Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1001,6 +1001,13 @@
       "command": "heartbeat",
       "agent": "wil-astra-ward-two-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T20:23:32.659Z",
+      "taskId": "SV-026",
+      "command": "submit",
+      "agent": "wil-astra-ward-two-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1807,7 +1814,7 @@
     {
       "id": "SV-026",
       "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1843,16 +1850,10 @@
         "No ward or feature merge is authorized by this registration.",
         "Use pcu-* stable IDs and route /ward/wards/pcu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/pcu/."
       ],
-      "claim": {
-        "agent": "wil-astra-ward-two-20261105",
-        "owner": "wil",
-        "leaseId": "c169d175-cbb4-446e-a59c-133978c36d9a",
-        "claimedAt": "2026-11-05T20:13:08.604Z",
-        "expiresAt": "2026-11-05T22:20:43.016Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/21",
       "submittedBy": "wil-astra-ward-two-20261105",
-      "submittedAt": "2026-11-05T20:04:27.211Z",
+      "submittedAt": "2026-11-05T20:23:32.659Z",
       "blockedReason": null,
       "reviewNote": "Repaired head47ee00f resolves original focus loss;7wardtests andCIpass, independent Enter/Tab/Enter retains focused pump/monitor in3D andzero-canvaslistmode. New Back/history mismatch remains: restoreIVpumps, listmode showsall26 includingmonitors/carts; in3Dafterready summarysays9but liststill26. Reconcile restoredcontrols,list,count,highlight consistently with browserBackregression inbothmodes, preservingselectionfocus. OriginalPCUowner shouldreclaim normally onexistingbranch; keepdraft. PRmanager exact-head review links document repro; no merge/completion performed."
     }
