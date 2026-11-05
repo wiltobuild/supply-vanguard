@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 10,
-  "updatedAt": "2026-11-05T09:15:22.556Z",
+  "revision": 11,
+  "updatedAt": "2026-11-05T09:15:25.569Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -73,6 +73,13 @@
       "command": "heartbeat",
       "agent": "cheich-agent-1",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T09:15:25.569Z",
+      "taskId": "SV-001",
+      "command": "submit",
+      "agent": "cheich-agent-1",
+      "owner": null
     }
   ],
   "tasks": [
@@ -101,7 +108,7 @@
     {
       "id": "SV-001",
       "title": "Define equipment and event contracts",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -115,13 +122,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "cheich-agent-1",
-        "owner": "cheich",
-        "leaseId": "1e338bd3-b411-493d-9928-2e90c9cc7c1d",
-        "claimedAt": "2026-11-05T08:33:29.597Z",
-        "expiresAt": "2026-11-05T11:15:22.556Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/2",
+      "submittedBy": "cheich-agent-1",
+      "submittedAt": "2026-11-05T09:15:25.569Z"
     },
     {
       "id": "SV-002",
