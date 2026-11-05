@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 88,
-  "updatedAt": "2026-11-05T18:36:16.388Z",
+  "revision": 89,
+  "updatedAt": "2026-11-05T18:37:46.923Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -622,6 +622,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T18:37:46.923Z",
+      "taskId": "SV-008",
+      "command": "submit",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -855,7 +862,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -873,16 +880,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "7a9c2f84-b51c-4989-9753-dbaf6db5e45f",
-        "claimedAt": "2026-11-05T18:33:47.465Z",
-        "expiresAt": "2026-11-05T20:36:16.388Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
-      "submittedAt": "2026-11-05T18:13:32.155Z",
+      "submittedAt": "2026-11-05T18:37:46.923Z",
       "blockedReason": null,
       "reviewNote": "Exact-head review ea5029774c06f838a42ea00e92811e463a446e6c: camera onScan compares raw SV1:EQ-001 text with normalized EQ-001 and eagerly clears attempt, so an equivalent prefixed QR rescan discards successful or uncertain-response retry keys. Remove eager invalidation, retain normalized submit comparison, and add deterministic successful/interrupted equivalent-prefixed-rescan regressions plus changed-target coverage."
     },
