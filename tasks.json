@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 93,
-  "updatedAt": "2026-11-05T18:56:26.402Z",
+  "revision": 94,
+  "updatedAt": "2026-11-05T18:57:08.811Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -657,6 +657,13 @@
       "taskId": "SV-025",
       "command": "claim",
       "agent": "wil-astra-picu-20261105",
+      "owner": "wil"
+    },
+    {
+      "at": "2026-11-05T18:57:08.811Z",
+      "taskId": "SV-026",
+      "command": "claim",
+      "agent": "wil-astra-ward-two-20261105",
       "owner": "wil"
     }
   ],
@@ -1420,7 +1427,7 @@
     {
       "id": "SV-026",
       "title": "Build illustrative pediatric cardiac step-down ward (PCU)",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-002"
@@ -1456,7 +1463,13 @@
         "No ward or feature merge is authorized by this registration.",
         "Use pcu-* stable IDs and route /ward/wards/pcu/index.html. Keep ward implementation isolated under packages/scene/viewer/wards/pcu/."
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-astra-ward-two-20261105",
+        "owner": "wil",
+        "leaseId": "33687aba-f104-4c0b-918e-7bfc27cebaf8",
+        "claimedAt": "2026-11-05T18:57:08.811Z",
+        "expiresAt": "2026-11-05T20:57:08.811Z"
+      }
     }
   ]
 }
