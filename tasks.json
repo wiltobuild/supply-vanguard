@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 22,
-  "updatedAt": "2026-11-05T13:06:31.222Z",
+  "revision": 23,
+  "updatedAt": "2026-11-05T13:06:38.644Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -157,6 +157,13 @@
       "command": "heartbeat",
       "agent": "cheich-agent-4",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T13:06:38.644Z",
+      "taskId": "SV-003",
+      "command": "submit",
+      "agent": "cheich-agent-4",
+      "owner": null
     }
   ],
   "tasks": [
@@ -229,7 +236,7 @@
     {
       "id": "SV-003",
       "title": "Accessible equipment workflows and fallback",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [],
       "scope": [
@@ -243,13 +250,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "cheich-agent-4",
-        "owner": "cheich",
-        "leaseId": "f0715e5f-44d9-46d1-b820-1b16ba0dcdc8",
-        "claimedAt": "2026-11-05T13:00:13.644Z",
-        "expiresAt": "2026-11-05T15:06:31.222Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/5",
+      "submittedBy": "cheich-agent-4",
+      "submittedAt": "2026-11-05T13:06:38.644Z"
     },
     {
       "id": "SV-004",
