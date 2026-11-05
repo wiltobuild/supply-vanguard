@@ -6,16 +6,16 @@ import {Readable} from 'node:stream';
 import {database,sql} from './database.mjs';
 import {createAuthorization} from '../../auth/index.mjs';
 import {createLocalIdentityProvider} from '../../auth/local-identity.mjs';
-import {createEquipmentHandler} from '../../equipment/routes.mjs';
-import {createCheckInHandler} from '../routes.mjs';
+import {createCheckInHost} from '../host.mjs';
 const A='00000000-0000-4000-8000-000000000001',B='00000000-0000-4000-8000-000000000002';
 const users={operator:'00000000-0000-4000-8000-000000000901',other:'00000000-0000-4000-8000-000000000902',viewer:'00000000-0000-4000-8000-000000000903',outsider:'00000000-0000-4000-8000-000000000904'};
-let db,server,base,auth,dispatch;const identity=createLocalIdentityProvider({mode:'test'}),tokens={};
+let db,server,base,auth,dispatch,host;const identity=createLocalIdentityProvider({mode:'test'}),tokens={};
 // In-process HTTP request/response streams still invoke the real route, authorization and SQL.
 // Set CHECK_IN_HTTP=network only in an environment with authorized loopback socket access.
 async function http(url,options={}) {
  if(process.env.CHECK_IN_HTTP==='network')return fetch(url,options);
- const req=Readable.from(options.body===undefined?[]:[Buffer.from(options.body)]);
+ const bytes=options.body===undefined?null:Buffer.from(options.body);
+ const req=Readable.from(bytes===null?[]:[bytes.subarray(0,7),bytes.subarray(7)]);
  req.url=new URL(url).pathname;req.method=options.method||'GET';req.headers=Object.fromEntries(Object.entries(options.headers||{}).map(([k,v])=>[k.toLowerCase(),v]));req.socket={remoteAddress:'127.0.0.1'};
  let status,headers,response;const res={writeHead(s,h){status=s;headers=h;},end(data){response=new Response(data,{status,headers});}};
  await dispatch(req,res);return response;
@@ -61,19 +61,20 @@ before(async()=>{
  GRANT SELECT ON organization,location,equipment_type,auth_user,auth_membership TO sv_check_in_runtime;
  GRANT EXECUTE ON FUNCTION auth_resolve_identity(text,text) TO sv_check_in_runtime;`);
  auth=createAuthorization({identityProvider:identity,pool:{connect:()=>db.connect()}});
- const handler=createCheckInHandler({authorization:auth}),equipment=createEquipmentHandler({authorization:auth});
- dispatch=(req,res)=>req.url.includes('/check-ins')?handler(req,res):equipment(req,res);
+ host=createCheckInHost({identityProvider:identity,pool:{connect:()=>db.connect()}});await host.ready();
+ dispatch=host.handle;
  base='http://127.0.0.1';
  if(process.env.CHECK_IN_HTTP==='network'){server=createServer(dispatch);server.listen(0,'127.0.0.1');await once(server,'listening');base=`http://127.0.0.1:${server.address().port}`;}
  console.log(`Check-in SQL backend: ${db.native?'native PostgreSQL, independent connections':'PGlite, serialized connections'}`);
 });
-after(async()=>{if(server)await new Promise(r=>server.close(r));if(db)await db.close();});
+after(async()=>{if(server)await new Promise(r=>server.close(r));if(host)await host.close();if(db)await db.close();});
 
 test('manual, QR and barcode check-ins preserve identity, attribution, provenance and truthful times',async()=>{
  for(const [i,source]of ['manual-check-in','qr','barcode'].entries()){
-  const input={...body(`EQ-00${i+1}`),source},res=await call(input,`entry-${i}`),out=await res.json();assert.equal(res.status,201,JSON.stringify(out));
+  const input={...body(`EQ-00${i+1}`),source},res=await call(input,`entry-${i}`,'operator',A,{headers:{'x-correlation-id':`entry-correlation-${i}`}}),out=await res.json();assert.equal(res.status,201,JSON.stringify(out));
   assert.equal(out.record.id,input.equipmentId);assert.equal(out.record.provenance,'synthetic-seed');assert.equal(out.observation.source,source);
   assert.equal(out.observation.actor,`user:${users.operator}`);assert.equal(out.observation.observedAt,input.observedAt);assert.ok(Date.parse(out.observation.receivedAt)>=Date.parse(input.observedAt));assert.equal(out.record.version,0);
+  const observation=(await owner('SELECT actor,correlation_id FROM equipment_observation WHERE organization_id=$1 AND idempotency_key=$2',[A,`check-in:entry-${i}`])).rows[0];assert.deepEqual(observation,{actor:`user:${users.operator}`,correlation_id:`entry-correlation-${i}`});
  }
  const result=await http(`${base}/organizations/${A}/check-ins/locations`,{headers:{authorization:`Bearer ${tokens.operator}`}});assert.equal(result.status,200);assert.equal((await result.json()).items.length,10);
 });

@@ -1,8 +1,23 @@
 # SV-008 verification evidence
 
-Current integrated main: `f18d8967895b2c9ae52fea96a26f80e821640233`. Initial base was `75f2cf60a645aa9a40363b9836b3830047d77ca5`. Isolated branch: `task/sv-008-wil-sol-sv008-20261105-f28c`. Initial normal CLI claim was confirmed at board revision 78; fixture compatibility rework was recorded by the separate reviewer at revision 154, then the original owner claimed at revision 159. The lease file is retained in this checkout. Relative to integrated main, task-specific changes remain confined to the two check-in directories; shared files match main.
+Current integrated main: `94d2f97978ee0e0d13dbfe1918785111481e7058`. Initial base was `75f2cf60a645aa9a40363b9836b3830047d77ca5`. Isolated branch: `task/sv-008-wil-sol-sv008-20261105-f28c`. Initial normal CLI claim was confirmed at board revision 78; fixture compatibility rework was recorded at revision 154 and claimed at 159. The bounded local-host handoff was recorded at revision 163, claimed by the original owner at revision 164 and renewed after the environment reconnect at revision 165. The matching lease file remains in this checkout. Relative to integrated main, task-specific changes remain confined to the two check-in directories; shared files match main.
 
-## Current-main fixture repair (2026-11-05)
+## Task-local composite host
+
+`services/api/check-in/host.mjs` receives an explicitly supplied existing pool and identity verifier and constructs one existing authorization instance shared by the equipment/check-in handlers. It preserves the original request/header/body stream, limits dispatch to their supported route shapes, and retains existing auth and safe error mapping. Its optional listener binds only 127.0.0.1, accepts only a port, and serves no static web files. There is no CLI/config loader, implicit environment connection, fixture import, fallback identity or token issuance.
+
+Startup validates existing prerequisite schema/functions, runtime privilege/RLS boundaries and grants in a read-only transaction; missing configuration/provisioning fails clearly. The host never runs migrations or creates users/roles/grants. Its caller owns pool/verifier cleanup. Closing stops admission and waits for readiness/startup before closing its own listener. Bind, runtime-server, connection cleanup and close failures have explicit outcomes; failed close is unconfirmed and is not silently retried.
+
+The attached execution environment disconnected before the pending documentation/test refinement could apply. After reconnect, read-only status/file checks confirmed the uncommitted host/tests were preserved and that the interrupted edit had not applied; the same retained lease was renewed before continuing. No replacement checkout, execution route or worker was used.
+
+- Final `npm test --prefix services/api/check-in`: **37 passed, 0 failed, 1 explicitly skipped** (38 cases). Twelve API/SQL cases now run through the actual composite host with the explicitly supplied serialized PGlite pool/verifier, chunked JSON bodies and verified correlation headers. Thirteen additional host cases cover invalid config/client, read-only cached preflight, missing/unsafe provisioning, exact routing, denied-identity request preservation, loopback-only listener options, lifecycle/connection cleanup and unconfirmed shutdown failures. Twelve DOM/scanner cases pass. The native lock-wait case remains skipped.
+- Listener/bind/close lifecycle tests inject controlled Node server events and callbacks; **they do not open a socket**. This is explicit unit coverage, not a real runtime bind or network test. The separate SQL fixtures exercise actual migrated SQL, RLS, attribution, actor/tenant isolation, denial, replay and atomic rollback through the host.
+- `node --test tests/contracts.test.mjs tests/domain.test.mjs tests/web.test.mjs tests/scene-config.test.mjs tests/location.test.mjs`: **30 passed, 0 failed, 0 skipped** on the integrated tree.
+- `npm run check`: passed JavaScript syntax, **27 GLB containers** and 19 seed task definitions. `git diff --check` passed. No differences from integrated main exist outside the two check-in directories.
+
+Full root tests and the earlier Windows native/loopback/filesystem-denied stages were not retried. Real runtime startup with externally supplied approved database/verifier provisioning, physical camera, browser acceptance and shared-web mounting remain unrun/unresolved. The previous browser inventory timed out without a usable surface. No camera permission, provisioning, credentials, shared-web scope publication or SV-019 change occurred. The seven-path shared-web scope hold remains in force; this host is only the already-permitted task-local API composition.
+
+## Earlier current-main fixture repair
 
 Before the fixture repair, the combined-tree administrative PATCH regression failed with HTTP **500 instead of 200**, confirming the missing merged receipt setup. The fixture now applies `services/api/equipment/migrations/0001_receipts.up.sql` inside an explicit BEGIN/COMMIT transaction after core/auth, and grants its disposable `sv_check_in_runtime` role only SELECT and INSERT on `equipment_command_receipt`. No persistent runtime role, application migration, shared code or credentials were changed.
 
@@ -32,7 +47,7 @@ Real browser visual layout, tab traversal, narrow-screen rendering, live camera 
 
 ## Integration still required
 
-PR #13/shared-entry owners must mount the web module with their existing authenticated transport and refetch callback, register the API handler in the existing dispatcher, and coordinate application of the task-local receipt migration plus grants to the existing runtime role. The minimal hooks are documented in both check-in READMEs. Do not merge or deploy until that coordination and unrun native/browser stages have been reviewed. This submission is a draft for review only.
+Shared-entry owners must mount the web module with their existing authenticated transport and refresh callback only after the held shared scope is approved. The task-local API composition now exists in `host.mjs`; its approved external runtime pool/verifier and existing database provisioning must be supplied separately. The host performs no persistent provisioning. The remaining hooks/prerequisites are documented in both check-in READMEs. Shared-web mounting, externally supplied runtime and unrun native/browser stages remain separate gates. This submission is a draft for review only.
 
 ## Focused retry rework
 

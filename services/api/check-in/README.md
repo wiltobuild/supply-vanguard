@@ -1,6 +1,29 @@
 # Attributed check-in API (SV-008)
 
-This task-local handler consumes the merged auth, equipment and domain interfaces. It creates no competing server/auth layer. Task-specific changes are confined to `services/api/check-in` and `apps/web/check-in`. The branch integrates main `f18d8967895b2c9ae52fea96a26f80e821640233`, including the merged PR #12 equipment repair; pending PR #13 shared web/API wiring is not imported.
+This task-local handler consumes the merged auth, equipment and domain interfaces. Task-specific changes are confined to `services/api/check-in` and `apps/web/check-in`. The branch integrates main `94d2f97978ee0e0d13dbfe1918785111481e7058`, including the merged PR #12/#13 repairs. The composite API host below adds no alternative auth/client layer. Task-specific shared-web mounting remains held and is not included.
+
+## Local composite API host
+
+`host.mjs` composes the existing equipment and check-in handlers using **one** existing `createAuthorization({pool, identityProvider})` instance. Import it from an already trusted local bootstrap that supplies its approved runtime pool and verifier:
+
+```js
+import {createCheckInHost} from './services/api/check-in/host.mjs';
+// pool and identityProvider must already come from your approved local runtime configuration.
+const host = createCheckInHost({pool, identityProvider});
+await host.listen({port: 4181}); // always 127.0.0.1; no configurable external interface
+// On shutdown, await this before closing caller-owned database/verifier resources.
+await host.close();
+```
+
+There is no CLI, config-module loader, environment-based pool construction, test identity fallback or import-time listener. The host issues no tokens, loads no fixture, runs no migrations, and creates no users, roles, grants or credentials. Supplying no pool/verifier fails immediately. `ready()` and `listen()` use a read-only transaction to inspect prerequisite schema/functions, minimum privileges, the non-owner NOSUPERUSER/NOBYPASSRLS runtime role and required RLS. Missing/unavailable provisioning fails with a specific `CheckInHostError.code`; it is not repaired automatically. An unready HTTP handler responds 503 without exposing database connection details.
+
+Approved provisioning must already have applied core, auth, merged equipment-command receipts and this task's check-in receipt migration, with their existing policies/functions, before startup. The existing runtime must have the public API grants and resolver EXECUTE privilege; receipt privileges are SELECT/INSERT on equipment command receipts and SELECT/INSERT/UPDATE on check-in receipts. The existing application provisioning owner must handle this separately. `tests/database.mjs` and fixture migration/grant setup are disposable test support and are never imported by the runtime host.
+
+`handle(req,res)` preserves the original request, headers and body stream. It dispatches only `/organizations/:org/check-ins`, `/organizations/:org/check-ins/locations`, and the existing equipment collection/item/observation route shapes. The original handlers retain methods, body limits, idempotency and authorization/error behavior. Other routes are 404; absolute URLs, raw fragments and normalized traversal paths are 400. The host serves no web assets and changes no proxy or browser mounting.
+
+`listen()` accepts only a port, rejects duplicate startup and reports bind failures. `close()` stops admission, waits for a pending readiness check/startup and closes its own listener; it never ends the supplied pool or disposes the verifier. Repeated close calls share the same result. A failed close rejects with `close_failed` and means shutdown is **unconfirmed**; it is not silently retried. A post-start server error stops admission and is exposed through `state` and `lastError` for the caller to handle. The caller remains responsible for orderly shutdown and its own pool/verifier lifecycle.
+
+Task-local host lifecycle tests use explicitly controlled Node server events, without binding a real socket. The SQL suite now routes through this same composite host with its explicitly supplied synthetic PGlite pool/verifier, including chunked JSON bodies, correlation headers, actor/tenant isolation, denials and replay/rollback behavior. Actual provisioned runtime startup, loopback binding and native/browser acceptance remain unrun here; prior permission stops remain respected.
 
 ## Integration contract
 
