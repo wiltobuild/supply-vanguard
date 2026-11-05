@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 47,
-  "updatedAt": "2026-11-05T16:31:40.653Z",
+  "revision": 48,
+  "updatedAt": "2026-11-05T16:31:55.340Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -333,6 +333,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv009-20261105-c4d8",
       "owner": null
+    },
+    {
+      "at": "2026-11-05T16:31:55.340Z",
+      "taskId": "SV-006",
+      "command": "submit",
+      "agent": "cheich-agent-5",
+      "owner": null
     }
   ],
   "tasks": [
@@ -508,7 +515,7 @@
     {
       "id": "SV-006",
       "title": "Equipment API and immutable audit transactions",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -526,13 +533,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "cheich-agent-5",
-        "owner": "cheich",
-        "leaseId": "a5b4e435-9970-48c8-818e-807be0e6919a",
-        "claimedAt": "2026-11-05T16:23:42.837Z",
-        "expiresAt": "2026-11-05T18:27:53.525Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/8",
+      "submittedBy": "cheich-agent-5",
+      "submittedAt": "2026-11-05T16:31:55.340Z"
     },
     {
       "id": "SV-007",

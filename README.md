@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 47. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 48. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -10,7 +10,7 @@ Revision 47. Live state is on the task-board branch. Use npm run board -- claim;
 | SV-003 Accessible equipment workflows and fallback | done | — | — | — | [PR](https://github.com/wiltobuild/supply-vanguard/pull/5) |
 | SV-004 Database foundation and migrations | done | — | — | — | [PR](https://github.com/wiltobuild/supply-vanguard/pull/4) |
 | SV-005 Authentication and role authorization | done | — | — | SV-004 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/7) |
-| SV-006 Equipment API and immutable audit transactions | claimed | cheich / cheich-agent-5 | 2026-11-05T18:27:53.525Z | SV-001, SV-004, SV-005 | services/api/equipment |
+| SV-006 Equipment API and immutable audit transactions | review | — | — | SV-001, SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/8) |
 | SV-007 Connect web client to shared equipment API | ready | — | — | SV-003, SV-006 | apps/web |
 | SV-008 Barcode and QR manual check-in | ready | — | — | SV-001, SV-006 | apps/web/check-in, services/api/check-in |
 | SV-009 Supply ledger and bin inventory | claimed | wil / wil-sol-sv009-20261105-c4d8 | 2026-11-05T18:31:40.653Z | SV-004, SV-005 | services/api/supplies, packages/domain/supplies |
