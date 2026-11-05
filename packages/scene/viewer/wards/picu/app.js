@@ -2,15 +2,17 @@ import {WARD,ROOMS,EQUIPMENT,LABELS,filterEquipment,moveSafely,validateConfig} f
 const $=id=>document.getElementById(id);
 let sceneApi=null,selected=null,results=EQUIPMENT;
 for(const [kind,label] of Object.entries(LABELS)){const o=document.createElement('option');o.value=kind;o.textContent=label;$('kind').append(o);}
-function choose(id){selected=EQUIPMENT.find(e=>e.id===id);if(!selected)return;$('selection').hidden=false;$('selected-name').textContent=LABELS[selected.kind];$('selected-detail').textContent=`${selected.location} · ${selected.id}. Illustrative, untracked placement.`;renderList();sceneApi?.focus(selected);}
+function choose(id){selected=EQUIPMENT.find(e=>e.id===id);if(!selected)return;$('selection').hidden=false;$('selected-name').textContent=LABELS[selected.kind];$('selected-detail').textContent=`${selected.location} · ${selected.id}. Illustrative, untracked placement.`;updateSelection();sceneApi?.highlight(results,selected.id);sceneApi?.focus(selected);}
+// Selection keeps the existing controls (and keyboard focus/scroll position) intact.
+function updateSelection(){for(const button of $('equipment-list').querySelectorAll('button'))button.setAttribute('aria-pressed',String(button.dataset.equipmentId===selected?.id));}
 function renderList(){
  results=filterEquipment($('search').value,$('kind').value);$('count').textContent=`${results.length} illustrative placement${results.length===1?'':'s'} shown`;
- const entries=results.map(e=>{const li=document.createElement('li'),button=document.createElement('button'),small=document.createElement('small');button.type='button';button.textContent=LABELS[e.kind];button.setAttribute('aria-pressed',String(e.id===selected?.id));button.setAttribute('aria-label',`${LABELS[e.kind]}, ${e.location}, ${e.id}`);small.textContent=`${e.location} · ${e.id.replace('picu-room-','')}`;button.append(small);button.onclick=()=>choose(e.id);li.append(button);return li;});
+ const entries=results.map(e=>{const li=document.createElement('li'),button=document.createElement('button'),small=document.createElement('small');button.type='button';button.dataset.equipmentId=e.id;button.textContent=LABELS[e.kind];button.setAttribute('aria-pressed',String(e.id===selected?.id));button.setAttribute('aria-label',`${LABELS[e.kind]}, ${e.location}, ${e.id}`);small.textContent=`${e.location} · ${e.id.replace('picu-room-','')}`;button.append(small);button.onclick=()=>choose(e.id);li.append(button);return li;});
  if(!entries.length){const li=document.createElement('li');li.textContent='No matching display placements. Try a different name or room.';entries.push(li);}
  $('equipment-list').replaceChildren(...entries);sceneApi?.highlight(results,selected?.id);
 }
 $('search').addEventListener('input',renderList);$('kind').addEventListener('change',renderList);
-$('show-type').onclick=()=>{if(!selected)return;$('kind').value=selected.kind;$('search').value='';selected=null;$('selection').hidden=true;renderList();sceneApi?.overview();};
+$('show-type').onclick=()=>{if(!selected)return;const moveFocus=document.activeElement===$('show-type');$('kind').value=selected.kind;$('search').value='';selected=null;$('selection').hidden=true;renderList();sceneApi?.overview();if(moveFocus)$('kind').focus();};
 for(const r of ROOMS){const button=document.createElement('button');button.textContent=r.name.replace('Demo room ','Room ');button.setAttribute('aria-label',`View ${r.name} interior`);button.disabled=true;button.onclick=()=>sceneApi?.room(r);$('room-views').append(button);}
 renderList();
 function unavailable(message){$('scene-state').hidden=false;$('scene-state').textContent=message;document.querySelectorAll('.toolbar button,#room-views button').forEach(b=>b.disabled=true);$('instructions').textContent='The equipment list and source notes remain available without 3D.';$('walk-controls').hidden=true;}

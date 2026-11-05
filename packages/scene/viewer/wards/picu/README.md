@@ -21,7 +21,7 @@ The only existing shared file changed is `viewer/index.html`, with a ward-link n
 The local `three-loader.mjs` is a Node test resolver for the existing vendored browser module; it adds no runtime dependencies and does not change the root test loader. Tests stay inside the assigned ward scope:
 
 ```sh
-node --test packages/scene/viewer/wards/picu/picu.test.mjs
+node --test packages/scene/viewer/wards/picu/picu.test.mjs packages/scene/viewer/wards/picu/selection.test.mjs
 npm ci --prefix services/api/auth --ignore-scripts
 npm test
 npm run check
@@ -33,7 +33,7 @@ Story: NICU ward link → PICU static page/config → reused Three.js models →
 
 | Check | Evidence |
 | --- | --- |
-| Ward tests | 7 passed: identities and mappings; 55 finite bounded model instances; all eight interior viewpoints reachable from entry; collision substeps prevent tunneling; all ten demo pumps searchable; unavailable/wrong ward routes rejected; source limitations retained |
+| Ward tests | 10 passed: the original seven geometry/search/navigation/provenance tests plus focused selection retaining its button and scroll, focus transfer after show-type, and the supported equipment workspace route |
 | Root tests | 45 passed, 6 skipped (native PostgreSQL unavailable to the repository test harness). No failures after installing the declared locked PGlite test dependency and running with normal temp-directory access |
 | Repository check | Passed: JavaScript syntax, 12 original GLB containers, existing task definitions |
 | Browser rendering | IAB overview, A2 room interior and corridor rendered; final renderer log had no errors or warnings. A deprecated soft-shadow mode was replaced with the vendored module's supported PCF mode |
@@ -48,6 +48,14 @@ Story: NICU ward link → PICU static page/config → reused Three.js models →
 Initial sandbox test attempts failed on temp-directory access and a missing declared PGlite package. Those environment conditions were resolved without editing auth, dependencies, CI or root scripts. Root native database tests remain skipped and must not be described as passed. No performance/FPS target, measured architectural accuracy, real-world equipment placement or ward-staff sign-off is claimed.
 
 Before any fidelity claim: obtain approved measured geometry and current room mapping, equipment dimensions/placement evidence, and facilities/ward-staff review. These are external evidence requirements, not completed by this illustrative scene.
+
+### PR review corrections
+
+Selection updates the existing list buttons' pressed state, preserving the active button and list scroll rather than recreating the list. If the focused `Show all of this type` action hides its own panel, focus moves to the equipment type filter. The header Equipment workspace link now targets `/#/equipment`.
+
+Browser regression sequence repeated in both ordinary 3D (one canvas) and `?view=list` (zero canvases): press Enter on the A1 pump, verify the pump remains the active/pressed button, press Tab to reach the A1 monitor, and press Enter again to verify monitor focus/selection. In fallback, activate show-type and verify focus reaches the type filter and nine monitors remain. Follow Equipment workspace, verify the Equipment page/title at `/#/equipment`, then use Back and verify the PICU page returns. Actual focused controls are captured in `evidence/keyboard-selection.jpg` and `evidence/keyboard-fallback.jpg`.
+
+`selection.test.mjs` executes the actual list-only entry point in a small DOM fixture which resets focus when a focused node is detached. It covers the selection-handler regression and list identity; native Enter/Tab behavior is verified by the browser sequence above. Root tests and repository check were rerun after these corrections. The shared selector and PCU-local files remain unchanged.
 
 ![Overview](evidence/overview.jpg)
 
