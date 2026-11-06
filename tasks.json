@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 184,
-  "updatedAt": "2026-11-06T01:49:41.568Z",
+  "revision": 185,
+  "updatedAt": "2026-11-06T01:51:25.205Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1295,6 +1295,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T01:51:25.205Z",
+      "taskId": "SV-011",
+      "command": "block",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1624,7 +1631,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1642,17 +1649,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv011-20261106-maintenance",
-        "owner": "wil",
-        "leaseId": "a41e5ec1-4848-4ebc-af91-dc813e5acb29",
-        "claimedAt": "2026-11-06T01:43:49.189Z",
-        "expiresAt": "2026-11-06T03:49:41.568Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-06T01:34:45.472Z",
-      "blockedReason": null,
+      "blockedReason": "Manager-requested PR22 repairs are committed and tested locally at d8147c177533b6e8b2a3e5afa640f061aa9ffd65. Automatic approval review denied git push to the public repository because explicit user approval for publishing these repairs is missing. Read-only check confirms remote and draft PR22 remain at 56edcffadef7ae9ac31a5594d5c4a50a4b1155cf; denied push did not execute and was not retried or rerouted. Scoped51/51, permitted repository38/38, offline Chrome actual-adapter authorization/lifecycle regressions and syntax27GLB checks passed. Await explicit approval to publish the same local commit, then verify exact-head CI and submit normally. Scope and policy unchanged.",
       "reviewNote": "Exact head56edcff maintenance review found two reproduced P2 UI gaps: https://github.com/wiltobuild/supply-vanguard/pull/22#pullrequestreview-5794633966. (1) After initial list, start panel.refresh with pending list, close panel, reject list403: refresh throws TypeError reading replaceChildren on null via clearHistory/detail. Guard late failed reads after close and add401/403 unmount/disconnect regressions. (2) Non-JSON/empty403 response is reclassified status0 in api.js before panel authorization cleanup; after prior load/draft, cache and draft remain visible. Preserve HTTP401/403 even with malformed bodies and clear appropriate equipment/draft/history caches; test401/403 variants while preserving exact uncertain-write retry keys/body. Original maintenance owner wil-sol-sv011-20261106-maintenance alone should reclaim normally, fix only apps/web/maintenance and services/api/maintenance tests/docs as needed, and resubmit same draft PR22. Do not edit held/shared web files, root/CI/auth/bootstrap, scopes or SV021 policy; keep service completion unavailable. Scoped18/18 and exact-microsecond/ready-pagination checks passed. No root board-race/native/socket or denied-stage retry. Keep draft until defects and separately coordinated integration gates close."
     },
     {
