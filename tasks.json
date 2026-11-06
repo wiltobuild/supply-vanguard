@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 179,
-  "updatedAt": "2026-11-06T01:34:45.472Z",
+  "revision": 180,
+  "updatedAt": "2026-11-06T01:35:33.892Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1260,6 +1260,13 @@
       "command": "submit",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T01:35:33.892Z",
+      "taskId": "SV-010",
+      "command": "block",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1565,7 +1572,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1583,13 +1590,8 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv010-20261106-replenishment",
-        "owner": "wil",
-        "leaseId": "95e7c1ed-8cc3-4656-9aa7-c0fc74feb4ba",
-        "claimedAt": "2026-11-06T01:16:45.675Z",
-        "expiresAt": "2026-11-06T03:33:48.867Z"
-      }
+      "claim": null,
+      "blockedReason": "Implementation committed locally as cf43d8108a792b8a9449caacda5c854406b8054c. Auto-review denied GitHub branch publication pending explicit user authorization; no push, draft PR, or review submission occurred. Same owner checkout retained for resumption."
     },
     {
       "id": "SV-011",
