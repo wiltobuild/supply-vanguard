@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 167,
-  "updatedAt": "2026-11-06T00:03:05.815Z",
+  "revision": 168,
+  "updatedAt": "2026-11-06T00:07:28.495Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1176,6 +1176,13 @@
       "command": "submit",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T00:07:28.495Z",
+      "taskId": "SV-008",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1418,7 +1425,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1441,7 +1448,7 @@
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T00:03:05.815Z",
       "blockedReason": null,
-      "reviewNote": "Bounded existing-scope host wiring for original owner wil-sol-sv008-20261105-f28c only: add services/api/check-in/host.mjs plus check-in-local README/tests. Accept existing {pool,identityProvider}, create one existing createAuthorization shared by equipment/check-in handlers, dispatch exact supported check-in and equipment routes while preserving request headers/body streams and normal error mapping. Optional CLI may load only an explicitly supplied trusted local config and bind 127.0.0.1; missing pool/verifier or unprovisioned schema/role must fail clearly. No token issuance, migration execution, roles/grants, persistent credentials, silent PGlite/identity fallback, or auth/bootstrap/root/CI edits. Test in-scope composition, routing, attribution, denial and retry behavior through permitted fixtures; retain prior Windows native/loopback stops. Do not edit any of the seven shared-web paths whose scope publication is held; shared scope and ownership remain unchanged. Original QR owner alone should claim normally, integrate current main safely on the same draft branch, then submit. Keep PR14 draft: mounted browser acceptance and externally supplied/provisioned runtime remain unresolved."
+      "reviewNote": "Exact host head fa963be57d0e8e7a1f250a9fbfcf95dcde8c47f5 has two independently reproduced P2 gaps; review https://github.com/wiltobuild/supply-vanguard/pull/14#pullrequestreview-5793907445. (1) After ready(), block verifier inside admitted handle(GET equipment), then await close(): it reports closed while verifier/request remain active. Drain admitted direct-handle work before close resolves, preserving caller ownership of pool/verifier; add gated verifier and active lease/transaction regressions. (2) If BEGIN READ ONLY rejects, begun is still false, so no rollback/discard occurs and release(undefined) reuses an uncertain transaction. Roll back safely or discard on uncertain BEGIN failure; add focused regression and keep safe error mapping. Original QR owner alone should reclaim normally and fix host/tests/docs only inside services/api/check-in on existing draft branch. No held shared-web paths, scope migration, auth/bootstrap/provisioning/root/CI edits, new credentials/grants, or retries of denied Windows native/loopback stages. 37 scoped passes/1 native skip, selected30 and27GLB check passed; keep draft/unmerged pending repair and remaining integration gates."
     },
     {
       "id": "SV-009",
