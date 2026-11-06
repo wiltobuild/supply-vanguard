@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 185,
-  "updatedAt": "2026-11-06T01:51:25.205Z",
+  "revision": 186,
+  "updatedAt": "2026-11-06T08:24:20.969Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1302,6 +1302,13 @@
       "command": "block",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T08:24:20.969Z",
+      "taskId": "SV-021",
+      "command": "claim",
+      "agent": "cheich-agent-10",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -1935,7 +1942,7 @@
     {
       "id": "SV-021",
       "title": "Independent stacked equipment holds",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-006",
@@ -1961,7 +1968,13 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-agent-10",
+        "owner": "cheich",
+        "leaseId": "4990989d-e090-4bad-89e7-c13ddc49fbf7",
+        "claimedAt": "2026-11-06T08:24:20.969Z",
+        "expiresAt": "2026-11-06T10:24:20.969Z"
+      }
     },
     {
       "id": "SV-022",
