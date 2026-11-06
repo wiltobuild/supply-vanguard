@@ -19,7 +19,10 @@ async function verifyProvisioning(pool) {
  try {
   client=await pool.connect();
   if(typeof client?.query!=='function'||typeof client?.release!=='function')throw fail('invalid_pool','The supplied pool must lease an exclusive query client with release().');
-  await client.query('BEGIN READ ONLY');begun=true;
+  // A rejected acknowledgement can still mean BEGIN reached the server. Attempt rollback
+  // and conservatively discard that client using the pg-compatible release(error) contract.
+  begun=true;
+  try{await client.query('BEGIN READ ONLY');}catch(error){discard=error;throw error;}
   const missing=await client.query(`SELECT ARRAY(SELECT name FROM unnest($1::text[]) AS name WHERE to_regclass('public.'||name) IS NULL) AS tables,
    ARRAY(SELECT name FROM unnest($2::text[]) AS name WHERE to_regprocedure('public.'||name) IS NULL) AS functions`,[TABLES,FUNCTIONS]);
   if(missing.rows[0]?.tables?.length||missing.rows[0]?.functions?.length)throw fail('missing_schema','Required core, auth, equipment-receipt or check-in schema is missing. Apply approved provisioning separately.');
@@ -54,13 +57,17 @@ export function createCheckInHost(configuration={}) {
  const authorization=createAuthorization({pool,identityProvider});
  const equipment=createEquipmentHandler({authorization}),checkIn=createCheckInHandler({authorization});
  let readiness,startPromise,closePromise,stopping=false,bound=false,state='idle',lastError=null;
+ let activeRequests=0,drained,resolveDrained;
+ const drainRequests=()=>activeRequests?(drained??=new Promise(resolve=>resolveDrained=resolve)):Promise.resolve();
  const ready=()=>{
   if(stopping)return Promise.reject(fail('host_closed','The local check-in host is closing or closed.'));
   return readiness??=verifyProvisioning(pool);
  };
  const handle=async(req,res)=>{
+  let admitted=false;
   try {
    if(stopping)throw new ApiError(503,'host_closed');
+   admitted=true;activeRequests++;
    if(typeof req.url!=='string'||!req.url.startsWith('/')||req.url.startsWith('//')||req.url.includes('#'))throw new ApiError(400,'invalid_request');
    const path=req.url.split('?')[0];
    if(new URL(req.url,'http://localhost').pathname!==path)throw new ApiError(400,'invalid_request');
@@ -71,6 +78,7 @@ export function createCheckInHost(configuration={}) {
    if(stopping)throw new ApiError(503,'host_closed');
    return await target(req,res);
   }catch(error){writeError(res,error instanceof CheckInHostError?new ApiError(503,'host_not_ready','Local database provisioning is not ready.'):error);}
+  finally{if(admitted&&--activeRequests===0)resolveDrained?.();}
  };
  const server=createServer(handle);
  server.on('error',()=>{if(bound){lastError=fail('server_failed','The local HTTP server reported an error. Close the host and inspect the caller-owned runtime.');stopping=true;state='failed';}});
@@ -102,7 +110,11 @@ export function createCheckInHost(configuration={}) {
    if(startPromise){try{await startPromise;}catch{/* startup failure already reaches its caller */}}
    else if(readiness){try{await readiness;}catch{/* readiness failure already reaches its caller */}}
    state='closing';
-   if(bound)await new Promise((resolve,reject)=>{try{server.close(error=>{if(error){state='close_failed';lastError=fail('close_failed','Could not close the local HTTP server; shutdown is not confirmed.');reject(lastError);}else{bound=false;resolve();}});}catch{state='close_failed';lastError=fail('close_failed','Could not close the local HTTP server; shutdown is not confirmed.');reject(lastError);}});
+   const listenerClosed=bound?new Promise((resolve,reject)=>{try{server.close(error=>{if(error){state='close_failed';lastError=fail('close_failed','Could not close the local HTTP server; shutdown is not confirmed.');reject(lastError);}else{bound=false;resolve();}});}catch{state='close_failed';lastError=fail('close_failed','Could not close the local HTTP server; shutdown is not confirmed.');reject(lastError);}}):Promise.resolve();
+   // Listener shutdown alone cannot drain direct handle() calls. Wait for both, including
+   // mapped errors/cancellation and verifier, transaction and lease cleanup in the handlers.
+   const [listener]=await Promise.allSettled([listenerClosed,drainRequests()]);
+   if(listener.status==='rejected')throw listener.reason;
    state='closed';
   })();
   return closePromise;

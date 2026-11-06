@@ -6,10 +6,11 @@ import {createCheckInHost,CheckInHostError} from '../host.mjs';
 
 // Explicit unit collaborators for startup/lifecycle errors only. Production host has no fixture imports.
 // The API suite separately supplies actual SQL/auth fixtures through this same composite host.
-function configuration({missing=false,unsafe=false,granted=true,queryFailure,rollbackFailure,releaseFailure}={}) {
+function configuration({missing=false,unsafe=false,granted=true,queryFailure,beginFailure,rollbackFailure,releaseFailure}={}) {
  const queries=[],releases=[],verified=[];let connections=0;
  const client={async query(text,params){
   queries.push({text,params});
+  if(text==='BEGIN READ ONLY'&&beginFailure)throw beginFailure;
   if(text==='ROLLBACK'&&rollbackFailure)throw rollbackFailure;
   if(text.includes('to_regclass')){if(queryFailure)throw queryFailure;return {rows:[{tables:missing?['check_in_receipt']:[],functions:[]}]};}
   if(text.includes(' AS unsafe'))return {rows:[{unsafe}]};
@@ -34,6 +35,68 @@ function simulatedServer(t,{listenError=false,closeError=false}={}) {
 }
 test('host requires an explicit pool/verifier and does not load config or create fallback identities',()=>{
  for(const value of [undefined,null,[],{},'config.mjs',{pool:{connect(){}}},{identityProvider:{verify(){}}},{pool:{connect:3},identityProvider:{verify(){}}}])assert.throws(()=>createCheckInHost(value),code('invalid_configuration'));
+});
+const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return {promise,resolve,reject};};
+const flush=()=>new Promise(resolve=>setImmediate(resolve));
+for(const outcome of ['late denial','verifier failure','cancelled request'])test(`close drains admitted verifier work through ${outcome}`,async()=>{
+ const c=configuration(),entered=deferred(),verification=deferred();let verifierActive=false,verifierCalls=0;
+ c.identityProvider.verify=async req=>{verifierCalls++;verifierActive=true;entered.resolve(req);try{return await verification.promise;}finally{verifierActive=false;}};
+ const host=createCheckInHost(c);await host.ready();
+ const handling=request(host,'/organizations/00000000-0000-4000-8000-000000000001/equipment');const req=await entered.promise;
+ if(outcome==='cancelled request')req.destroy();
+ let closed=false;const closing=host.close();closing.then(()=>closed=true);assert.equal(host.close(),closing);
+ try{
+  await flush();assert.equal(closed,false,'close must wait for the admitted verifier');assert.equal(verifierActive,true);
+  const rejected=await request(host,'/organizations/00000000-0000-4000-8000-000000000001/equipment');assert.equal(rejected.status,503);assert.equal(verifierCalls,1);
+ }finally{if(outcome==='late denial')verification.resolve(null);else verification.reject(Error('synthetic verifier interruption'));await handling;await closing;}
+ assert.equal((await handling).status,outcome==='late denial'?401:500);assert.equal(verifierActive,false);assert.equal(host.state,'closed');assert.equal(c.connections,1,'denied verification never leased a runtime connection');
+});
+for(const failed of [false,true])test(`close drains active ${failed?'failed transaction rollback':'transaction commit'} and lease release`,async()=>{
+ const c=configuration(),queryEntered=deferred(),queryResume=deferred(),cleanupEntered=deferred(),cleanupResume=deferred();
+ const user='00000000-0000-4000-8000-000000000901',queries=[];let leased=false,transaction=false,released=0;
+ c.identityProvider.verify=async()=>({issuer:'urn:synthetic:host',subject:'fictional-operator'});
+ const host=createCheckInHost(c);await host.ready();
+ c.pool.connect=async()=>{leased=true;return {async query(text){
+  queries.push(text);
+  if(text==='BEGIN'){transaction=true;return {rows:[]};}
+  if(text==='COMMIT'||text==='ROLLBACK'){cleanupEntered.resolve();await cleanupResume.promise;transaction=false;return {rows:[]};}
+  if(text.includes(' AS unsafe'))return {rows:[{unsafe:false}]};
+  if(text.includes('auth_resolve_identity'))return {rows:[{id:user}]};
+  if(text.includes('SELECT role'))return {rows:[{role:'operator'}]};
+  if(text.includes('FROM equipment e')){queryEntered.resolve();await queryResume.promise;if(failed)throw Error('synthetic request SQL failure');return {rows:[]};}
+  return {rows:[]};
+ },release(){leased=false;released++;}};};
+ const handling=request(host,'/organizations/00000000-0000-4000-8000-000000000001/equipment');await queryEntered.promise;
+ let closed=false;const closing=host.close();closing.then(()=>closed=true);
+ try{
+  await flush();assert.equal(closed,false,'active query work must drain');assert.equal(leased,true);assert.equal(transaction,true);
+  queryResume.resolve();await cleanupEntered.promise;await flush();assert.equal(closed,false,'COMMIT/ROLLBACK and release must finish before close');assert.equal(leased,true);assert.equal(transaction,true);
+ }finally{queryResume.resolve();cleanupResume.resolve();await handling;await closing;}
+ const response=await handling;assert.equal(response.status,failed?500:200);assert.equal(released,1);assert.equal(leased,false);assert.equal(transaction,false);assert.ok(queries.includes(failed?'ROLLBACK':'COMMIT'));assert.equal(host.state,'closed');
+});
+test('rejected BEGIN acknowledgement rolls back and discards the uncertain client',async()=>{
+ const beginFailure=Error('synthetic ambiguous BEGIN acknowledgement'),c=configuration({beginFailure}),host=createCheckInHost(c);
+ try{await assert.rejects(host.ready(),code('provisioning_unavailable'));assert.deepEqual(c.queries.map(q=>q.text),['BEGIN READ ONLY','ROLLBACK']);assert.equal(c.releases.length,1);assert.equal(c.releases[0],beginFailure);}finally{await host.close();}
+});
+test('rejected BEGIN and failed rollback discard with the cleanup error while retaining safe mapping',async()=>{
+ const beginFailure=Error('private BEGIN detail'),rollbackFailure=Error('private rollback detail'),c=configuration({beginFailure,rollbackFailure}),host=createCheckInHost(c);
+ try{
+  await assert.rejects(host.ready(),code('provisioning_unavailable'));assert.deepEqual(c.queries.map(q=>q.text),['BEGIN READ ONLY','ROLLBACK']);assert.equal(c.releases[0],rollbackFailure);
+  const response=await request(host,'/organizations/a/check-ins',{method:'POST'});assert.equal(response.status,503);assert.doesNotMatch(JSON.stringify(response.body),/private BEGIN|private rollback/);
+ }finally{await host.close();}
+});
+test('release failure after rejected BEGIN remains visible and still receives a discard error',async()=>{
+ const beginFailure=Error('synthetic ambiguous BEGIN'),c=configuration({beginFailure,releaseFailure:true}),host=createCheckInHost(c);
+ try{await assert.rejects(host.ready(),code('connection_release_failed'));assert.equal(c.releases.length,1);assert.equal(c.releases[0],beginFailure);}finally{await host.close();}
+});
+test('failed listener close still drains admitted work and preserves the repeated rejection',async t=>{
+ const socket=simulatedServer(t,{closeError:true}),c=configuration(),entered=deferred(),verification=deferred();
+ c.identityProvider.verify=async()=>{entered.resolve();return verification.promise;};
+ const host=createCheckInHost(c);await host.listen();const handling=request(host,'/organizations/a/equipment');await entered.promise;
+ let settled=false;const closing=host.close(),observed=closing.then(()=>{settled=true;return null;},error=>{settled=true;return error;});
+ try{await flush();assert.equal(socket.calls.close,1);assert.equal(settled,false,'listener failure must not abandon admitted request work');assert.equal(host.close(),closing);}
+ finally{verification.resolve(null);await handling;await observed;}
+ assert.equal((await observed).code,'close_failed');assert.equal(host.state,'close_failed');assert.equal(host.lastError.code,'close_failed');assert.equal(socket.calls.close,1);assert.equal(host.close(),closing);
 });
 test('startup verification is cached, read-only and releases its supplied connection',async()=>{
  const c=configuration(),host=createCheckInHost(c);await Promise.all([host.ready(),host.ready()]);assert.equal(c.connections,1);assert.equal(c.releases.length,1);
