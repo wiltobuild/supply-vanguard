@@ -5,7 +5,8 @@ export const ITEM_STATES=Object.freeze(['open','assigned']);
 export const CLAIM_ERRORS=Object.freeze({
  equipment_not_found:404,item_not_found:404,
  item_already_assigned:409,stale_version:409,equipment_already_assigned:409,
- wrong_equipment_type:422,not_assignable:422
+ wrong_equipment_type:422,not_assignable:422,
+ equipment_on_hold:422   // SV-021: raised by the item_assignment trigger while any hold on the asset is active
 });
 const fail=m=>{throw new Error(m);};
 const text=(v,name,max)=>{if(typeof v!=='string'||!v.trim()||v.length>max)fail(`${name} must be non-empty text under ${max} characters`);return v;};
