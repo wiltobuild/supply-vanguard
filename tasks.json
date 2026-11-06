@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 170,
-  "updatedAt": "2026-11-06T01:04:00.258Z",
+  "revision": 171,
+  "updatedAt": "2026-11-06T01:05:43.865Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1197,6 +1197,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T01:05:43.865Z",
+      "taskId": "SV-008",
+      "command": "submit",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1439,7 +1446,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1457,16 +1464,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "e3f1d468-dfc1-4d49-9ae4-676bed9ea6e3",
-        "claimedAt": "2026-11-06T00:59:12.769Z",
-        "expiresAt": "2026-11-06T03:04:00.258Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
-      "submittedAt": "2026-11-06T00:03:05.815Z",
+      "submittedAt": "2026-11-06T01:05:43.865Z",
       "blockedReason": null,
       "reviewNote": "Exact host head fa963be57d0e8e7a1f250a9fbfcf95dcde8c47f5 has two independently reproduced P2 gaps; review https://github.com/wiltobuild/supply-vanguard/pull/14#pullrequestreview-5793907445. (1) After ready(), block verifier inside admitted handle(GET equipment), then await close(): it reports closed while verifier/request remain active. Drain admitted direct-handle work before close resolves, preserving caller ownership of pool/verifier; add gated verifier and active lease/transaction regressions. (2) If BEGIN READ ONLY rejects, begun is still false, so no rollback/discard occurs and release(undefined) reuses an uncertain transaction. Roll back safely or discard on uncertain BEGIN failure; add focused regression and keep safe error mapping. Original QR owner alone should reclaim normally and fix host/tests/docs only inside services/api/check-in on existing draft branch. No held shared-web paths, scope migration, auth/bootstrap/provisioning/root/CI edits, new credentials/grants, or retries of denied Windows native/loopback stages. 37 scoped passes/1 native skip, selected30 and27GLB check passed; keep draft/unmerged pending repair and remaining integration gates."
     },
