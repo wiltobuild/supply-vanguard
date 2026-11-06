@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 171,
-  "updatedAt": "2026-11-06T01:05:43.865Z",
+  "revision": 172,
+  "updatedAt": "2026-11-06T01:16:45.675Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1204,6 +1204,13 @@
       "command": "submit",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T01:16:45.675Z",
+      "taskId": "SV-010",
+      "command": "claim",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1509,7 +1516,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1527,7 +1534,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-sol-sv010-20261106-replenishment",
+        "owner": "wil",
+        "leaseId": "95e7c1ed-8cc3-4656-9aa7-c0fc74feb4ba",
+        "claimedAt": "2026-11-06T01:16:45.675Z",
+        "expiresAt": "2026-11-06T03:16:45.675Z"
+      }
     },
     {
       "id": "SV-011",
