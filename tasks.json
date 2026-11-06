@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 180,
-  "updatedAt": "2026-11-06T01:35:33.892Z",
+  "revision": 181,
+  "updatedAt": "2026-11-06T01:40:36.447Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1267,6 +1267,13 @@
       "command": "block",
       "agent": "wil-sol-sv010-20261106-replenishment",
       "owner": null
+    },
+    {
+      "at": "2026-11-06T01:40:36.447Z",
+      "taskId": "SV-011",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1596,7 +1603,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1617,7 +1624,9 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
-      "submittedAt": "2026-11-06T01:34:45.472Z"
+      "submittedAt": "2026-11-06T01:34:45.472Z",
+      "blockedReason": null,
+      "reviewNote": "Exact head56edcff maintenance review found two reproduced P2 UI gaps: https://github.com/wiltobuild/supply-vanguard/pull/22#pullrequestreview-5794633966. (1) After initial list, start panel.refresh with pending list, close panel, reject list403: refresh throws TypeError reading replaceChildren on null via clearHistory/detail. Guard late failed reads after close and add401/403 unmount/disconnect regressions. (2) Non-JSON/empty403 response is reclassified status0 in api.js before panel authorization cleanup; after prior load/draft, cache and draft remain visible. Preserve HTTP401/403 even with malformed bodies and clear appropriate equipment/draft/history caches; test401/403 variants while preserving exact uncertain-write retry keys/body. Original maintenance owner wil-sol-sv011-20261106-maintenance alone should reclaim normally, fix only apps/web/maintenance and services/api/maintenance tests/docs as needed, and resubmit same draft PR22. Do not edit held/shared web files, root/CI/auth/bootstrap, scopes or SV021 policy; keep service completion unavailable. Scoped18/18 and exact-microsecond/ready-pagination checks passed. No root board-race/native/socket or denied-stage retry. Keep draft until defects and separately coordinated integration gates close."
     },
     {
       "id": "SV-012",
