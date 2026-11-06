@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 172,
-  "updatedAt": "2026-11-06T01:16:45.675Z",
+  "revision": 173,
+  "updatedAt": "2026-11-06T01:17:04.026Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1211,6 +1211,13 @@
       "command": "claim",
       "agent": "wil-sol-sv010-20261106-replenishment",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-06T01:17:04.026Z",
+      "taskId": "SV-011",
+      "command": "claim",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1545,7 +1552,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1563,7 +1570,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-sol-sv011-20261106-maintenance",
+        "owner": "wil",
+        "leaseId": "986fda0e-7ae1-4791-8494-6c2cf544fa4d",
+        "claimedAt": "2026-11-06T01:17:04.026Z",
+        "expiresAt": "2026-11-06T03:17:04.026Z"
+      }
     },
     {
       "id": "SV-012",
