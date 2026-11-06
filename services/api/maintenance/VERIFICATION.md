@@ -22,3 +22,20 @@ The 36 root skips comprise missing auth-local PGlite and native PostgreSQL prere
 Screenshots: [desktop](../../../apps/web/maintenance/evidence/desktop.png), [390px narrow](../../../apps/web/maintenance/evidence/narrow.png). They show an **offline synthetic adapter**, not mounted shared-app reachability.
 
 Remaining decisions: the exact independent-hold/matching-role clearance policy belongs to SV-021. Service completion therefore preserves unavailable status. Shared static/API mounting and shared available-search adoption require coordinator handoff; the existing shared status-only search is unchanged. There is no deployment, merge or completion claim in this receipt. PR head, exact-head hosted CI and board submission receipt are reported in the draft PR/task handoff.
+
+## Review rework — 2026-11-06 UTC
+
+[Manager review](https://github.com/wiltobuild/supply-vanguard/pull/22#pullrequestreview-5794633966) reproduced a rejected read touching removed DOM after close, and non-JSON403 losing its HTTP status before cache cleanup. Normal original-owner reclaim confirmed exit 0 at live board **182**, `2026-11-06T01:43:49.189Z`; pre-edit heartbeat confirmed at **183**. Same checkout, branch and draft PR #22, unchanged scope.
+
+The adapter now classifies HTTP denial before parsing success JSON and preserves status on unreadable successful responses. The panel checks root ownership, lifecycle and request generations on success/error/finalization. Close/remount/access loss invalidates obsolete reads/writes/history, including late errors; current errors still show. Authorization-sensitive state/cursors are cleared on inventory/write denial or session expiry; history-only403 clears audit history without widening audit permission or discarding separately permitted inventory. Genuine uncertain writes still retain exact command/key and refetch after accepted replay.
+
+| Rework check | Observed result |
+| --- | --- |
+| Initial regression run before production fixes | **20 of 29 tests failed**, including the removed-DOM exception, non-JSON401/403 status loss, stale cached data and obsolete lifecycle writes. Controls for current errors and genuine uncertain retry passed. |
+| `npm test --prefix services/api/maintenance` | **51 passed, 0 failed, 0 skipped**, exit 0: original18 plus33 lifecycle/status regressions. Includes explicit deferred401/403/500 after close, identity remount, newer history/selection, global expiry versus other in-flight work, delayed writes, HTML/empty/malformed/JSON denials, and unchanged key/body for network/unreadable200/500/503 retries. Actual auth/RLS/service/history/pagination/receipt/rollback fixtures remain passing. |
+| `node apps/web/maintenance/tests/browser-check.mjs` | **Passed**, exit 0. Actual adapter and domain validator bundled into an offline Chrome page: HTML/empty401/403 clear cached equipment/draft/history; late401/403/500 after close produce zero page errors/unhandled rejections. Existing keyboard/focus, desktop/390px, reduced-motion and axe checks also pass. No HTTP listener or mounted runtime claim. |
+| Permitted repository subset | **38 passed, 0 failed, 0 skipped**, exit 0. Command: `node --test tests/additional-assets.test.mjs tests/contracts.test.mjs tests/domain.test.mjs tests/glb-equivalence.test.mjs tests/location.test.mjs tests/scene-config.test.mjs tests/web.test.mjs`. No socket/native/temp-Git fixture runs. |
+| `npm run check` | **Passed**, exit 0; syntax,27GLBs and19seed definitions. |
+| `git diff --check` | Passed. |
+
+The full root `npm test` was **not rerun**: it would repeat the specifically denied temporary Git operation recorded above. Its earlier46pass/2fail/36skip receipt is historical, not a result for the rework. No prior-denied native/loopback stage was retried or rerouted. Shared mounted reachability, real HTTP service hosting, native multi-session concurrency and manual screen-reader checks remain unrun. This rework changes no API/service policy, SQL, hold clearance, shared files or reserved infrastructure.

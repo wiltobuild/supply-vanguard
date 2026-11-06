@@ -14,12 +14,15 @@ export function mountMaintenance(root,{api,keyFactory=()=>crypto.randomUUID()}){
  <section aria-labelledby="history-heading"><h3 id="history-heading">Administrative service history</h3>
  <p>Recorded status and note changes. History access requires the existing audit permission.</p><button type="button" data-history>Load history</button><ol data-events></ol><p data-history-message role="status"></p><button type="button" data-history-more hidden>More history</button></section></section>`;
  const el=s=>root.querySelector(s),search=el('[data-search]'),form=el('[data-service]'),select=el('[data-items]'),action=form.elements.action,note=form.elements.note;
- let items=[],selected='',cursor=null,historyCursor=null,busy=false,pending=null,needsRefresh=true,closed=false,historyGeneration=0;
+ const surface=root.firstElementChild;
+ let items=[],selected='',cursor=null,historyCursor=null,busy=false,pending=null,needsRefresh=true,closed=false,historyGeneration=0,lifecycle=0,readGeneration=0;
+ // A remount can replace this root before the old host calls close. Never touch its new identity's DOM.
+ const current=(epoch=lifecycle)=>!closed&&epoch===lifecycle&&root.firstElementChild===surface;
  const drafts=new Map(),listeners=[];
  const on=(node,event,fn)=>{node.addEventListener(event,fn);listeners.push(()=>node.removeEventListener(event,fn));};
- const message=text=>{if(!closed)el('[data-message]').textContent=text;};
+ const message=text=>{if(current())el('[data-message]').textContent=text;};
  function controls(){
-  if(closed)return;
+  if(!current())return;
   for(const node of [...search.elements,select,el('[data-refresh]'),el('[data-more]')])node.disabled=busy;
   const unavailable=busy||!!pending||needsRefresh||!items.find(i=>i.id===selected)||!action.options.length;
   for(const node of form.elements)node.disabled=unavailable;
@@ -28,6 +31,7 @@ export function mountMaintenance(root,{api,keyFactory=()=>crypto.randomUUID()}){
   el('[data-rebase]').disabled=unavailable;
  }
  function detail(){
+  if(!current())return;
   const item=items.find(i=>i.id===selected),draft=drafts.get(selected);
   action.replaceChildren();
   const actions=item&&['available','in-use'].includes(item.status)?[['start-cleaning','Start cleaning'],['start-maintenance','Start maintenance']]:item&&['cleaning','maintenance'].includes(item.status)?[['record-service','Record service step; keep unavailable']]:[];
@@ -39,34 +43,40 @@ export function mountMaintenance(root,{api,keyFactory=()=>crypto.randomUUID()}){
   controls();
  }
  function remember(){const item=items.find(i=>i.id===selected);if(item){const old=drafts.get(selected);drafts.set(selected,{action:action.value,note:note.value,expectedVersion:old?.expectedVersion??item.version});}}
- function clearHistory(){historyGeneration++;historyCursor=null;el('[data-events]').replaceChildren();el('[data-history-message]').textContent='';el('[data-history-more]').hidden=true;}
+ function clearHistory(){historyGeneration++;historyCursor=null;if(!current())return;el('[data-events]').replaceChildren();el('[data-history-message]').textContent='';el('[data-history-more]').hidden=true;}
+ function discardAccess(error){
+  if(!current())return;
+  // Expiry, inventory denial or rejected write invalidates all cached identity-sensitive state and older work.
+  lifecycle++;readGeneration++;items=[];selected='';cursor=null;drafts.clear();pending=null;busy=false;needsRefresh=true;
+  select.replaceChildren();el('[data-more]').hidden=true;clearHistory();detail();message(error.message);
+ }
  async function refresh({more=false}={}){
-  if(busy||closed)return;busy=true;controls();message('Loading authoritative equipment…');
+  if(busy||!current())return;const epoch=lifecycle,gen=++readGeneration,valid=()=>current(epoch)&&gen===readGeneration;busy=true;controls();message('Loading authoritative equipment…');
   try{
-   const page=await api.list({view:search.elements.view.value,q:search.elements.q.value,cursor:more?cursor:null});if(closed)return;
+   const page=await api.list({view:search.elements.view.value,q:search.elements.q.value,cursor:more?cursor:null});if(!valid())return;
    items=more?[...items,...page.items]:page.items;cursor=page.nextCursor;
    select.replaceChildren();for(const item of items){const opt=doc.createElement('option');opt.value=item.id;opt.textContent=`${item.id} — ${item.name} (${item.status})`;select.append(opt);}
    if(!items.some(i=>i.id===selected)){selected=items[0]?.id??'';clearHistory();}select.value=selected;
    el('[data-more]').hidden=!cursor;needsRefresh=false;detail();message(`${items.length} loaded.${pending?' Uncertain command retained; retry uses its original version and key.':''}`);
-  }catch(error){needsRefresh=true;if([401,403].includes(error.status)){items=[];selected='';cursor=null;drafts.clear();select.replaceChildren();clearHistory();detail();}message(error.message);}
-  finally{busy=false;controls();}
+  }catch(error){if(!valid())return;needsRefresh=true;if([401,403].includes(error.status))discardAccess(error);else message(error.message);}
+  finally{if(valid()){busy=false;controls();}}
  }
  async function save(retry=false){
-  if(busy||closed)return;
+  if(busy||!current())return;const epoch=lifecycle;
   if(!retry){if(pending||needsRefresh)return;remember();const draft=drafts.get(selected);if(!draft||!action.options.length)return;pending={id:selected,body:{...draft},key:keyFactory()};}
   if(!pending)return;const command=pending;busy=true;controls();message('Saving service entry…');
   let accepted=false,noChange=false;
-  try{const result=await api.service(command.id,command.body,command.key);accepted=true;noChange=result.changed===false&&!result.replayed;drafts.delete(command.id);pending=null;needsRefresh=true;if(!closed)clearHistory();message('Service entry accepted; refreshing current state.');}
-  catch(error){if(!error.uncertain)pending=null;needsRefresh=true;message(error.message);}
-  finally{busy=false;controls();}
-  if(accepted){await refresh();if(!needsRefresh)message(noChange?'No change: this note already matches. Current state refreshed.':'Service entry saved. Current state refreshed; unavailable status is preserved.');}
+  try{const result=await api.service(command.id,command.body,command.key);if(!current(epoch))return;accepted=true;noChange=result.changed===false&&!result.replayed;drafts.delete(command.id);pending=null;needsRefresh=true;clearHistory();message('Service entry accepted; refreshing current state.');}
+  catch(error){if(!current(epoch))return;if([401,403].includes(error.status))discardAccess(error);else{if(!error.uncertain)pending=null;needsRefresh=true;message(error.message);}}
+  finally{if(current(epoch)){busy=false;controls();}}
+  if(accepted&&current(epoch)){await refresh();if(current(epoch)&&!needsRefresh)message(noChange?'No change: this note already matches. Current state refreshed.':'Service entry saved. Current state refreshed; unavailable status is preserved.');}
  }
  async function history(more=false){
-  if(!selected||closed)return;const id=selected,gen=++historyGeneration;el('[data-history-message]').textContent='Loading history…';
-  try{const page=await api.history(id,more?historyCursor:null);if(closed||gen!==historyGeneration||id!==selected)return;
+  if(!selected||!current())return;const epoch=lifecycle,id=selected,gen=++historyGeneration,valid=()=>current(epoch)&&gen===historyGeneration&&id===selected;el('[data-history-message]').textContent='Loading history…';
+  try{const page=await api.history(id,more?historyCursor:null);if(!valid())return;
    if(!more)el('[data-events]').replaceChildren();for(const event of page.items){const li=doc.createElement('li');li.textContent=`${event.at} · ${event.actor} · ${event.before?.status??'unknown'} → ${event.after?.status??'unknown'} · ${event.after?.note??'No note'}`;el('[data-events]').append(li);}
    historyCursor=page.nextCursor;el('[data-history-more]').hidden=!historyCursor;el('[data-history-message]').textContent=page.items.length?'History loaded.':'No recorded changes.';
-  }catch(error){if(gen===historyGeneration&&!closed){if([401,403].includes(error.status)){el('[data-events]').replaceChildren();historyCursor=null;el('[data-history-more]').hidden=true;}el('[data-history-message]').textContent=error.message;}}
+  }catch(error){if(!valid())return;if(error.status===401)discardAccess(error);else{if(error.status===403)clearHistory();el('[data-history-message]').textContent=error.message;}}
  }
  on(search,'submit',e=>{e.preventDefault();void refresh();});on(select,'change',()=>{selected=select.value;clearHistory();detail();});
  on(note,'input',remember);on(action,'change',remember);on(form,'submit',e=>{e.preventDefault();void save();});
@@ -74,5 +84,5 @@ export function mountMaintenance(root,{api,keyFactory=()=>crypto.randomUUID()}){
  on(el('[data-rebase]'),'click',()=>{const item=items.find(i=>i.id===selected);if(item&&!busy&&!pending&&!needsRefresh){drafts.set(selected,{action:action.value,note:note.value,expectedVersion:item.version});detail();message('Draft retained using the reviewed current version. Save explicitly to submit.');}});
  on(el('[data-history]'),'click',()=>void history());on(el('[data-history-more]'),'click',()=>void history(true));
  controls();void refresh();
- return {refresh,close(){closed=true;historyGeneration++;listeners.forEach(remove=>remove());drafts.clear();pending=null;items=[];root.replaceChildren();}};
+ return {refresh,close(){const ownsRoot=current();closed=true;lifecycle++;readGeneration++;historyGeneration++;listeners.forEach(remove=>remove());drafts.clear();pending=null;items=[];selected='';cursor=null;historyCursor=null;note.value='';select.replaceChildren();action.replaceChildren();surface.replaceChildren();if(ownsRoot)root.replaceChildren();}};
 }

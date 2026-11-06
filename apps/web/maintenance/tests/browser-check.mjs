@@ -13,6 +13,7 @@ const browser=await chromium.launch({headless:true,executablePath:process.env.CH
 try{
  const context=await browser.newContext({offline:true,viewport:{width:1440,height:1100},reducedMotion:'reduce'}),page=await context.newPage();
  page.setDefaultTimeout(10000);
+ const pageErrors=[];page.on('pageerror',error=>pageErrors.push(error.message));
  await page.setContent(html);await page.addStyleTag({content:css});await page.addScriptTag({content:`window.mountMaintenance=${mountMaintenance.toString()}`});
  await page.evaluate(()=>{
   document.querySelector('#connect').hidden=true;document.querySelector('#disconnect').hidden=false;
@@ -41,6 +42,32 @@ try{
   assert.deepEqual(results.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>n.target)})),[],`${name}: axe violations`);
   await page.screenshot({path:`${evidence}/${name}.png`,fullPage:true});console.log(`${name}: axe WCAG A/AA passed; no horizontal overflow; screenshot saved`);
  }
+ // Bundle the actual adapter and existing domain validator into the offline page, without an HTTP host.
+ const contracts=readFileSync(new URL('../../../../packages/domain/contracts.js',import.meta.url),'utf8').replace(/export /g,'');
+ const adapter=readFileSync(new URL('../api.js',import.meta.url),'utf8').replace(/^import[^\n]+\n/,'').replace(/export /g,'');
+ await page.addScriptTag({content:`${contracts}\n${adapter}\nwindow.createMaintenanceApi=createMaintenanceApi;`});
+ for(const status of [401,403])for(const format of ['html','empty']){
+  await page.evaluate(({status,format})=>{
+   window.panel.close();window.denied=false;
+   const record={schemaVersion:1,id:'SYN-001',name:'Synthetic monitor',modelKind:'monitor',locationId:'store',status:'maintenance',version:1,lastVerified:null,lastAdminEditAt:null,provenance:'synthetic-fixture'};
+   const api=window.createMaintenanceApi({organizationId:'synthetic',token:'synthetic-session',fetcher:async(url)=>url.includes('/history')?Response.json({items:[{at:'2026-11-06T00:00:00Z',actor:'synthetic',before:{status:'maintenance'},after:{status:'maintenance',note:'Synthetic cached history'}}],nextCursor:null}):window.denied?new Response(format==='html'?'<html>Forbidden</html>':'',{status}):Response.json({items:[record],nextCursor:null})});
+   window.panel=window.mountMaintenance(document.querySelector('#maintenance'),{api});
+  },{status,format});
+  await page.waitForFunction(()=>document.querySelector('[data-items]').options.length===1&&!document.querySelector('[data-refresh]').disabled);
+  await note.fill('Synthetic private draft');await page.getByRole('button',{name:'Load history',exact:true}).click();await page.getByText('History loaded.',{exact:true}).waitFor();
+  await page.evaluate(async()=>{window.denied=true;await window.panel.refresh();});
+  assert.equal(await page.locator('[data-items] option').count(),0);assert.equal(await note.inputValue(),'');assert.equal(await page.locator('[data-events] li').count(),0);
+  assert.match(await page.locator('[data-message]').innerText(),status===401?/Session expired/:/cannot perform/);
+ }
+ for(const status of [401,403,500]){
+  const result=await page.evaluate(async(status)=>{
+   window.panel.close();let rejectRead,calls=0;
+   window.panel=window.mountMaintenance(document.querySelector('#maintenance'),{api:{list:()=>++calls===1?Promise.resolve({items:[],nextCursor:null}):new Promise((resolve,reject)=>{rejectRead=reject;})}});
+   await Promise.resolve();const read=window.panel.refresh();window.panel.close();rejectRead(Object.assign(Error('Old read'),{status}));await read;return document.querySelector('#maintenance').children.length;
+  },status);assert.equal(result,0);
+ }
+ assert.deepEqual(pageErrors,[],'no browser unhandled rejection or late DOM exception');
+ console.log('Offline Chrome regressions: actual adapter clears cached inventory/draft/history for HTML/empty401/403; late401/403/500 rejection after close has no page errors.');
  console.log('Offline Chrome: native keyboard service save, unavailable status, history, desktop/narrow and reduced-motion checks passed. Shared app/API mounting is unverified.');
  await context.close();
 }finally{await browser.close();}
