@@ -41,6 +41,41 @@ differences and cleanup failures return nonzero. Do not retry a permission denia
 different directory, identity, binary route or host. Record the exact blocker. A test of the
 integrity-comparison function is not a database backup/restore pass.
 
+## Comparison failure diagnostics
+
+A strict comparison failure retains the nonzero exit and generic failure message, followed by
+`Recovery comparison diagnostics:` and one bounded JSON object. `phase` distinguishes
+`post-restore` (before protection probes) from `post-protection-probes` (after the probe SQL has
+returned). A phase identifies where comparison failed; it is not a successful drill or a pass for
+an individual probe. An earlier fixture validation or SQL/tool failure may have no comparison
+receipt. Do not infer completion of later stages from a missing receipt.
+
+The receipt contains SHA-256 hashes of the complete before/after JSON snapshots and at most
+eight mismatch entries, each with a structural `path`, `kind` and before/after subtree hashes.
+Hashes use the existing JSON serialization, including key and array order; no comparison is
+normalized or relaxed. Missing fields have a separate hashed presence marker. Paths contain
+only fixed public schema/contract labels and numeric positions. Arbitrary object keys become
+`property[n]` positions in that object's combined before/after key order; these positions are
+not row identifiers and may require a separately approved local investigation to resolve.
+No row values, SQL/function bodies, ACL values, tenant IDs, credentials or connection strings
+are included in the comparison receipt. Hashes are diagnostic fingerprints, not encrypted data;
+retain the receipt with the same care as other internal operational evidence.
+
+Diagnostic traversal stops at depth 12 or 10,000 visited nodes; paths are at most 160 characters
+and the JSON receipt is at most 8,192 bytes. `truncated: true` means the entries are incomplete
+or a limit reports only a mismatching enclosing subtree. The strict full-snapshot comparison
+still runs regardless of diagnostic limits. A cleanup failure keeps error priority and the safe
+comparison receipt, while all existing database/archive cleanup attempts remain unconditional.
+Do not disable strict checks or retain raw snapshots to make diagnosis easier.
+
+The native attempt on 2026-11-09 at `1cf34f3e7503b30fafbaaa04cd8ef0d690306beb` failed with
+`Restored data or security/schema metadata differs`. Matching PostgreSQL 18.6 tools completed
+dump and restore before the failure. The historical output did not distinguish the two comparison
+phases, so neither the exact differing field nor protection-probe completion is established.
+Its finalized receipt confirms cluster shutdown and removal of the generated root and credential
+files. This instrumentation does not reinterpret that failure or constitute another native run.
+An instrumented rerun requires separate coordinator clearance and the approved disposable setup.
+
 ## What the script does
 
 1. Checks explicit opt-in, non-production mode, loopback routing and safe existing username/port.
@@ -81,9 +116,9 @@ integrity-comparison function is not a database backup/restore pass.
    deferred override-audit FK check, then compares all data again. Hold probes reject deletion,
    rewriting and reactivation, wrong-role or unconfigured clearance, duplicate active kinds and
    new assignments with active holds. A successful single-kind clearance must leave the other
-   holds blocking; that test clearance is rolled back before final comparison. These native SQL
-   probes remain unrun until the documented prerequisites exist. Outputs aggregate SHA-256
-   digests and checks, never raw rows or connection errors.
+   holds blocking; that test clearance is rolled back before final comparison. Native protection
+   probe completion remains unproven in the recorded failed attempt. Outputs aggregate SHA-256
+   digests and checks, or the bounded comparison diagnostics above, never raw rows or connection errors.
 5. Drops both generated databases, deletes the temporary archive directory, then reports success.
    If ordinary cleanup fails, output identifies exact generated resources for the cluster owner;
    no pass is claimed. An externally killed process may require that owner's cleanup of the

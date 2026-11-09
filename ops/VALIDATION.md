@@ -1,5 +1,57 @@
 # SV-017 validation record
 
+## Local failure diagnostics (2026-11-09)
+
+Separate-reviewer rework exited 0 at revision 230; original-owner claim exited 0 at **revision
+231**, owner `wil`, agent `wil-sol-sv017-20261105-ops`, in the same checkout/branch. Heartbeat
+before finishing the repair exited 0 at revision 235. Baseline remains published draft PR #17
+head `1cf34f3e7503b30fafbaaa04cd8ef0d690306beb`. This repair is authorized for a tested local
+commit only: no push, PR metadata/attachment retry, board submission, merge or deployment.
+Auth/core/bootstrap/root/dependency/CI/workflow scope remains excluded.
+
+The already executed native drill at that baseline used matching PostgreSQL **18.6** tools and
+server, with a synthetic loopback-only marked disposable cluster. It exited **1**, state
+`not-passed`, with `Restored data or security/schema metadata differs`. Dump and restore
+returned successfully before that error; the exact differing field and protection-probe
+completion cannot be reconstructed from the generic historical error. No native acceptance
+pass or hosted/release readiness is available. The finalized receipt records cluster shutdown,
+postmaster exit, credential-file removal and generated-root removal as true. Read-only
+reconciliation also verified no matching process or listener. No setup or native rerun occurs
+in this diagnostic repair; a further instrumented run requires coordinator clearance.
+
+The failure/reconciliation receipts are preserved unchanged outside the repository in the
+authorized task folder. Their SHA-256 fingerprints are:
+
+| Receipt | SHA-256 |
+| --- | --- |
+| `sv017-native-acceptance-20261109.json` | `21288322AD6145DEBDC0ACBB0D2832DC7006823ACEEEB5162DDB6A1A616CCCF7` |
+| `sv017-native-reconciliation-20261109.json` | `59A53CF77E638DFF0C3242CF1B26A22921522233DBF1EECB6C3B1067E7CDD129` |
+
+Comparison failures now identify `post-restore` or `post-protection-probes`, with complete
+snapshot hashes and bounded structural mismatch paths/subtree hashes. Only fixed public
+labels and numeric positions are emitted; arbitrary keys and all raw values are withheld.
+Strict JSON hash equality, fixture/tenant/identity/RLS/protection assertions and cleanup are
+unchanged. The regressions cover exact field/presence/security hashes, key-order/type rejection,
+value/key/phase redaction, immutable trusted receipts, cleanup-error retention and entry/depth/
+node/path/byte bounds. These are source/logic checks, not a new recovery pass.
+
+| Local command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 26 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: 8 migrations and 26 expected public tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 task definitions validated |
+| `git diff --check` | Exit 0 |
+| SHA-256 of the two preserved native receipts | Unchanged, as recorded above |
+
+Checks used Node `v24.18.0`. Diff review confirms the full-snapshot digest predicate and all
+remaining integrity assertions are unchanged. The drill changes only supply phase labels,
+print the safe receipt on failure and retain that receipt when cleanup takes error priority;
+the fixture SQL, native protection probes and database/archive cleanup operations are unchanged.
+
+The previous full/root-suite limitations and the denied board-race Git operation below remain
+historical evidence; that denied fixture is not retried for this local repair. No full `npm test`
+pass or exact-head CI result is claimed for an unpublished local commit.
+
 ## Holds compatibility repair (2026-11-09)
 
 Live revision 190 confirmed separate-reviewer rework and no claim. Original-owner claim exited 0

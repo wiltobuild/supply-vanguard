@@ -7,6 +7,7 @@ import {randomUUID, createHash} from 'node:crypto';
 import {inventoryEvidence, loadRecoveryInventory} from './recovery-inventory.mjs';
 import {fixtureSetupSql} from './recovery-fixture.mjs';
 import {verifySnapshot} from './recovery-integrity.mjs';
+import {mismatchDiagnosticLine, retainMismatchDiagnostics} from './recovery-diagnostics.mjs';
 export {verifySnapshot} from './recovery-integrity.mjs';
 
 export const marker = 'sv-ops-disposable';
@@ -91,12 +92,12 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
     // This is not a repair or test of the independent SV-019 bootstrap sequence.
     query(source, fixtureSetupSql(inventory));
     const before = snapshot(source);
-    verifySnapshot(before, before); // Refuse to archive an incomplete fixture even if restore would match it.
+    verifySnapshot(before, before, {phase: 'source-fixture'}); // Refuse to archive an incomplete fixture even if restore would match it.
     run('pg_dump', ['--no-password', '--format=custom', '--file', archive, '--dbname', source]);
     const archiveSha256 = createHash('sha256').update(readFileSync(archive)).digest('hex');
     run('pg_restore', ['--no-password', '--exit-on-error', '--single-transaction', '--dbname', target, archive]);
     const after = snapshot(target);
-    const integrity = verifySnapshot(before, after);
+    const integrity = verifySnapshot(before, after, {phase: 'post-restore'});
     // Prove restored append-only triggers and replay/idempotency uniqueness still execute.
     query(target, `DO $$ BEGIN
       BEGIN UPDATE equipment_observation SET actor='forbidden'; RAISE EXCEPTION 'append-only assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
@@ -157,7 +158,7 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
         RAISE EXCEPTION USING ERRCODE='SV999', MESSAGE='ops rollback hold-clear probe';
       EXCEPTION WHEN SQLSTATE 'SV999' THEN NULL; END;
     END $$;`);
-    verifySnapshot(before, snapshot(target));
+    verifySnapshot(before, snapshot(target), {phase: 'post-protection-probes'});
     evidence = {state: 'passed', engine: `native PostgreSQL ${serverMajor}`, syntheticOnly: true,
       ...integrity, archiveSha256, inventory: inventoryEvidence(inventory), checks: ['all 26 public tables', 'physical/receipt timestamps',
         'legacy and no-op command receipts', 'fractional ledger and stock projection', 'request assignment and event links',
@@ -171,12 +172,17 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
     catch { cleanupFailed.push(database); }
   }
   try { rmSync(archiveCleanupTarget(directory), {recursive: true, force: true}); } catch { cleanupFailed.push(directory); }
-  if (cleanupFailed.length) throw Error(`Cleanup incomplete: ${cleanupFailed.join(', ')}; stop and ask the disposable-cluster owner to remove these exact drill resources; no pass recorded`);
+  if (cleanupFailed.length) throw retainMismatchDiagnostics(Error(`Cleanup incomplete: ${cleanupFailed.join(', ')}; stop and ask the disposable-cluster owner to remove these exact drill resources; no pass recorded`), failure);
   if (failure) throw failure;
   return {...evidence, cleanup: 'both generated databases and temporary archive removed'};
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try { console.log(JSON.stringify(runDrill(), null, 2)); }
-  catch (error) { console.error(`Recovery drill BLOCKED/FAILED: ${error.message}`); process.exitCode = 1; }
+  catch (error) {
+    console.error(`Recovery drill BLOCKED/FAILED: ${error.message}`);
+    const diagnostics = mismatchDiagnosticLine(error);
+    if (diagnostics) console.error(diagnostics);
+    process.exitCode = 1;
+  }
 }

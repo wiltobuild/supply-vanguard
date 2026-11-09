@@ -2,6 +2,7 @@ import {createHash} from 'node:crypto';
 import {validateTableInventory} from './recovery-inventory.mjs';
 import {locationPolicy} from '../packages/domain/location/index.js';
 import {summarizeHolds, validateRuleInput} from '../packages/domain/holds/index.js';
+import {SnapshotMismatchError} from './recovery-diagnostics.mjs';
 
 const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const requireThat = (condition, message) => { if (!condition) throw Error(message); };
@@ -19,8 +20,8 @@ const counts = {organization: 1, facility: 1, ward: 1, location: 10, equipment_t
   ingestion_nonce: 1, ingestion_receipt: 1, ingestion_dead_letter: 1, location_override: 1, location_override_audit: 1,
   hold_clearance_rule: 2, equipment_hold: 5};
 
-export function verifySnapshot(before, after) {
-  if (digest(after) !== digest(before)) throw Error('Restored data or security/schema metadata differs');
+export function verifySnapshot(before, after, options) {
+  if (digest(after) !== digest(before)) throw new SnapshotMismatchError(before, after, options);
   const t = before.tables;
   validateTableInventory(t);
   for (const [name, count] of Object.entries(counts)) requireThat(Array.isArray(t[name]) && t[name].length === count, `Missing synthetic evidence: ${name}`);
