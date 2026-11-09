@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 240,
-  "updatedAt": "2026-11-09T19:28:37.482Z",
+  "revision": 241,
+  "updatedAt": "2026-11-09T23:15:08.984Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1689,6 +1689,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T23:15:08.984Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2211,7 +2218,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2233,8 +2240,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T14:31:17.407Z",
-      "blockedReason": "Single coordinator-cleared instrumented native retry at a87df9844183453c46aa21516202a522834ed088 used matching PostgreSQL18.6 and exited1 at post-restore. Dump/restore completed; protection probes did not run. One untruncated value mismatch at $.metadata.constraints[41][2]: before SHA256 40db3d04079639d4f7a253603326d0e3c65a83d4b79447926a6e59c603be6917, after 83fb2793046e743b5e910fd084bb4a9079b3f94d82aa6d1bd5d8b4f4bfae31ab. Distinct local instrumented receipt finalized not-passed; both drill DBs/archives removed, roles unchanged, cluster/credentials/root removed, exact run PIDs exited and port55439 empty. Old receipts unchanged. Runtime stopped; no speculative fix, further retry, publication, merge or deployment. Coordinator diagnosis/rework required.",
-      "reviewNote": "Independent review of frozen a87df9844183453c46aa21516202a522834ed088 passed 26 ops tests plus 4 manager diagnostic regressions. Coordinator clears one instrumented retry under existing approved official PostgreSQL isolated synthetic recovery/remove scope, after prior receipt and cleanup reconciliation. Preserve strict comparisons, redacted phase/path/hash diagnostics and unconditional verified cleanup. Original SV-017 owner only; normal claim required. No publication, merge, deployment or unrelated provisioning."
+      "blockedReason": null,
+      "reviewNote": "Coordinator clears only one isolated PostgreSQL18.6 CHECK parse/deparse diagnostic under existing temporary synthetic recovery approval. Frozen a87df984 unchanged. Compare source BETWEEN expansion and explicit AND reparse, exact retained hashes, catalog enforcement flags and boundary rejection/acceptance. Normal original-owner claim required; verify prior cleanup first. No full recovery run, comparator/source/migration edits, publication, merge or deployment."
     },
     {
       "id": "SV-018",
