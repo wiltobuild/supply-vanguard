@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 225,
-  "updatedAt": "2026-11-09T16:59:39.889Z",
+  "revision": 226,
+  "updatedAt": "2026-11-09T17:01:21.194Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1584,6 +1584,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Approved check-in handoff: transfer six shared paths from idle SV011, add check-in integration test, retain maintenance directories/test and all unrelated state"
+    },
+    {
+      "at": "2026-11-09T17:01:21.194Z",
+      "taskId": "SV-008",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1826,7 +1833,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1856,7 +1863,7 @@
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
       "blockedReason": null,
-      "reviewNote": "Exact host head fa963be57d0e8e7a1f250a9fbfcf95dcde8c47f5 has two independently reproduced P2 gaps; review https://github.com/wiltobuild/supply-vanguard/pull/14#pullrequestreview-5793907445. (1) After ready(), block verifier inside admitted handle(GET equipment), then await close(): it reports closed while verifier/request remain active. Drain admitted direct-handle work before close resolves, preserving caller ownership of pool/verifier; add gated verifier and active lease/transaction regressions. (2) If BEGIN READ ONLY rejects, begun is still false, so no rollback/discard occurs and release(undefined) reuses an uncertain transaction. Roll back safely or discard on uncertain BEGIN failure; add focused regression and keep safe error mapping. Original QR owner alone should reclaim normally and fix host/tests/docs only inside services/api/check-in on existing draft branch. No held shared-web paths, scope migration, auth/bootstrap/provisioning/root/CI edits, new credentials/grants, or retries of denied Windows native/loopback stages. 37 scoped passes/1 native skip, selected30 and27GLB check passed; keep draft/unmerged pending repair and remaining integration gates.",
+      "reviewNote": "Approved shared check-in integration after scope transfer225 f75bb474ae10ced10767ff32ff39492fb25059c0. Original SV008 owner alone must normally claim before edits. Pin published maintenance984e6aec as an unmerged dependency and integrate it locally without merging feature PRs or modifying maintenance directories/test; inspect authored changes relative to that baseline. Implement exact shared static/navigation/session/API mounting in transferred six paths plus check-in integration test, preserving maintenance lifecycle, canonical held/unassigned readiness, auth/RLS, attribution/idempotency, focus and scanner/manual/cancel behavior. Approved temporary in-memory roles/minimum grants, fictional memberships and short-lived test tokens are solely for mounted form/API acceptance; use real handlers/auth/SQL, revoke/close and verify cleanup. Preserve all operation-specific native/loopback/filesystem/metadata403 stops, SV019 auth/core/root/CI ownership and SV017 recovery isolation. No real patient data, external transmission, retained credentials or production access. No feature-code publication, merge, deployment, persistent access expansion or unrelated provisioning. Return claim/source/test/cleanup and tested local commit receipts; report any distinct runtime or access blocker without rerouting it.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing."
       ]
