@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 214,
-  "updatedAt": "2026-11-09T15:35:48.561Z",
+  "revision": 215,
+  "updatedAt": "2026-11-09T15:36:53.015Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1506,6 +1506,13 @@
       "command": "block",
       "agent": "wil-sol-sv015-20261105-b9c2",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:36:53.015Z",
+      "taskId": "SV-010",
+      "command": "unblock",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1811,7 +1818,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1830,8 +1837,8 @@
         "Add and run task-specific acceptance checks"
       ],
       "claim": null,
-      "blockedReason": "Retained commit cf43d8108a792b8a9449caacda5c854406b8054c is published on task/sv-010-wil-sol-sv010-20261106-replenishment and remote head verified. Draft PR creation through GitHub integration returned 403 Resource not accessible by integration; no PR or submission created and no alternate creation route attempted. Original checkout retained.",
-      "reviewNote": "SV-010 retained-commit draft publication handoff resumed; scope unchanged."
+      "blockedReason": null,
+      "reviewNote": "Independent exact public cf43d810 client review reproduced P2: createReplenishmentClient parses JSON before HTTP status, so malformed401/403 GET/POST lose error.status and rejected writes become uncertain; mountSupplies cannot clear unauthorized cached records/pending drafts. Four manager regressions fail; malformed201 write uncertainty control passes. Original owner alone may normally reclaim for local apps/web/supplies/client.mjs and task-local regression tests/docs repair, handling authoritative status before malformed body while retaining true network/5xx/success-parse uncertainty and access cleanup. Existing GitHub integration PR creation403 remains stopped; this readies local repair only, not a retry or alternate creation route. Published exact cf43d810 retained; new repair publication needs applicable approval. No fixture/native/loopback denial retry, shared edits, provisioning, credentials, merge or deployment."
     },
     {
       "id": "SV-011",
