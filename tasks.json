@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 189,
-  "updatedAt": "2026-11-09T14:17:41.546Z",
+  "revision": 190,
+  "updatedAt": "2026-11-09T14:19:11.547Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1330,6 +1330,13 @@
       "command": "complete",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T14:19:11.547Z",
+      "taskId": "SV-017",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1835,7 +1842,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1858,7 +1865,7 @@
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-05T23:14:45.203Z",
       "blockedReason": null,
-      "reviewNote": "Reconcile recovery inventory with merged equipment receipt, supply, request and location-resolution migrations and add focused integrity regressions. Integrate current main on the existing branch, editing ops/ only. Native recovery remains unverified until PostgreSQL clients and disposable cluster setup are available."
+      "reviewNote": "Current-main compatibility review against merged holds PR23 dd770606: prospective merge is clean, but node ops/recovery-inventory.mjs exits1 because holds migration is absent from the explicit7-migration inventory. Original ops owner should normally reclaim, integrate current main, extend ops-only inventory/fixtures/integrity assertions for hold_clearance_rule and equipment_hold, including stacked/cleared state, role mapping, links, RLS, append-only history and assignment blocking without inventing policy or roles. Retain fail-closed inventory behavior. No auth/core/bootstrap/root/CI edits or new credentials/provisioning. Matching psql/pg_dump/pg_restore and explicit existing disposable cluster are still absent; real recovery remains unrun and required before merge. Preserve all prior denial/scope holds and resubmit tested existing draft PR17 only."
     },
     {
       "id": "SV-018",
