@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 216,
-  "updatedAt": "2026-11-09T15:38:00.518Z",
+  "revision": 217,
+  "updatedAt": "2026-11-09T15:40:00.109Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1520,6 +1520,13 @@
       "command": "claim",
       "agent": "wil-sol-sv010-20261106-replenishment",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-09T15:40:00.109Z",
+      "taskId": "SV-010",
+      "command": "heartbeat",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1848,7 +1855,7 @@
         "owner": "wil",
         "leaseId": "e752cdd5-3526-48ca-8ad6-e64a452b0bd6",
         "claimedAt": "2026-11-09T15:38:00.518Z",
-        "expiresAt": "2026-11-09T17:38:00.518Z"
+        "expiresAt": "2026-11-09T17:40:00.109Z"
       },
       "blockedReason": null,
       "reviewNote": "Independent exact public cf43d810 client review reproduced P2: createReplenishmentClient parses JSON before HTTP status, so malformed401/403 GET/POST lose error.status and rejected writes become uncertain; mountSupplies cannot clear unauthorized cached records/pending drafts. Four manager regressions fail; malformed201 write uncertainty control passes. Original owner alone may normally reclaim for local apps/web/supplies/client.mjs and task-local regression tests/docs repair, handling authoritative status before malformed body while retaining true network/5xx/success-parse uncertainty and access cleanup. Existing GitHub integration PR creation403 remains stopped; this readies local repair only, not a retry or alternate creation route. Published exact cf43d810 retained; new repair publication needs applicable approval. No fixture/native/loopback denial retry, shared edits, provisioning, credentials, merge or deployment."
