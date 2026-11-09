@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 252,
-  "updatedAt": "2026-11-09T23:48:42.705Z",
+  "revision": 253,
+  "updatedAt": "2026-11-09T23:50:59.499Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1773,6 +1773,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-09T23:50:59.499Z",
+      "taskId": "SV-017",
+      "command": "submit",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2295,7 +2302,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2313,16 +2320,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "e1479d53-1e92-49f3-b5ad-0e24ae8f9886",
-        "claimedAt": "2026-11-09T23:48:42.705Z",
-        "expiresAt": "2026-11-10T01:48:42.705Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
-      "submittedAt": "2026-11-09T14:31:17.407Z",
+      "submittedAt": "2026-11-09T23:50:59.499Z",
       "blockedReason": null,
       "reviewNote": "Independent frozen 1557b4f5ebc344f6dd903e2b74704c586853bdc4 review passed: clean eight ops-only files, 35 scoped tests plus eight manager schema/security/redaction regressions; strict digest and protection/cleanup preserved. Coordinator clears ONE full instrumented PostgreSQL18.6 disposable local synthetic backup/restore acceptance at this exact head, after prior cleanup reconciliation. Original owner normal claim required; distinct immutable receipts, capture post-restore AND post-protection outcomes, verified unconditional cleanup. Stop on new failure after cleanup, no blind retry or weakened checks. No publication, merge, deployment or unrelated changes."
     },
