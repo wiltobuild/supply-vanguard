@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 209,
-  "updatedAt": "2026-11-09T15:29:40.679Z",
+  "revision": 210,
+  "updatedAt": "2026-11-09T15:29:54.711Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1471,6 +1471,13 @@
       "command": "unblock",
       "agent": "wil-sol-sv010-20261106-replenishment",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:29:54.711Z",
+      "taskId": "SV-010",
+      "command": "claim",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -1776,7 +1783,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1794,7 +1801,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-sol-sv010-20261106-replenishment",
+        "owner": "wil",
+        "leaseId": "0122b432-9c79-4a5b-b2cc-d407285a6ff3",
+        "claimedAt": "2026-11-09T15:29:54.711Z",
+        "expiresAt": "2026-11-09T17:29:54.711Z"
+      },
       "blockedReason": null,
       "reviewNote": "SV-010 retained-commit draft publication handoff resumed; scope unchanged."
     },
