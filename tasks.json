@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 224,
-  "updatedAt": "2026-11-09T16:13:29.318Z",
+  "revision": 225,
+  "updatedAt": "2026-11-09T16:59:39.889Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1576,6 +1576,14 @@
       "command": "submit",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T16:59:39.889Z",
+      "taskId": "SV-008,SV-011",
+      "command": "migration-transfer-scope",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Approved check-in handoff: transfer six shared paths from idle SV011, add check-in integration test, retain maintenance directories/test and all unrelated state"
     }
   ],
   "tasks": [
@@ -1826,7 +1834,14 @@
       ],
       "scope": [
         "apps/web/check-in",
-        "services/api/check-in"
+        "services/api/check-in",
+        "apps/web/index.html",
+        "apps/web/serve.mjs",
+        "apps/web/README.md",
+        "apps/web/src/app.js",
+        "apps/web/src/equipment-api.js",
+        "apps/web/tests/api-fixture.mjs",
+        "apps/web/tests/check-in-integration.test.mjs"
       ],
       "acceptance": [
         "Scan/type ID, validate location, attributed idempotent check-in; unknown IDs and duplicate requests handled."
@@ -1841,7 +1856,10 @@
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
       "blockedReason": null,
-      "reviewNote": "Exact host head fa963be57d0e8e7a1f250a9fbfcf95dcde8c47f5 has two independently reproduced P2 gaps; review https://github.com/wiltobuild/supply-vanguard/pull/14#pullrequestreview-5793907445. (1) After ready(), block verifier inside admitted handle(GET equipment), then await close(): it reports closed while verifier/request remain active. Drain admitted direct-handle work before close resolves, preserving caller ownership of pool/verifier; add gated verifier and active lease/transaction regressions. (2) If BEGIN READ ONLY rejects, begun is still false, so no rollback/discard occurs and release(undefined) reuses an uncertain transaction. Roll back safely or discard on uncertain BEGIN failure; add focused regression and keep safe error mapping. Original QR owner alone should reclaim normally and fix host/tests/docs only inside services/api/check-in on existing draft branch. No held shared-web paths, scope migration, auth/bootstrap/provisioning/root/CI edits, new credentials/grants, or retries of denied Windows native/loopback stages. 37 scoped passes/1 native skip, selected30 and27GLB check passed; keep draft/unmerged pending repair and remaining integration gates."
+      "reviewNote": "Exact host head fa963be57d0e8e7a1f250a9fbfcf95dcde8c47f5 has two independently reproduced P2 gaps; review https://github.com/wiltobuild/supply-vanguard/pull/14#pullrequestreview-5793907445. (1) After ready(), block verifier inside admitted handle(GET equipment), then await close(): it reports closed while verifier/request remain active. Drain admitted direct-handle work before close resolves, preserving caller ownership of pool/verifier; add gated verifier and active lease/transaction regressions. (2) If BEGIN READ ONLY rejects, begun is still false, so no rollback/discard occurs and release(undefined) reuses an uncertain transaction. Roll back safely or discard on uncertain BEGIN failure; add focused regression and keep safe error mapping. Original QR owner alone should reclaim normally and fix host/tests/docs only inside services/api/check-in on existing draft branch. No held shared-web paths, scope migration, auth/bootstrap/provisioning/root/CI edits, new credentials/grants, or retries of denied Windows native/loopback stages. 37 scoped passes/1 native skip, selected30 and27GLB check passed; keep draft/unmerged pending repair and remaining integration gates.",
+      "coordinationNotes": [
+        "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing."
+      ]
     },
     {
       "id": "SV-009",
@@ -1915,12 +1933,6 @@
       "scope": [
         "apps/web/maintenance",
         "services/api/maintenance",
-        "apps/web/index.html",
-        "apps/web/serve.mjs",
-        "apps/web/README.md",
-        "apps/web/src/app.js",
-        "apps/web/src/equipment-api.js",
-        "apps/web/tests/api-fixture.mjs",
         "apps/web/tests/maintenance-integration.test.mjs"
       ],
       "acceptance": [
@@ -1938,7 +1950,8 @@
       "blockedReason": null,
       "reviewNote": "Publication gate resolved for frozen integration 984e6aec255aa6c880442a8268191360611efd15. Resume original-owner publication and normal resubmission on existing PR22 only. Manager mounted browser/API acceptance and80 controlled tests passed; the disposable preview is closed. No merge, deployment, metadata403 retry or runtime restart.",
       "coordinationNotes": [
-        "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements."
+        "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements.",
+        "This approved SV008 transfer supersedes only the earlier reservation of the six shared web files: their sole implementation owner is now original SV008 owner after normal claiming. SV011 retains apps/web/maintenance, services/api/maintenance and apps/web/tests/maintenance-integration.test.mjs. Published PR22 remains frozen; any shared-file repair requires fresh coordinator ownership reconciliation. No maintenance implementation lease or feature publication/merge/deployment is granted by this scope migration."
       ]
     },
     {
