@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 202,
-  "updatedAt": "2026-11-09T14:54:56.654Z",
+  "revision": 203,
+  "updatedAt": "2026-11-09T15:16:41.786Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1421,6 +1421,14 @@
       "command": "submit",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:16:41.786Z",
+      "taskId": "SV-011",
+      "command": "scope",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "User-authorized bounded maintenance shared-app integration"
     }
   ],
   "tasks": [
@@ -1758,7 +1766,14 @@
       ],
       "scope": [
         "apps/web/maintenance",
-        "services/api/maintenance"
+        "services/api/maintenance",
+        "apps/web/index.html",
+        "apps/web/serve.mjs",
+        "apps/web/README.md",
+        "apps/web/src/app.js",
+        "apps/web/src/equipment-api.js",
+        "apps/web/tests/api-fixture.mjs",
+        "apps/web/tests/maintenance-integration.test.mjs"
       ],
       "acceptance": [
         "Restricted transitions, service history; unavailable equipment excluded from ready search."
@@ -1773,7 +1788,10 @@
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T14:54:56.654Z",
       "blockedReason": null,
-      "reviewNote": "Explicit user approval verified for publishing tested retained repair b52e924080b54c013fddf979ba35bc22068ad830 to the existing public PR22 branch. Resume normal original-owner claim and publication/submission only; no merge or deployment."
+      "reviewNote": "Explicit user approval verified for publishing tested retained repair b52e924080b54c013fddf979ba35bc22068ad830 to the existing public PR22 branch. Resume normal original-owner claim and publication/submission only; no merge or deployment.",
+      "coordinationNotes": [
+        "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements."
+      ]
     },
     {
       "id": "SV-012",
