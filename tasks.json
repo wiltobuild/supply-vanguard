@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 229,
-  "updatedAt": "2026-11-09T19:03:41.160Z",
+  "revision": 230,
+  "updatedAt": "2026-11-09T19:03:53.024Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1612,6 +1612,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T19:03:53.024Z",
+      "taskId": "SV-017",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2140,7 +2147,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2163,7 +2170,7 @@
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T14:31:17.407Z",
       "blockedReason": null,
-      "reviewNote": "Current-main compatibility review against merged holds PR23 dd770606: prospective merge is clean, but node ops/recovery-inventory.mjs exits1 because holds migration is absent from the explicit7-migration inventory. Original ops owner should normally reclaim, integrate current main, extend ops-only inventory/fixtures/integrity assertions for hold_clearance_rule and equipment_hold, including stacked/cleared state, role mapping, links, RLS, append-only history and assignment blocking without inventing policy or roles. Retain fail-closed inventory behavior. No auth/core/bootstrap/root/CI edits or new credentials/provisioning. Matching psql/pg_dump/pg_restore and explicit existing disposable cluster are still absent; real recovery remains unrun and required before merge. Preserve all prior denial/scope holds and resubmit tested existing draft PR17 only."
+      "reviewNote": "Native PostgreSQL18.6 recovery at exact1cf34f3e executed and failed strict data/security/schema comparison after successful dump/restore; protection-probe completion and exact differing field are unproven. Shutdown/root/credential cleanup verified. Original ops owner alone should normally reclaim for LOCAL ops-only diagnostics: distinguish post-restore from post-probe phase, emit capped mismatch paths and before/after hashes with no raw rows, SQL bodies, credentials or sensitive values. Preserve strict comparisons, RLS/protection assertions, inventory and unconditional cleanup. Test diagnostic accuracy, bounds and redaction; freeze a tested local commit. No auth/core/root/CI/workflow edits, code publication, PR metadata403 retry, merge or deployment. No new native setup/rerun until coordinator clearance after diagnostic review; prior one-retry runtime direction is not expanded by this rework. Keep existing source/runtime evidence and exact failure truthful."
     },
     {
       "id": "SV-018",
