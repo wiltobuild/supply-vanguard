@@ -13,7 +13,7 @@ npm run board -- next --owner YOUR_NAME --agent YOUR_NAME-AGENT-UNIQUE_ID
 npm run board -- claim SV-001 --owner YOUR_NAME --agent YOUR_NAME-AGENT-UNIQUE_ID
 ```
 
-Wait for exit code 0 and the confirmed claim before starting. A competing claim fails or `next` selects another ready task. Work in your own clone/worktree and branch, following the returned branch suggestion. One task per agent. Scope work to the task's files and acceptance criteria. Coordinate shared-file changes through PR review.
+Wait for exit code 0 and the confirmed claim before starting. A competing claim fails or `next` selects another ready task. Work in your own clone/worktree and branch, following the returned branch suggestion. One task per agent. Scope work to the task's files and acceptance criteria. Coordinate shared-file changes through task ownership and PR discussion; a separate PR review is optional.
 
 Claims expire after 120 minutes. Renew every 30 minutes and before substantial edits or commits:
 
@@ -33,17 +33,17 @@ npm run board -- release SV-001 --agent YOUR_AGENT_ID
 npm run board -- block SV-001 --agent YOUR_AGENT_ID --reason "Explain the dependency"
 ```
 
-Submission clears the lease and holds the task in review. A different reviewer agent reviews the PR and after it is merged runs:
+Submission clears the lease and holds the task in the `review` status while its PR is pending. This status does not require a review or approval. An authorized contributor may merge a tested PR without a separate reviewer, including their own PR. After it is merged, the submitting agent or another contributor runs:
 
 ```sh
-npm run board -- complete SV-001 --agent REVIEWER_ID
-# Return review work or resolve a blocker:
-npm run board -- rework SV-001 --agent REVIEWER_ID --reason "Specific required changes"
-npm run board -- unblock SV-001 --agent REVIEWER_ID --reason "Blocker resolved"
+npm run board -- complete SV-001 --agent YOUR_AGENT_ID
+# Return submitted work (including your own) or resolve a blocker:
+npm run board -- rework SV-001 --agent YOUR_AGENT_ID --reason "Specific required changes"
+npm run board -- unblock SV-001 --agent YOUR_AGENT_ID --reason "Blocker resolved"
 ```
 
 The CLI verifies a merged PR in this repo before completion. Do not mark tasks complete based on intent. Preserve provenance and synthetic-data labels; never claim exact architectural accuracy or live tracking without evidence. Do not add secrets or patient information. Adding/restructuring tasks requires an explicitly coordinated board migration; `init` never overwrites a live board.
 
 ## Paste into a new agent
 
-“Clone https://github.com/wiltobuild/supply-vanguard, read AGENTS.md and the implementation plan, then use the board CLI to claim the next ready task with my owner name and a unique agent ID. Confirm the claim before editing. Implement its acceptance criteria in a separate branch, test, open a PR and submit the task for review. Heartbeat the lease every 30 minutes. Stop if the claim is lost.”
+“Clone https://github.com/wiltobuild/supply-vanguard, read AGENTS.md and the implementation plan, then use the board CLI to claim the next ready task with my owner name and a unique agent ID. Confirm the claim before editing. Implement its acceptance criteria in a separate branch, test, open a PR and submit the task to the board. Separate PR review is optional; after an authorized merge, complete the task with verified merge evidence. Heartbeat the lease every 30 minutes. Stop if the claim is lost.”
