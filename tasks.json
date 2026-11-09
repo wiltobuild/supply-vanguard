@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 218,
-  "updatedAt": "2026-11-09T15:40:06.834Z",
+  "revision": 219,
+  "updatedAt": "2026-11-09T15:40:28.781Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1534,6 +1534,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:40:28.781Z",
+      "taskId": "SV-010",
+      "command": "block",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1839,7 +1846,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1857,14 +1864,8 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv010-20261106-replenishment",
-        "owner": "wil",
-        "leaseId": "e752cdd5-3526-48ca-8ad6-e64a452b0bd6",
-        "claimedAt": "2026-11-09T15:38:00.518Z",
-        "expiresAt": "2026-11-09T17:40:00.109Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Local access-response repair committed as bcfd05ceb49c08c3155e99bec82aa93726ab8894, clean checkout; 12 isolated tests pass after 11 reproduced failures and 1 passing control. New repair bytes are unpushed pending applicable publication authority. Published cf43d810 is unchanged. GitHub integration draft-creation 403 remains stopped; no PR or submission exists. Original checkout retained.",
       "reviewNote": "Independent exact public cf43d810 client review reproduced P2: createReplenishmentClient parses JSON before HTTP status, so malformed401/403 GET/POST lose error.status and rejected writes become uncertain; mountSupplies cannot clear unauthorized cached records/pending drafts. Four manager regressions fail; malformed201 write uncertainty control passes. Original owner alone may normally reclaim for local apps/web/supplies/client.mjs and task-local regression tests/docs repair, handling authoritative status before malformed body while retaining true network/5xx/success-parse uncertainty and access cleanup. Existing GitHub integration PR creation403 remains stopped; this readies local repair only, not a retry or alternate creation route. Published exact cf43d810 retained; new repair publication needs applicable approval. No fixture/native/loopback denial retry, shared edits, provisioning, credentials, merge or deployment."
     },
     {
