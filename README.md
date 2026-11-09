@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 217. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 218. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -15,7 +15,7 @@ Revision 217. Live state is on the task-board branch. Use npm run board -- claim
 | SV-008 Barcode and QR manual check-in | review | — | — | SV-001, SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/14) |
 | SV-009 Supply ledger and bin inventory | done | — | — | SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/9) |
 | SV-010 Replenishment queue and low-stock alerts | claimed | wil / wil-sol-sv010-20261106-replenishment | 2026-11-09T17:40:00.109Z | SV-007, SV-009 | apps/web/supplies, services/api/replenishment |
-| SV-011 Equipment cleaning and maintenance workflows | claimed | wil / wil-sol-sv011-20261106-maintenance | 2026-11-09T17:21:55.949Z | SV-006, SV-007 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/22) |
+| SV-011 Equipment cleaning and maintenance workflows | claimed | wil / wil-sol-sv011-20261106-maintenance | 2026-11-09T17:40:06.834Z | SV-006, SV-007 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/22) |
 | SV-012 Audit search and permission-scoped export | done | — | — | SV-006, SV-009 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/19) |
 | SV-013 Provider-neutral observation ingestion simulator | done | — | — | SV-001, SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/10) |
 | SV-014 Location confidence and RTLS adapter boundary | done | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/18) |
