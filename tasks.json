@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 203,
-  "updatedAt": "2026-11-09T15:16:41.786Z",
+  "revision": 204,
+  "updatedAt": "2026-11-09T15:17:18.555Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1429,6 +1429,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "User-authorized bounded maintenance shared-app integration"
+    },
+    {
+      "at": "2026-11-09T15:17:18.555Z",
+      "taskId": "SV-011",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1758,7 +1765,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1788,7 +1795,7 @@
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T14:54:56.654Z",
       "blockedReason": null,
-      "reviewNote": "Explicit user approval verified for publishing tested retained repair b52e924080b54c013fddf979ba35bc22068ad830 to the existing public PR22 branch. Resume normal original-owner claim and publication/submission only; no merge or deployment.",
+      "reviewNote": "User-authorized PR22 maintenance integration. Scoped migration203 adds exactly apps/web/index.html, serve.mjs, README.md, src/app.js, src/equipment-api.js, tests/api-fixture.mjs and tests/maintenance-integration.test.mjs; former SV007 owner confirmed clean/idle and acknowledged original maintenance owner as sole implementation owner. Claim normally before edits. Expose only maintenance public assets, add direct/hash route navigation/reload behavior with stable mount/unmount and session-loss/identity cleanup; dispatch existing equipment/maintenance handlers through one existing injected authorization context, no dependency on unmerged PR14 and no duplicate auth or server provisioning. Adopt available/unassigned/no-active-hold search consistently before pagination. Add in-process mounted-flow/lifecycle/error/retry/permission tests in approved files, preserving held assets, role/RLS/provenance and unavailable completion. Synthetic fixture infrastructure may be reused; no runtime credential issuance, persistent access, retained environment, production migration/grant, SV019/root/CI or unrelated SV008 edits. Preserve prior operation-specific denials and PR-description403; no native/loopback/filesystem reroute. Manager will use permitted browser surface for real mounted acceptance. No merge/deployment. New integration publication requires applicable authorization; retain tested local commit and report any distinct publication/runtime block rather than assume previous b52-only approval covers it.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements."
       ]
