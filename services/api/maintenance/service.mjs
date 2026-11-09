@@ -50,7 +50,7 @@ export async function searchEquipment(ctx,params=new URLSearchParams()){
  if(view!=='ready')return listEquipment(ctx,{...options,...(view!=='all'&&{status:view})});
  for(const [name,max] of [['q',100],['location',64]])if(options[name]!==undefined&&(!options[name].trim()||options[name].length>max))throw invalid(`Invalid ${name}`);
  const after=options.cursor===undefined?null:decodeCursor(options.cursor),pattern=options.q===undefined?null:`%${options.q.replace(/[\\%_]/g,'\\$&')}%`;
- // Filter BEFORE pagination, in one SQL snapshot. An active assignment is unavailable even with status=available.
+ // Filter BEFORE pagination, in one SQL snapshot. Assignments and independent holds do not change status/version.
  const result=await ctx.query(`SELECT e.external_id, e.name, t.model_kind, l.external_key AS location_key, e.status, e.version, e.note,
   e.last_admin_edit_at, lv.external_key AS verified_location_key, e.last_verified_at, e.last_verified_source, e.provenance
   FROM equipment e
@@ -59,6 +59,7 @@ export async function searchEquipment(ctx,params=new URLSearchParams()){
   LEFT JOIN location lv ON lv.organization_id = e.organization_id AND lv.id = e.last_verified_location_id
   WHERE e.organization_id = $1 AND e.status = 'available'
    AND NOT EXISTS (SELECT 1 FROM item_assignment a WHERE a.organization_id = e.organization_id AND a.equipment_id = e.id AND a.active)
+   AND NOT EXISTS (SELECT 1 FROM equipment_hold h WHERE h.organization_id = e.organization_id AND h.equipment_id = e.id AND h.active)
    AND ($2::text IS NULL OR l.external_key = $2)
    AND ($3::text IS NULL OR e.name ILIKE $3 ESCAPE '\\' OR e.external_id ILIKE $3 ESCAPE '\\')
    AND ($4::text IS NULL OR e.external_id > $4)

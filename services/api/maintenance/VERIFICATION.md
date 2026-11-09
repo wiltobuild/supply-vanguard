@@ -39,3 +39,21 @@ The adapter now classifies HTTP denial before parsing success JSON and preserves
 | `git diff --check` | Passed. |
 
 The full root `npm test` was **not rerun**: it would repeat the specifically denied temporary Git operation recorded above. Its earlier46pass/2fail/36skip receipt is historical, not a result for the rework. No prior-denied native/loopback stage was retried or rerouted. Shared mounted reachability, real HTTP service hosting, native multi-session concurrency and manual screen-reader checks remain unrun. This rework changes no API/service policy, SQL, hold clearance, shared files or reserved infrastructure.
+
+## Current-main holds compatibility — 2026-11-09
+
+Coordinator handoff permitted **local code only**, with the existing public-push stop intact. Original identity reclaimed SV-011 normally at board **196**, `2026-11-09T14:36:33.576Z`; pre-edit heartbeat confirmed at **197**. Latest main `afe17ebc52c125ae1e3d1d95881a5b294e9dee16` merged cleanly on the same branch via local merge `8c29202592b79b1a572bf74fa3f685c41250682f`, preserving unpublished UI repair `d8147c177533b6e8b2a3e5afa640f061aa9ffd65`. Current instructions make separate review optional; they do not override publication, scope, testing or claim restrictions.
+
+The ready SQL now adds a tenant/equipment-correlated `NOT EXISTS` on **any active `equipment_hold` before pagination**, alongside available status and no active assignment. The fixture applies the actual merged SV-021 migration and grants only ephemeral SELECT on holds. Synthetic fixture history uses its trusted in-memory owner; it introduces no runtime clearance role, new policy, hold mutation grant or production provisioning. Service completion and replay preserve every hold and remain unavailable. The panel/runbook describe the unheld requirement and the real migration/read-privilege prerequisites. Missing holds schema or read permission fails closed with generic500 and no ready records, without an older-schema fallback.
+
+| Check | Observed result |
+| --- | --- |
+| New hold-query suite before SQL fix | **7 failed,1 passed**, reproducing available/version0 EQ-1 appearing despite an active dirty hold, and missing pre-pagination/hold prerequisites. |
+| `node --test services/api/maintenance/tests/holds-ready.test.mjs` after SQL fix | **8 passed,0 failed,0 skipped**, exit0. All four kinds/all existing inventory roles; stacked/partially cleared/all-cleared history; limit1 pages past active holds/assignments; tenant-isolated same external IDs; service/replay preserving holds; missing read privilege/schema failing closed. |
+| `npm test --prefix services/api/maintenance` | **59 passed,0 failed,0 skipped**, exit0. Retained UI lifecycle/HTTP-denial regressions and actual auth/RLS/audit/receipt/hold fixtures all pass on the integrated branch. |
+| Permitted repository subset, same explicit seven-file command above | **40 passed,0 failed,0 skipped**, exit0. The current-main optional-review tests account for the count change from38. |
+| Offline Chrome browser command | **Passed**, exit0. Actual-adapter HTML/empty401/403 cache cleanup and late rejection after close; native keyboard/focus, desktop/390px, reduced motion, zero horizontal overflow and zero axe WCAG A/AA violations. Refreshed synthetic screenshots visually inspected. This is still an offline module fixture, not mounted HTTP. |
+| `npm run check` | **Passed**, exit0; syntax,27GLBs and19seed task definitions. |
+| `git diff --check` | Passed. |
+
+Full root `npm test`, native PostgreSQL, loopback hosting and previously denied Git fixtures were not retried. No shared/held web paths, SV-019 reservations, root dependency/CI, operational roles or hold policy were authored here; incoming main was integrated unchanged. Mounted-app integration remains coordinator-owned. No push, alternate publication route or PR submission is authorized or attempted for this local repair. The exact retained commit and blocked-board receipt are reported in the task handoff; there is no remote-head CI, merge or readiness claim for unpublished work.

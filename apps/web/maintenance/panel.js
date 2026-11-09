@@ -2,8 +2,8 @@
 export function mountMaintenance(root,{api,keyFactory=()=>crypto.randomUUID()}){
  const doc=root.ownerDocument;
  root.innerHTML=`<section aria-labelledby="service-heading"><h2 id="service-heading">Equipment service</h2>
- <p>Service entries preserve unavailable status. Readiness clearance needs the separate hold policy.</p>
- <form data-search><label>View<select name="view"><option value="cleaning">Cleaning</option><option value="maintenance">Maintenance</option><option value="ready">Available and unassigned</option><option value="all">All equipment</option></select></label>
+ <p>Service entries preserve unavailable status and every hold. Hold clearance uses the existing configured workflow.</p>
+ <form data-search><label>View<select name="view"><option value="cleaning">Cleaning</option><option value="maintenance">Maintenance</option><option value="ready">Available, unassigned and unheld</option><option value="all">All equipment</option></select></label>
  <label>Search name or asset ID<input name="q" type="search" maxlength="100"></label><button>Search</button></form>
  <p data-message role="status" aria-live="polite"></p><button type="button" data-refresh>Refresh current state</button>
  <label>Equipment<select data-items><option value="">Load equipment</option></select></label><button type="button" data-more hidden>More equipment</button>

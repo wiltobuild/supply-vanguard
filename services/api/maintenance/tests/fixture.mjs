@@ -6,13 +6,14 @@ import {createAuthorization} from '../../auth/index.mjs';
 import {createMaintenanceHandler} from '../routes.mjs';
 import {ROLE_PERMISSIONS} from '../../auth/roles.mjs';
 
-export async function fixture(){
+export async function fixture({holds=true}={}){
  const db=new PGlite();
  const sql=path=>readFileSync(new URL(path,import.meta.url),'utf8');
  await db.exec(sql('../../db/migrations/0001_core.up.sql').replace('CREATE EXTENSION IF NOT EXISTS pgcrypto;',''));
  await db.exec(sql('../../auth/migrations/0001_auth.up.sql'));
  await db.exec(sql('../../equipment/migrations/0001_receipts.up.sql'));
  await db.exec(sql('../../requests/migrations/0001_requests.up.sql'));
+ if(holds)await db.exec(sql('../../holds/migrations/0001_holds.up.sql'));
  const orgs=['00000000-0000-4000-8000-000000000001','00000000-0000-4000-8000-000000000002'];
  for(const [i,org] of orgs.entries()){
   await db.query('INSERT INTO organization(id,name) VALUES ($1,$2)',[org,`Synthetic tenant ${i}`]);
@@ -43,6 +44,8 @@ export async function fixture(){
   GRANT SELECT,UPDATE ON equipment TO maintenance_fixture_runtime;
   GRANT SELECT,INSERT ON equipment_event,equipment_command_receipt TO maintenance_fixture_runtime;
   GRANT EXECUTE ON FUNCTION auth_resolve_identity(text,text) TO maintenance_fixture_runtime;`);
+ // Existing inventory:read RLS applies. The maintenance runtime reads holds; it cannot place or clear them.
+ if(holds)await db.exec('GRANT SELECT ON equipment_hold TO maintenance_fixture_runtime');
  let available=Promise.resolve();
  async function connect(role='maintenance_fixture_runtime'){
   const previous=available;let release;available=new Promise(r=>{release=r;});await previous;

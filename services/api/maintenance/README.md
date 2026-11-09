@@ -1,10 +1,10 @@
 # SV-011 cleaning and maintenance
 
-Scoped module, not a mounted production service. It reuses merged equipment commands/receipts, SV-001 transitions, SV-005 permissions/RLS, SV-012 audit queries and SV-020 active assignments. No migrations, new roles, grants to a real database, hold policy or shared host changes.
+Scoped module, not a mounted production service. It reuses merged equipment commands/receipts, SV-001 transitions, SV-005 permissions/RLS, SV-012 audit queries, SV-020 active assignments and the merged SV-021 hold overlay. No migrations, new roles, grants to a real database, hold policy or shared host changes.
 
 ## Contract
 
-Instantiate `createMaintenanceHandler({authorization})` from `routes.mjs` using the existing `createAuthorization({identityProvider, pool})`. Mount only its `/organizations/:org/maintenance/equipment` prefix in an authorized API composition. Its transaction client must use the existing READ COMMITTED contract, core/auth/receipt/request migrations and existing least-privilege runtime configuration. No bootstrap or dependency repair is supplied here.
+Instantiate `createMaintenanceHandler({authorization})` from `routes.mjs` using the existing `createAuthorization({identityProvider, pool})`. Mount only its `/organizations/:org/maintenance/equipment` prefix in an authorized API composition. Its transaction client must use the existing READ COMMITTED contract, core/auth/receipt/request/holds migrations and existing least-privilege runtime configuration. No bootstrap or dependency repair is supplied here.
 
 | Route | Existing permission | Result |
 | --- | --- | --- |
@@ -20,13 +20,19 @@ Actions:
 
 The command locks equipment first, checks an actor-private namespaced receipt before transient state/version rules, then delegates the normalized command to the actual merged `updateEquipment`. Equipment, immutable admin event and receipt commit atomically under `authorization.run`. The retry must retain target, body, expected version and key; replay returns its original snapshot, so the client refetches current truth. Keys use `admin:maintenance:<client-key>` in existing event/receipt storage. Cross-target/body/actor collisions cannot apply another mutation. No patient information belongs in notes.
 
-`ready` means **available status and no active assignment in the currently merged model**, not a clinical release certificate. The SQL filters both before pagination in one statement snapshot. Cleaning, maintenance, in-use, retired and any unrecognized status cannot enter that view. Physical location freshness remains separate, including unknown/never-verified evidence. No new freshness threshold or borrowing policy is invented.
+`ready` means **available status, no active assignment and no active equipment hold**, not a clinical release certificate. The SQL filters all three before pagination in one statement snapshot. Any active dirty/fault/maintenance/unknown hold excludes the asset even though the hold leaves equipment status/version unchanged. Clearing only one of several holds does not make the item eligible. Inactive hold rows remain history and do not themselves block an otherwise eligible asset. Cleaning, maintenance, in-use, retired and any unrecognized status cannot enter that view. Physical location freshness remains separate, including unknown/never-verified evidence. No new freshness threshold or borrowing policy is invented.
 
 ## Explicit policy/integration decisions still needed
 
-SV-021 owns independent dirty/fault/maintenance/unknown holds and matching-role clearance; its role mapping is unresolved. The merged single-status schema cannot prove all independent holds are clear. Therefore this module cannot certify readiness or turn an unavailable item available when a service step finishes. Decide the hold/role policy separately before adding release. `equipment:write` is the existing coarse permission (operator/equipment manager/admin); history retains the existing `audit:read` permission without widening access for operators. There is no administrator bypass.
+Merged SV-021 supplies independent dirty/fault/maintenance/unknown holds and organization-configured matching-role clearance. It ships without a default mapping: an unconfigured kind cannot be cleared, and an administrator has no special exception. This module reads the hold overlay under existing `inventory:read` RLS; it adds no hold placement, clearance or configuration action. Service steps never change holds or turn unavailable equipment available. `equipment:write` remains the existing coarse permission (operator/equipment manager/admin); history retains the existing `audit:read` permission without widening access for operators. No operational role mapping is introduced here.
 
-The shared equipment API/client's existing available-status search is unchanged: callers must deliberately mount and use this module's available-and-unassigned query until a separately coordinated shared search integration is approved. No claim is made that the shared app can reach this panel or handler. See the web module README for the exact handoff. SV-008's held seven shared web files, SV-019's reserved infrastructure and SV-021 are untouched.
+The shared equipment API/client's existing available-status search is unchanged: callers must deliberately mount and use this module's available, unassigned and unheld query until a separately coordinated shared search integration is approved. No claim is made that the shared app can reach this panel or handler. See the web module README for the exact handoff. SV-008's held seven shared web files, SV-019's reserved infrastructure and SV-021 source/policy are untouched.
+
+## Host prerequisites and fail-closed behavior
+
+Use the existing migration lifecycle: core, auth, equipment command receipts, requests, then `services/api/holds/migrations/0001_holds.up.sql` (holds requires core/auth/requests). The existing non-owner, NOBYPASSRLS runtime must already have its approved inventory/assignment reads plus **SELECT on `equipment_hold`**; hold reads use the existing tenant-scoped `inventory:read` policy. This module does not provision a runtime, widen memberships, install a clearance rule or apply a persistent grant. Any runtime setup belongs to its separately authorized owner.
+
+Do not mount this readiness query against an older status-only schema or silently ignore a missing hold table/read privilege. Missing holds schema or SELECT privilege produces a generic500 with no ready items, rather than falling back to optimistic readiness. The migration and read privilege are tested as prerequisites in the in-memory fixture. Querying readiness does not update equipment, assignments or hold history and does not authorize allocation; the existing assignment transaction still decides atomically.
 
 ## Verification
 
@@ -34,11 +40,13 @@ The shared equipment API/client's existing available-status search is unchanged:
 npm ci --prefix services/api/maintenance --ignore-scripts --no-audit --no-fund
 npm test --prefix services/api/maintenance
 node apps/web/maintenance/tests/browser-check.mjs
-npm test
 npm run check
+# This retained environment's full root npm test includes previously denied Git/socket/native stages.
+# Do not rerun those here. Permitted repository subset:
+node --test tests/additional-assets.test.mjs tests/contracts.test.mjs tests/domain.test.mjs tests/glb-equivalence.test.mjs tests/location.test.mjs tests/scene-config.test.mjs tests/web.test.mjs
 ```
 
-Task-local PGlite 0.5.15 and DOM fixtures execute the actual authorization, RLS, equipment commands, receipts, audit and assignment schemas using synthetic records. All HTTP is in-process streams with no listeners. Ephemeral SQL roles/grants exist only inside the in-memory test database. These fixtures do not repair/reconstruct SV-019 bootstrap. Embedded parallel submissions are serialized by PGlite's single-connection lease; they are **not native multi-session concurrency proof**.
+Task-local PGlite 0.5.15 and DOM fixtures execute the actual authorization, RLS, equipment commands, receipts, audit, assignment and holds migrations using synthetic records. Hold-query fixtures grant only SELECT on holds to their ephemeral runtime; trusted fixture arrangements create active/cleared history without introducing a runtime clearance role or policy. All HTTP is in-process streams with no listeners. Ephemeral SQL roles/grants exist only inside the in-memory test database. These fixtures do not repair/reconstruct SV-019 bootstrap. Embedded parallel submissions are serialized by PGlite's single-connection lease; they are **not native multi-session concurrency proof**.
 
 Offline installed-Chrome tests use `page.setContent` and an injected synthetic adapter, with no listener or live API. `CHROME_PATH` can select an installed executable. They verify native keyboard save/focus retention, history, desktop/narrow layout, reduced motion, no horizontal overflow and axe WCAG A/AA checks. They do not prove a mounted HTTP flow or manual screen-reader support. Screenshots are scoped under `apps/web/maintenance/evidence`.
 
