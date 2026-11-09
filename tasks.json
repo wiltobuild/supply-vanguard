@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 211,
-  "updatedAt": "2026-11-09T15:30:08.747Z",
+  "revision": 212,
+  "updatedAt": "2026-11-09T15:31:35.403Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1485,6 +1485,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv015-20261105-b9c2",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:31:35.403Z",
+      "taskId": "SV-010",
+      "command": "block",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1790,7 +1797,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1808,14 +1815,8 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv010-20261106-replenishment",
-        "owner": "wil",
-        "leaseId": "0122b432-9c79-4a5b-b2cc-d407285a6ff3",
-        "claimedAt": "2026-11-09T15:29:54.711Z",
-        "expiresAt": "2026-11-09T17:29:54.711Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Retained commit cf43d8108a792b8a9449caacda5c854406b8054c is published on task/sv-010-wil-sol-sv010-20261106-replenishment and remote head verified. Draft PR creation through GitHub integration returned 403 Resource not accessible by integration; no PR or submission created and no alternate creation route attempted. Original checkout retained.",
       "reviewNote": "SV-010 retained-commit draft publication handoff resumed; scope unchanged."
     },
     {
