@@ -1,19 +1,21 @@
 // Same-origin API adapter. Credentials and inventory live only in memory.
 import {validateEquipmentRecord} from '../../../packages/domain/contracts.js';
+import {createMaintenanceApi} from '../maintenance/api.js';
 export class EquipmentError extends Error {
  constructor(message,{status=0,code='network',uncertain=false}={}){super(message);Object.assign(this,{status,code,uncertain});}
 }
 export const errorMessage=status=>status===401?'Your session expired or is invalid. Connect again with a current session.':status===403?'This session does not have permission for this organization or action.':status===409?'Someone changed this equipment. Load the latest record, review your draft, and save again.':status===422?'This status transition is not allowed. Review the current status and choose another.':status>=500?'The equipment service could not complete this request. Retry when it is available.':'The equipment service rejected this request. Review your entries.';
-export function createEquipmentApi({organizationId,token,fetcher=fetch,base='',timeoutMs=15000}){
+export function createEquipmentApi({organizationId,token,fetcher=fetch,base='',timeoutMs=15000,onAuthorizationLoss=()=>{}}){
  if(!organizationId?.trim()||!token?.trim())throw new EquipmentError('Organization and session token are required.',{code:'configuration'});
  const root=`${base}/organizations/${encodeURIComponent(organizationId.trim())}/equipment`;
+ const maintenance=createMaintenanceApi({organizationId,token,fetcher,base,timeoutMs,onAuthorizationLoss});
  async function request(path='',{method='GET',body,key,signal}={}){
   const controller=new AbortController(),abort=()=>controller.abort();signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
   let timedOut=false;const timer=setTimeout(()=>{timedOut=true;abort();},timeoutMs);
   try{
    const response=await fetcher(root+path,{method,signal:controller.signal,cache:'no-store',credentials:'omit',redirect:'error',headers:{Authorization:`Bearer ${token}`,...(body&&{'Content-Type':'application/json','Idempotency-Key':key})},...(body&&{body:JSON.stringify(body)})});
-   let data;try{data=await response.json();}catch{throw new EquipmentError('The equipment service returned an unreadable response.',{status:response.ok?0:response.status,code:'response',uncertain:method!=='GET'});}
-   if(!response.ok)throw new EquipmentError(errorMessage(response.status),{status:response.status,code:data.error||'request'});
+   if(!response.ok){let data;try{data=await response.json();}catch{}const error=new EquipmentError(errorMessage(response.status),{status:response.status,code:data?.error||'request',uncertain:method!=='GET'&&response.status>=500});if(response.status===401||(response.status===403&&method==='GET'))onAuthorizationLoss(error);throw error;}
+   let data;try{data=await response.json();}catch{throw new EquipmentError('The equipment service returned an unreadable response.',{status:response.status,code:'response',uncertain:method!=='GET'});}
    return data;
   }catch(error){
    if(error instanceof EquipmentError)throw error;
@@ -21,6 +23,13 @@ export function createEquipmentApi({organizationId,token,fetcher=fetch,base='',t
   }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);}
  }
  return {
+  maintenance,
+  async listReady({signal}={}){
+   const items=[],seen=new Set();let cursor;
+   do{const page=await maintenance.list({view:'ready',cursor,signal});items.push(...page.items);cursor=page.nextCursor;if(cursor&&seen.has(cursor))throw new EquipmentError('The availability service repeated a page.',{code:'response'});seen.add(cursor);}while(cursor);
+   if(new Set(items.map(item=>item.id)).size!==items.length)throw new EquipmentError('The availability service repeated equipment identities.',{code:'response'});
+   return items;
+  },
   async list({signal}={}){
    const items=[],cursors=new Set();let cursor=null;
    do{const page=await request(`?limit=100${cursor?`&cursor=${encodeURIComponent(cursor)}`:''}`,{signal});
@@ -38,27 +47,40 @@ export function createEquipmentApi({organizationId,token,fetcher=fetch,base='',t
 }
 // Refresh after every command/replay: a replay response can be an older committed snapshot.
 // A cancelled write may already have committed. Require a fresh read; never silently retry.
-export function createEquipmentSession(api,{onChange=()=>{}}={}){
- let state={items:[],phase:'idle',error:null,busy:false,needsRefresh:false},read=null,write=null,generation=0,closed=false;
+export function createEquipmentSession(api,{onChange=()=>{},withAvailability=false}={}){
+ let state={items:[],readyItems:null,availabilityError:null,phase:'idle',error:null,busy:false,needsRefresh:false},read=null,write=null,generation=0,closed=false;
  const emit=patch=>{state={...state,...patch};if(!closed)onChange(state);};
  async function refresh({background=false}={}){
+  if(closed)throw new EquipmentError('Session closed.',{code:'cancelled'});
   const gen=++generation;read?.abort();read=new AbortController();
   // Keep the failed-refresh warning visible during automatic retries, until a read succeeds.
   if(!background)emit({phase:'loading'});
-  try{const items=await api.list({signal:read.signal});if(gen===generation&&!closed)emit({items,phase:'ready',error:null,needsRefresh:false});return items;}
-  catch(error){if(gen===generation&&!closed)emit({phase:'error',error});throw error;}
+  try{
+   const [inventory,availability]=await Promise.allSettled([api.list({signal:read.signal}),withAvailability&&api.listReady?api.listReady({signal:read.signal}):Promise.resolve(null)]);
+   if(inventory.status==='rejected')throw inventory.reason;
+   if(availability.status==='rejected'&&[401,403].includes(availability.reason.status))throw availability.reason;
+   const items=inventory.value,byId=new Map(items.map(item=>[item.id,item]));
+   let readyItems=availability.status==='fulfilled'?availability.value:null,availabilityError=availability.status==='rejected'?availability.reason:null;
+   // Separate reads are not a transaction snapshot. Never pair an older available row with a newer unavailable detail.
+   if(readyItems?.some(item=>{const held=byId.get(item.id);return !held||held.version!==item.version||held.status!=='available'||item.status!=='available';})){
+    readyItems=null;availabilityError=new EquipmentError('Availability changed between reads. Refresh to verify it again.',{code:'availability_changed'});
+   }else if(readyItems)readyItems=readyItems.map(item=>byId.get(item.id));
+   if(gen===generation&&!closed)emit({items,readyItems,availabilityError,phase:'ready',error:null,needsRefresh:false});return items;
+  }
+  catch(error){if(gen===generation&&!closed)emit({phase:'error',error,readyItems:null,...([401,403].includes(error.status)&&{items:[],needsRefresh:true})});throw error;}
  }
  return {
   get state(){return state;},refresh,
   cancelRead(){generation++;read?.abort();emit({phase:'idle',error:new EquipmentError('Refresh cancelled. Use Refresh to try again.',{code:'cancelled'})});},
   cancelWrite(){write?.abort();},
   async mutate(kind,id,body,{key=crypto.randomUUID()}={}){
+   if(closed)throw new EquipmentError('Session closed.',{code:'cancelled'});
    if(state.busy)throw new EquipmentError('A save is already in progress.',{code:'busy'});
    if(state.needsRefresh)throw new EquipmentError('Refresh committed state before saving again.',{code:'refresh_required'});
    generation++;read?.abort();write=new AbortController();emit({busy:true,error:null});
    let committed=false;
    try{
-    const result=await api[kind](id,body,{key,signal:write.signal});committed=true;
+    const result=await api[kind](id,body,{key,signal:write.signal});committed=true;if(closed)return result;
     await refresh();return result;
    }catch(error){
     if(committed||error.uncertain||error.status===409)emit({needsRefresh:true});
@@ -67,6 +89,6 @@ export function createEquipmentSession(api,{onChange=()=>{}}={}){
     throw error;
    }finally{write=null;emit({busy:false});}
   },
-  close(){closed=true;generation++;read?.abort();write?.abort();state={items:[],phase:'idle',error:null,busy:false,needsRefresh:false};}
+  close(){closed=true;generation++;read?.abort();write?.abort();state={items:[],readyItems:null,availabilityError:null,phase:'idle',error:null,busy:false,needsRefresh:false};}
  };
 }

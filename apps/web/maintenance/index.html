@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Equipment service · Supply Vanguard</title><link rel="stylesheet" href="./style.css"></head>
-<body><header><a href="/">Supply Vanguard</a><span>Equipment coordination</span></header><main><h1>Cleaning &amp; maintenance</h1>
+<body class="maintenance-page"><header><a href="/">Supply Vanguard</a><span>Equipment coordination</span></header><main><h1>Cleaning &amp; maintenance</h1>
 <p class="intro">Record equipment service while preserving availability and location evidence.</p>
-<p class="notice">Integration preview. Synthetic examples only. This module needs an authorized API host; the shared app does not mount it yet. It does not clear holds or certify equipment ready.</p>
+<p class="notice">Standalone synthetic preview. Synthetic examples only. Use Maintenance in the shared app for the integrated connection and navigation. Actual mounted-browser acceptance remains pending. This view does not clear holds or certify equipment ready.</p>
 <form id="connect"><label>Organization ID<input name="organization" required autocomplete="off"></label><label>Existing development session token<input name="token" type="password" required autocomplete="off"></label><button>Connect</button></form>
 <button id="disconnect" hidden>Disconnect and clear session</button><p id="connection" role="status"></p><div id="maintenance"></div></main>
 <script type="module">

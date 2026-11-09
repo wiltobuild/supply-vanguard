@@ -1,6 +1,6 @@
 # SV-011 cleaning and maintenance
 
-Scoped module, not a mounted production service. It reuses merged equipment commands/receipts, SV-001 transitions, SV-005 permissions/RLS, SV-012 audit queries, SV-020 active assignments and the merged SV-021 hold overlay. No migrations, new roles, grants to a real database, hold policy or shared host changes.
+Scoped module with an approved shared-shell integration; no deployed/production service claim. It reuses merged equipment commands/receipts, SV-001 transitions, SV-005 permissions/RLS, SV-012 audit queries, SV-020 active assignments and the merged SV-021 hold overlay. No migrations, new roles, grants to a real database or hold policy changes.
 
 ## Contract
 
@@ -26,7 +26,9 @@ The command locks equipment first, checks an actor-private namespaced receipt be
 
 Merged SV-021 supplies independent dirty/fault/maintenance/unknown holds and organization-configured matching-role clearance. It ships without a default mapping: an unconfigured kind cannot be cleared, and an administrator has no special exception. This module reads the hold overlay under existing `inventory:read` RLS; it adds no hold placement, clearance or configuration action. Service steps never change holds or turn unavailable equipment available. `equipment:write` remains the existing coarse permission (operator/equipment manager/admin); history retains the existing `audit:read` permission without widening access for operators. No operational role mapping is introduced here.
 
-The shared equipment API/client's existing available-status search is unchanged: callers must deliberately mount and use this module's available, unassigned and unheld query until a separately coordinated shared search integration is approved. No claim is made that the shared app can reach this panel or handler. See the web module README for the exact handoff. SV-008's held seven shared web files, SV-019's reserved infrastructure and SV-021 source/policy are untouched.
+The shared shell's available counts/search now use this module's canonical ready query and the shared connection. Inventory/ready are separate reads: the client rejects mismatched ID/version/available status and never falls back to status-only availability. The exact seven shared paths were admitted by coordinator migration203; unrelated SV008/check-in and SV019 reservations plus SV021 source/policy remain untouched. In-process mounted flows pass; actual supported mounted-browser acceptance remains with the coordinator.
+
+`createEquipmentMaintenanceHandler({authorization})` in `dispatch.mjs` routes to the unchanged public equipment handler or this maintenance handler, using one injected authorization/pool/verifier. Malformed request targets are mapped to400 rather than escaping the composite listener. `createWebHandler({apiHandler})` provides a same-origin injection point without introducing a server/auth implementation; injected sync/async failures are mapped to generic500. The separate test-only `preview.mjs` imports the existing shared fixture for the manager's authorized runtime, never production provisioning. Its first listening attempt succeeded with actual shell and authenticated API HTTP200; see the shared web README for the controlled start contract and cleanup. Actual supported-browser acceptance remains with the coordinator.
 
 ## Host prerequisites and fail-closed behavior
 

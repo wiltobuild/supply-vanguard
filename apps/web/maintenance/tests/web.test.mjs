@@ -73,5 +73,5 @@ test('web → adapter → handler → real auth/RLS → SQL → audit → refetc
 });
 test('preview follows shared responsive/focus direction and states mounting limitations',()=>{
  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
- assert.match(html,/shared app does not mount it yet/);assert.match(html,/Synthetic examples only/);assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:600px\)/);assert.match(css,/min-height:44px/);assert.ok(!css.includes('animation:'));
+ assert.match(html,/Actual mounted-browser acceptance remains pending/);assert.match(html,/Synthetic examples only/);assert.match(css,/:focus-visible/);assert.match(css,/@media\(max-width:600px\)/);assert.match(css,/min-height:44px/);assert.ok(!css.includes('animation:'));
 });

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Supply Vanguard</title>
 <link rel="stylesheet" href="/src/styles.css">
+<link rel="stylesheet" href="/maintenance/style.css">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -17,11 +18,12 @@
  <nav aria-label="Main" class="nav">
   <a href="#/workspace" data-route="workspace">Workspace</a>
   <a href="#/equipment" data-route="equipment">Equipment</a>
+  <a href="#/maintenance" data-route="maintenance">Maintenance</a>
   <a href="#/ward" data-route="ward">3D ward</a>
   <a href="#/equipment?search=1" class="nav-search" data-search>Search</a>
  </nav>
 </header>
-<main id="main" tabindex="-1"><div id="view"><p class="loading" role="status">Loading…</p></div><div id="ward-wrap" hidden></div></main>
+<main id="main" tabindex="-1"><div id="view"><p class="loading" role="status">Loading…</p></div><div id="maintenance-wrap" class="maintenance-panel" hidden></div><div id="ward-wrap" hidden></div></main>
 <footer class="site-footer"><p>Synthetic demo data. No live tracking, no patient information. <a href="https://github.com/wiltobuild/supply-vanguard/tree/task-board" target="_blank" rel="noreferrer">Engineering task board (opens in a new tab)</a></p></footer>
 <noscript><p class="notice">Supply Vanguard needs JavaScript to run.</p></noscript>
 <script type="module" src="/src/app.js"></script>
