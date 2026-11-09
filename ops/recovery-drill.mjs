@@ -74,7 +74,7 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
       'indexes', (SELECT jsonb_agg(jsonb_build_object('name',i.relname,'unique',x.indisunique,'valid',x.indisvalid,'definition',pg_get_indexdef(x.indexrelid)) ORDER BY i.relname) FROM pg_index x JOIN pg_class c ON c.oid=x.indrelid JOIN pg_class i ON i.oid=x.indexrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
       'policies', (SELECT jsonb_agg(to_jsonb(p) ORDER BY tablename,policyname) FROM pg_policies p WHERE schemaname='public'),
       'constraints', (SELECT jsonb_agg(jsonb_build_array(c.relname,k.conname,pg_get_constraintdef(k.oid)) ORDER BY c.relname,k.conname) FROM pg_constraint k JOIN pg_class c ON c.oid=k.conrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
-      'triggers', (SELECT jsonb_agg(pg_get_triggerdef(t.oid) ORDER BY c.relname,t.tgname) FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal),
+      'triggers', (SELECT jsonb_agg(jsonb_build_object('table',c.relname,'name',t.tgname,'enabled',t.tgenabled,'definition',pg_get_triggerdef(t.oid)) ORDER BY c.relname,t.tgname) FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal),
       'functions', (SELECT jsonb_agg(jsonb_build_object('definition',pg_get_functiondef(p.oid),'owner',pg_get_userbyid(p.proowner),'acl',p.proacl,'securityDefiner',p.prosecdef,'config',p.proconfig) ORDER BY p.proname,p.oid::regprocedure::text) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid=p.oid AND d.classid='pg_proc'::regclass AND d.deptype='e'))
     );`));
     return {tables, metadata};
@@ -120,12 +120,49 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
         SET CONSTRAINTS location_override_requires_audit IMMEDIATE;
         RAISE EXCEPTION 'missing override audit assertion failed';
       EXCEPTION WHEN foreign_key_violation THEN NULL; END;
+      BEGIN DELETE FROM equipment_hold; RAISE EXCEPTION 'hold deletion assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN UPDATE equipment_hold SET reason='forbidden'; RAISE EXCEPTION 'hold history assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN UPDATE equipment_hold SET active=true,cleared_by=NULL,cleared_at=NULL WHERE NOT active; RAISE EXCEPTION 'hold reactivation assertion failed'; EXCEPTION WHEN restrict_violation THEN NULL; END;
+      BEGIN
+        INSERT INTO equipment_hold(organization_id,equipment_id,kind,placed_by)
+          SELECT organization_id,equipment_id,kind,placed_by FROM equipment_hold WHERE active AND kind='dirty';
+        RAISE EXCEPTION 'active hold duplicate assertion failed';
+      EXCEPTION WHEN unique_violation THEN NULL; END;
+      PERFORM set_config('sv.organization_id',(SELECT id::text FROM organization),true);
+      PERFORM set_config('sv.user_id','00000000-0000-4000-8000-00000000f017',true);
+      BEGIN
+        PERFORM clear_equipment_hold((SELECT id FROM equipment_hold WHERE kind='fault' AND active),'user:00000000-0000-4000-8000-00000000f017');
+        RAISE EXCEPTION 'wrong-role hold clearance assertion failed';
+      EXCEPTION WHEN SQLSTATE 'SV403' THEN IF SQLERRM <> 'sv:wrong_role' THEN RAISE; END IF; END;
+      BEGIN
+        PERFORM clear_equipment_hold((SELECT id FROM equipment_hold WHERE kind='unknown' AND active),'user:00000000-0000-4000-8000-00000000f017');
+        RAISE EXCEPTION 'unconfigured hold clearance assertion failed';
+      EXCEPTION WHEN SQLSTATE 'SV422' THEN IF SQLERRM <> 'sv:no_clearance_rule' THEN RAISE; END IF; END;
+      BEGIN
+        INSERT INTO item_assignment(organization_id,request_item_id,equipment_id,assigned_by)
+          SELECT i.organization_id,i.id,h.equipment_id,'synthetic-recovery' FROM request_item i CROSS JOIN equipment_hold h WHERE h.active AND h.kind='fault';
+        RAISE EXCEPTION 'held assignment assertion failed';
+      EXCEPTION WHEN SQLSTATE 'SV422' THEN IF SQLERRM <> 'sv:equipment_on_hold' THEN RAISE; END IF; END;
+      BEGIN
+        PERFORM set_config('sv.user_id','00000000-0000-4000-8000-00000000f060',true);
+        PERFORM clear_equipment_hold((SELECT id FROM equipment_hold WHERE kind='dirty' AND active),'user:00000000-0000-4000-8000-00000000f060');
+        IF (SELECT count(*) FROM equipment_hold WHERE active) <> 3 OR NOT EXISTS (SELECT 1 FROM equipment_hold WHERE kind='fault' AND active)
+          THEN RAISE EXCEPTION 'clearing one hold changed independent holds'; END IF;
+        BEGIN
+          INSERT INTO item_assignment(organization_id,request_item_id,equipment_id,assigned_by)
+            SELECT i.organization_id,i.id,h.equipment_id,'synthetic-recovery' FROM request_item i CROSS JOIN equipment_hold h WHERE h.active AND h.kind='fault';
+          RAISE EXCEPTION 'remaining hold assignment assertion failed';
+        EXCEPTION WHEN SQLSTATE 'SV422' THEN IF SQLERRM <> 'sv:equipment_on_hold' THEN RAISE; END IF; END;
+        -- Roll back this successful test clearance so the final comparison retains the original history.
+        RAISE EXCEPTION USING ERRCODE='SV999', MESSAGE='ops rollback hold-clear probe';
+      EXCEPTION WHEN SQLSTATE 'SV999' THEN NULL; END;
     END $$;`);
     verifySnapshot(before, snapshot(target));
     evidence = {state: 'passed', engine: `native PostgreSQL ${serverMajor}`, syntheticOnly: true,
-      ...integrity, archiveSha256, inventory: inventoryEvidence(inventory), checks: ['all 24 public tables', 'physical/receipt timestamps',
+      ...integrity, archiveSha256, inventory: inventoryEvidence(inventory), checks: ['all 26 public tables', 'physical/receipt timestamps',
         'legacy and no-op command receipts', 'fractional ledger and stock projection', 'request assignment and event links',
-        'override audit and expiry links', 'RLS/ownership/ACLs', 'indexes/constraints/triggers/functions', 'append-only and replay/assignment uniqueness'],
+        'override audit and expiry links', 'stacked holds and retained configured-role clearance history', 'hold assignment blocking',
+        'RLS/ownership/ACLs', 'indexes/constraints/triggers/functions', 'append-only and replay/assignment uniqueness'],
       limitations: ['No runtime-role authorization, hosted restore, PITR, measured RPO/RTO or service rollback demonstrated']};
   } catch (error) { failure = error; }
   const cleanupFailed = [];

@@ -62,6 +62,36 @@ INSERT INTO location_override_audit(override_id, organization_id, user_id, idemp
     jsonb_build_object('state','fresh','reason','manual-override','locationId',location_id,'observedAt','2026-11-05T10:02:00.000Z',
       'override',jsonb_build_object('id',id,'organizationId',organization_id,'equipmentId',equipment_id,'locationId',location_id))
   FROM location_override;
+
+-- Reuse the holds task's documented TEST mappings, never an operational clearance policy.
+-- These synthetic auth rows have no tokens, login credentials, database roles or grants.
+INSERT INTO auth_user(id,issuer,subject) VALUES
+  ('00000000-0000-4000-8000-00000000f060','urn:sv:ops:synthetic','synthetic-supply-clearer'),
+  ('00000000-0000-4000-8000-00000000f061','urn:sv:ops:synthetic','synthetic-equipment-clearer');
+INSERT INTO auth_membership(organization_id,user_id,role)
+  SELECT o.id,v.user_id::uuid,v.role FROM organization o CROSS JOIN (VALUES
+    ('00000000-0000-4000-8000-00000000f060','supply_manager'),
+    ('00000000-0000-4000-8000-00000000f061','equipment_manager')) v(user_id,role);
+INSERT INTO hold_clearance_rule(organization_id,kind,role)
+  SELECT o.id,v.kind,v.role FROM organization o CROSS JOIN (VALUES
+    ('dirty','supply_manager'),('fault','equipment_manager')) v(kind,role);
+-- Maintenance/unknown deliberately have no fixture rule: clearance must fail closed.
+INSERT INTO equipment_hold(id,organization_id,equipment_id,kind,reason,placed_by,placed_at)
+  SELECT '00000000-0000-4000-8000-00000000f070',organization_id,id,'dirty','Synthetic cleared history',
+    'user:00000000-0000-4000-8000-00000000f017',transaction_timestamp()-interval '2 minutes'
+  FROM equipment WHERE external_id='EQ-003';
+SELECT set_config('sv.user_id','00000000-0000-4000-8000-00000000f060',true);
+SELECT clear_equipment_hold('00000000-0000-4000-8000-00000000f070','user:00000000-0000-4000-8000-00000000f060');
+INSERT INTO equipment_hold(id,organization_id,equipment_id,kind,reason,placed_by,placed_at)
+  SELECT v.id::uuid,e.organization_id,e.id,v.kind,'Synthetic stacked hold',
+    'user:00000000-0000-4000-8000-00000000f017',clock_timestamp()
+  FROM equipment e CROSS JOIN (VALUES
+    ('00000000-0000-4000-8000-00000000f071','dirty'),
+    ('00000000-0000-4000-8000-00000000f072','fault'),
+    ('00000000-0000-4000-8000-00000000f073','maintenance'),
+    ('00000000-0000-4000-8000-00000000f074','unknown')) v(id,kind)
+  WHERE e.external_id='EQ-003';
+SELECT set_config('sv.user_id','00000000-0000-4000-8000-00000000f017',true);
 `;
 
 export function fixtureSetupSql(inventory) {

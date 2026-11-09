@@ -1,6 +1,47 @@
 # SV-017 validation record
 
-## Resumed repair on current main
+## Holds compatibility repair (2026-11-09)
+
+Live revision 190 confirmed separate-reviewer rework and no claim. Original-owner claim exited 0
+at **revision 191**, owner `wil`, agent `wil-sol-sv017-20261105-ops`, same checkout/branch.
+Heartbeat before integration exited 0 at revision 192. A normal non-force merge integrated main
+`dd770606db334de80e40800506d9ab399af8c5cd` as
+`7e5daa215752e4bcf9b9e91c9a45eb62847e0998`, without conflicts or shared-file hand edits.
+Only `ops/` is authored scope. All prior auth/core/bootstrap/root/CI/shared-web/transfer holds remain.
+
+| Current command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 17 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: 8 migrations, 26 expected public tables, including both holds tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 seed task definitions validated |
+| Root file set excluding the previously denied board-race fixture, PowerShell command below | Exit 1: 97 tests, 49 passed, 1 failed, 47 skipped. Missing `@electric-sql/pglite` auth import remains the failure; no dependency install/repair performed |
+| Native client discovery via `findTools()` | Node child exits 1: PostgreSQL `psql`, `pg_dump`, `pg_restore` unavailable; no database connection or native SQL execution |
+| `git diff --check` | Exit 0 |
+
+The same explicit root-file selection below excludes `board-race.test.mjs`; the prior denied Git
+operation was not retried through any identity, directory or alternate route. No new full local
+`npm test` pass is claimed. Current skips include missing embedded audit/equipment/request/holds
+coverage and native database/request-race/hold-race coverage. Existing CI evidence is recorded on
+the PR against the exact published head; it does not substitute for an ops-native recovery exercise.
+
+The added fixture has five hold rows on a separate available/version-0 asset: all four active
+kinds and one cleared dirty predecessor. Two explicitly synthetic configuration rows reuse the
+holds task's documented test mappings; maintenance and unknown stay unconfigured. Additional
+synthetic auth-user/membership rows are evidence fixtures only, with no credentials, tokens,
+database roles, grants or persistent access. No operational clearance policy is chosen.
+Integrity regressions reject broken equipment/actor/role links, missing clearance history,
+reactivation, reordered replacement, lost stacked blocking, missing holds RLS, disabled assignment
+blocking/history triggers and a missing active-kind unique index. Native probes additionally
+exercise wrong-role/unconfigured refusal and assignment refusal before and after clearing only
+one kind, with the successful test clearance rolled back. All native SQL remains **unrun**.
+
+No matching clients or `PG_BIN`/`OPS_PG*` configuration is available, and no existing marked
+disposable cluster was verified. Real recovery remains a required gate before merge. No clients,
+cluster, credentials, roles, grants or provisioning were created; no prior denial was bypassed.
+See [the manual recovery command](RECOVERY.md#run-the-real-drill). Hosted readiness, runtime-role
+RLS execution, recovery integrity, native cleanup and release sign-off remain unproven.
+
+## Previous repair (2026-11-05, historical)
 
 Reviewer rework was independently confirmed at live revision 148. Original-owner reclaim exited
 0 at revision **149**, agent `wil-sol-sv017-20261105-ops`, owner `wil`, on the same checkout/branch.

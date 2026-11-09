@@ -50,10 +50,16 @@ integrity-comparison function is not a database backup/restore pass.
    existing superuser and matching client major versions before creating a database.
 2. Creates `sv_ops_src_<random>` and `sv_ops_restore_<random>` using template0. All writes are
    confined to those generated databases. Applies unchanged core migration, synthetic seed,
-   auth, equipment receipt, supply, request, ingestion and location-resolution migrations.
+   auth, equipment receipt, supply, request, holds, ingestion and location-resolution migrations.
    A synthetic legacy event precedes the receipt migration to exercise its key backfill.
    The remaining fixtures include a complete no-op response, two fractional stock transactions,
-   the real `claim_request_item` SQL function, and paired override/audit rows. All are disposable
+   the real `claim_request_item` SQL function, paired override/audit rows and independently stacked
+   dirty/fault/maintenance/unknown holds. A cleared dirty hold remains beside its later active
+   successor. Clearance invokes the actual SQL function with synthetic membership evidence.
+   The dirty-to-supply-manager and fault-to-equipment-manager TEST mappings reuse the holds task's
+   documented fixture conventions; maintenance/unknown are deliberately unconfigured. No mapping
+   here is an operational default. Synthetic auth rows contain no credentials or tokens and create
+   no database roles/grants. All are disposable
    SQL storage fixtures; they do not exercise HTTP or production identity. The policy values
    are explicitly synthetic and establish no operational defaults. Seed precedes forced RLS only inside this throwaway exercise;
    this does not repair or prove the independent SV-019 bootstrap path.
@@ -61,14 +67,22 @@ integrity-comparison function is not a database backup/restore pass.
    metadata. Makes a consistent custom-format `pg_dump` archive and restores into the separate
    empty target with `pg_restore --exit-on-error --single-transaction`. It preserves ownership
    and ACLs within that same disposable cluster; it does not use `--no-acl` or disable RLS.
-4. Requires all 24 expected public tables and nonempty fixtures before archiving. Compares full
+4. Requires all 26 expected public tables and nonempty fixtures before archiving. Compares full
    row contents, identities, counts, physical/receipt timestamps, legacy/no-op receipt links,
    exact fractional stock-ledger/balance/version reconciliation, request assignments/events,
-   override audit identity/policy/expiry and nonce evidence. Security metadata includes RLS flags,
+   override audit identity/policy/expiry, nonce evidence and hold history/actor/equipment/rule links.
+   Hold summaries must remain blocked with all four independent active kinds while the prior
+   cleared row and configured-role evidence survive. This fixture-specific check is not a general
+   proof of historical clearance authorization: the holds schema does not version past rule changes.
+   Security metadata includes RLS flags,
    table ownership/ACLs, policies, all indexes (including partial active-assignment uniqueness),
    constraints, triggers and function definitions/owners/ACLs/security settings. Runs rejected
    append-only mutations, duplicate replay/assignment inserts, stock-conflict rollback and the
-   deferred override-audit FK check, then compares all data again. Outputs aggregate SHA-256
+   deferred override-audit FK check, then compares all data again. Hold probes reject deletion,
+   rewriting and reactivation, wrong-role or unconfigured clearance, duplicate active kinds and
+   new assignments with active holds. A successful single-kind clearance must leave the other
+   holds blocking; that test clearance is rolled back before final comparison. These native SQL
+   probes remain unrun until the documented prerequisites exist. Outputs aggregate SHA-256
    digests and checks, never raw rows or connection errors.
 5. Drops both generated databases, deletes the temporary archive directory, then reports success.
    If ordinary cleanup fails, output identifies exact generated resources for the cluster owner;

@@ -6,8 +6,9 @@ import {verifySnapshot} from '../recovery-integrity.mjs';
 
 test('recovery inventory covers current repository migrations once and includes all additive tables', () => {
   const inventory = loadRecoveryInventory();
-  assert.equal(inventory.migrations.length, 7);
-  assert.equal(recoveryTables.length, 24);
+  assert.equal(inventory.migrations.length, 8);
+  assert.equal(recoveryTables.length, 26);
+  assert.ok(inventory.migrations.findIndex(m => m.id === 'holds') > inventory.migrations.findIndex(m => m.id === 'requests'));
   for (const migration of inventory.migrations) assert.match(migration.sha256, /^[a-f0-9]{64}$/);
   const paths = recoveryMigrations.map(migration => migration.path);
   for (const path of paths) assert.throws(() => validateMigrationPaths(paths.filter(candidate => candidate !== path)), /inventory differs/);
@@ -30,8 +31,9 @@ function snapshot() {
     organization: [{id: 'tenant'}], facility: [row({id: 'facility'})], ward: [row({id: 'ward'})],
     location: Array.from({length: 10}, (_, i) => row({id: `location-${i}`})),
     equipment_type: Array.from({length: 5}, (_, i) => row({id: `type-${i}`})),
-    equipment: Array.from({length: 8}, (_, i) => row({id: `equipment-${i}`, external_id: `EQ-${i}`, equipment_type_id: 'type-0', version: 0})),
-    auth_user: [{id: 'user'}], auth_membership: [row({user_id: 'user', role: 'operator'})],
+    equipment: Array.from({length: 8}, (_, i) => row({id: `equipment-${i}`, external_id: `EQ-${i}`, equipment_type_id: 'type-0', version: 0, status: 'available'})),
+    auth_user: [{id: 'user'}, {id: 'supply-clearer'}, {id: 'equipment-clearer'}],
+    auth_membership: [row({user_id: 'user', role: 'operator', active: true}), row({user_id: 'supply-clearer', role: 'supply_manager', active: true}), row({user_id: 'equipment-clearer', role: 'equipment_manager', active: true})],
     equipment_observation: [row({id: 'observation', equipment_id: 'equipment-0', location_id: 'location-0', idempotency_key: 'reading', observed_at: '2026-11-05T10:00:00Z', received_at: '2026-11-05T10:01:00Z'})],
     equipment_event: [row({equipment_id: 'equipment-0', idempotency_key: 'admin:legacy'})],
     ingestion_nonce: [row({source_id: 'source', nonce: 'nonce'})],
@@ -50,15 +52,22 @@ function snapshot() {
     location_override_audit: [row({override_id: 'override', user_id: 'user', recorded_at: '2026-11-05T10:03:00Z',
       policy: {version: 'synthetic-v1', freshMs: 60000, staleMs: 600000, conflictWindowMs: 0, maxOverrideMs: 3600000},
       after_state: {locationId: 'location-1', observedAt: '2026-11-05T10:02:00Z', override: {id: 'override', organizationId: 'tenant', equipmentId: 'equipment-0', locationId: 'location-1'}}})],
+    hold_clearance_rule: [row({kind: 'dirty', role: 'supply_manager'}), row({kind: 'fault', role: 'equipment_manager'})],
+    equipment_hold: [row({id: 'cleared-hold', equipment_id: 'equipment-2', kind: 'dirty', placed_by: 'user:user', placed_at: '2026-11-05T10:00:00Z',
+      active: false, cleared_by: 'user:supply-clearer', cleared_at: '2026-11-05T10:01:00Z'}),
+      ...['dirty','fault','maintenance','unknown'].map(kind => row({id: `active-${kind}`, equipment_id: 'equipment-2', kind,
+        placed_by: 'user:user', placed_at: '2026-11-05T10:02:00Z', active: true, cleared_by: null, cleared_at: null}))],
   };
   return {tables, metadata: {rls: recoveryTables.map(table => ({table, enabled: true, forced: table !== 'auth_user', owner: 'existing_owner', acl: null})),
-    indexes: ['item_assignment_one_active_per_equipment', 'item_assignment_one_active_per_item'].map(name => ({name, unique: true, valid: true})),
+    indexes: ['item_assignment_one_active_per_equipment', 'item_assignment_one_active_per_item', 'equipment_hold_one_active_per_kind'].map(name => ({name, unique: true, valid: true})),
+    triggers: [{table: 'item_assignment', name: 'item_assignment_block_on_hold', enabled: 'O', definition: 'EXECUTE FUNCTION block_assignment_on_hold()'},
+      {table: 'equipment_hold', name: 'equipment_hold_guard_trigger', enabled: 'O', definition: 'EXECUTE FUNCTION equipment_hold_guard()'}],
     functions: [{owner: 'existing_owner', acl: ['existing_owner=X/existing_owner'], securityDefiner: true, config: ['search_path=pg_catalog']}], policies: []}};
 }
 const verifyInternal = input => verifySnapshot(input, structuredClone(input));
 test('complete synthetic graph yields deterministic data and metadata hashes', () => {
   const input = snapshot(), evidence = verifyInternal(input);
-  assert.equal(evidence.tableCount, 24);
+  assert.equal(evidence.tableCount, 26);
   assert.match(evidence.dataSha256, /^[a-f0-9]{64}$/);
   assert.equal(evidence.metadataSha256, verifyInternal(structuredClone(input)).metadataSha256);
 });
@@ -116,4 +125,26 @@ test('physical observation time remains distinct and source security/index metad
   assert.throws(() => verifyInternal(rls), /RLS/);
   const index = snapshot(); index.metadata.indexes.pop();
   assert.throws(() => verifyInternal(index), /unique index/);
+});
+test('hold stacks retain clearance history, configured-role evidence and separate blocking state', () => {
+  for (const corrupt of [
+    input => { input.tables.equipment_hold[0].cleared_by = 'user:user'; },
+    input => { input.tables.hold_clearance_rule[0].role = 'admin'; },
+    input => { input.tables.auth_membership[1].active = false; },
+    input => { input.tables.equipment_hold[0].cleared_at = '2026-11-05T09:59:00Z'; },
+    input => { input.tables.equipment_hold[1].cleared_by = 'user:supply-clearer'; },
+    input => { input.tables.equipment_hold[2].kind = 'dirty'; },
+    input => { input.tables.equipment_hold[1].equipment_id = 'missing'; },
+    input => { input.tables.equipment_hold[0].kind = 'unknown'; },
+    input => { input.tables.equipment_hold[1].placed_at = '2026-11-05T10:00:30Z'; },
+  ]) { const input = snapshot(); corrupt(input); assert.throws(() => verifyInternal(input)); }
+});
+test('hold RLS, history trigger, assignment trigger and active-kind index cannot be missing on both sides', () => {
+  for (const corrupt of [
+    input => { input.metadata.rls.find(row => row.table === 'equipment_hold').forced = false; },
+    input => { input.metadata.rls.find(row => row.table === 'hold_clearance_rule').enabled = false; },
+    input => { input.metadata.indexes = input.metadata.indexes.filter(row => row.name !== 'equipment_hold_one_active_per_kind'); },
+    input => { input.metadata.triggers.find(row => row.table === 'item_assignment').enabled = 'D'; },
+    input => { input.metadata.triggers.find(row => row.table === 'equipment_hold').definition = 'unprotected'; },
+  ]) { const input = snapshot(); corrupt(input); assert.throws(() => verifyInternal(input)); }
 });

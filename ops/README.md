@@ -2,13 +2,16 @@
 
 These scripts and runbooks prepare an owner to evaluate a deployment. They do not deploy,
 provision an account, issue a credential, assign grants, send alerts or establish service levels.
-The repair integrates main `9113df98c2601820f7a13c471b9d4c226458654c`, including equipment
-receipts, supplies, requests and location resolution. Reconcile the inventory against the exact
+The repair integrates main `dd770606db334de80e40800506d9ab399af8c5cd`, including equipment
+receipts, supplies, requests, stacked holds and location resolution. Reconcile the inventory against the exact
 release commit: new or missing migration files block the drill rather than being silently omitted.
 
-The runnable product is the loopback browser demo (`npm run dev`, port 4180). It stores
-synthetic equipment changes in the browser. `tools/serve.mjs` serves static files, not the
-equipment API or ingestion handler; it has no `/health` or `/ready` route. API auth/equipment
+Root `npm run dev` serves static files on loopback port 4180. The merged shared equipment
+client requires an existing authorized equipment API and does not persist equipment or credentials
+in browser storage; initial connection failure must not substitute sample inventory. For the
+documented local API proxy use [apps/web setup](../apps/web/README.md), with an existing loopback
+API origin and already-issued synthetic session. This task supplies neither. `tools/serve.mjs`
+does not mount the equipment API or ingestion handler and has no `/health` or `/ready` route. API auth/equipment
 and provider-neutral ingestion are injectable modules. There is no production server entry,
 managed identity verifier, hosting manifest, real sensor integration or installed alert collector.
 The local identity/source verifiers reject production use. A static HTTP 200 does not certify
@@ -31,8 +34,9 @@ npm run check
 npm run dev
 ```
 
-The demo opens at `http://127.0.0.1:4180`; use its equipment list as the non-WebGL fallback.
-Stop the foreground process with Ctrl+C. No operational data or secret is needed. If `PORT`
+Static files open at `http://127.0.0.1:4180`; functional shared inventory requires the separate
+approved local API setup above. Use the equipment list as the non-WebGL fallback once connected.
+Stop the foreground process with Ctrl+C. Static serving needs no operational data or secret. If `PORT`
 is supplied, the existing server reads it. It does not automatically load `.env` files;
 Node 22+ supports `node --env-file=ops/.env tools/serve.mjs` for an optional ignored local file.
 Copy only `PORT` from [the example](.env.example) for that demo; keep connection settings separate.
@@ -55,6 +59,8 @@ The additive [supplies](../services/api/supplies/README.md), [requests](../servi
 and [location-resolution](../services/ingestion/resolution/README.md) modules retain separate
 lifecycle and hosting contracts. The recovery inventory covers their merged migrations without
 claiming that any module is mounted or production-ready.
+The [holds module](../services/api/holds/README.md) depends on requests and ships no clearance-role
+defaults. Fixture mappings are synthetic evidence only; organization owners must decide operational policy.
 Root tests can fail without the independent auth-local PGlite dependency. SV-019 owns that
 installation/test-loader repair, core seed/bootstrap and CI; this task does not install or
 reconstruct its fix. On Windows the core DB helper also assumes Unix executable paths.
@@ -75,8 +81,8 @@ aggregate metrics file; it is not a collector. `ops/recovery-drill.mjs` uses exi
 clients and an existing marked local cluster, creates two uniquely named disposable databases,
 then removes them and its archive. None accepts a production service URL.
 `node ops/recovery-inventory.mjs` is read-only and needs no database: it checks the explicit
-seven-migration inventory against every `services/**/*.up.sql` file and prints source hashes
-and the expected 24-table count. A future migration requires an explicit reviewed fixture update.
+eight-migration inventory against every `services/**/*.up.sql` file and prints source hashes
+and the expected 26-table count. A future migration requires an explicit reviewed fixture update.
 
 ## Deferred CI hook (SV-019)
 

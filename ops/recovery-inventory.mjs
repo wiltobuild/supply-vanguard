@@ -11,6 +11,7 @@ export const recoveryMigrations = Object.freeze([
   {id: 'equipment-receipts', path: 'services/api/equipment/migrations/0001_receipts.up.sql', tables: ['equipment_command_receipt']},
   {id: 'supplies', path: 'services/api/supplies/migrations/0001_supplies.up.sql', tables: ['supply_sku', 'supply_bin', 'supply_bin_stock', 'supply_stock_transaction']},
   {id: 'requests', path: 'services/api/requests/migrations/0001_requests.up.sql', tables: ['request', 'request_item', 'item_assignment', 'request_event']},
+  {id: 'holds', path: 'services/api/holds/migrations/0001_holds.up.sql', tables: ['hold_clearance_rule', 'equipment_hold']},
   {id: 'ingestion', path: 'services/ingestion/migrations/0001_ingestion.up.sql', tables: ['ingestion_nonce', 'ingestion_receipt', 'ingestion_dead_letter']},
   {id: 'location-resolution', path: 'services/ingestion/resolution/migrations/0001_resolution.up.sql', tables: ['location_override', 'location_override_audit']},
 ]);
