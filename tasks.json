@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 220,
-  "updatedAt": "2026-11-09T15:51:11.441Z",
+  "revision": 221,
+  "updatedAt": "2026-11-09T15:52:16.869Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1548,6 +1548,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:52:16.869Z",
+      "taskId": "SV-011",
+      "command": "block",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1878,7 +1885,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1903,17 +1910,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv011-20261106-maintenance",
-        "owner": "wil",
-        "leaseId": "39a2e57a-a81d-4c83-adcd-f52c9c54bdb5",
-        "claimedAt": "2026-11-09T15:20:34.576Z",
-        "expiresAt": "2026-11-09T17:51:11.441Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T14:54:56.654Z",
-      "blockedReason": null,
+      "blockedReason": "Approved shared-app maintenance integration is frozen in tested local commit 984e6aec255aa6c880442a8268191360611efd15 on the original checkout/branch. Changes stay in the two maintenance directories and exactly seven admitted shared paths. Integration16/16 plus polling5/5, maintenance59/59, permitted repository40/40, syntax27GLB and offline module Chrome checks passed. Actual supported mounted-browser acceptance remains pending with the manager. First maintenance fixture listener succeeded on127.0.0.1:4184 with shell and authenticated canonical ready API HTTP200; no applicable maintenance-listener denial was established or bypassed. One disposable fixture remains available for manager handoff/cleanup; no alternate listener. New integration publication is not covered by the previous b52-only approval, so no push/submission/merge/deployment or new-head hosted CI is claimed. Await manager review and applicable new-byte publication authorization; metadata403/native/check-in/temp-Git stops remain untouched.",
       "reviewNote": "User-authorized PR22 maintenance integration. Scoped migration203 adds exactly apps/web/index.html, serve.mjs, README.md, src/app.js, src/equipment-api.js, tests/api-fixture.mjs and tests/maintenance-integration.test.mjs; former SV007 owner confirmed clean/idle and acknowledged original maintenance owner as sole implementation owner. Claim normally before edits. Expose only maintenance public assets, add direct/hash route navigation/reload behavior with stable mount/unmount and session-loss/identity cleanup; dispatch existing equipment/maintenance handlers through one existing injected authorization context, no dependency on unmerged PR14 and no duplicate auth or server provisioning. Adopt available/unassigned/no-active-hold search consistently before pagination. Add in-process mounted-flow/lifecycle/error/retry/permission tests in approved files, preserving held assets, role/RLS/provenance and unavailable completion. Synthetic fixture infrastructure may be reused; no runtime credential issuance, persistent access, retained environment, production migration/grant, SV019/root/CI or unrelated SV008 edits. Preserve prior operation-specific denials and PR-description403; no native/loopback/filesystem reroute. Manager will use permitted browser surface for real mounted acceptance. No merge/deployment. New integration publication requires applicable authorization; retain tested local commit and report any distinct publication/runtime block rather than assume previous b52-only approval covers it.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements."
