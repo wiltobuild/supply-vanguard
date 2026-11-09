@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 232,
-  "updatedAt": "2026-11-09T19:06:49.344Z",
+  "revision": 233,
+  "updatedAt": "2026-11-09T19:07:43.586Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1633,6 +1633,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T19:07:43.586Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1875,7 +1882,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -1900,17 +1907,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "3fd8b137-5791-4119-87ef-eda65035ac15",
-        "claimedAt": "2026-11-09T17:04:12.129Z",
-        "expiresAt": "2026-11-09T21:06:49.344Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Tested LOCAL integration frozen at dd8f1111bb8ca9c28dbbf8a1f963f42d9ebe7e42, parents bb27780941a316f346f71fd486ae5cdcd9176d92 and published unmerged PR22 dependency 984e6aec255aa6c880442a8268191360611efd15. Publication is held by coordinator; PR14 remains bb277809. Authored scope and unchanged maintenance paths verified. Non-listening mounted/maintenance 33 pass, scoped 46 pass/1 native skip, selected repository 37 pass; syntax/assets pass. Approved ephemeral fixture cleanup verified: 0 listeners/leases, 4 issued and revoked tokens, database closed. Waiting for coordinator dependency/publication sequencing and separately approved browser/runtime gates; native/loopback/filesystem/403 operation stops remain respected. No new review submission for unpublished head.",
       "reviewNote": "Approved shared check-in integration after scope transfer225 f75bb474ae10ced10767ff32ff39492fb25059c0. Original SV008 owner alone must normally claim before edits. Pin published maintenance984e6aec as an unmerged dependency and integrate it locally without merging feature PRs or modifying maintenance directories/test; inspect authored changes relative to that baseline. Implement exact shared static/navigation/session/API mounting in transferred six paths plus check-in integration test, preserving maintenance lifecycle, canonical held/unassigned readiness, auth/RLS, attribution/idempotency, focus and scanner/manual/cancel behavior. Approved temporary in-memory roles/minimum grants, fictional memberships and short-lived test tokens are solely for mounted form/API acceptance; use real handlers/auth/SQL, revoke/close and verify cleanup. Preserve all operation-specific native/loopback/filesystem/metadata403 stops, SV019 auth/core/root/CI ownership and SV017 recovery isolation. No real patient data, external transmission, retained credentials or production access. No feature-code publication, merge, deployment, persistent access expansion or unrelated provisioning. Return claim/source/test/cleanup and tested local commit receipts; report any distinct runtime or access blocker without rerouting it.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing."
