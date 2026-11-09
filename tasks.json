@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 210,
-  "updatedAt": "2026-11-09T15:29:54.711Z",
+  "revision": 211,
+  "updatedAt": "2026-11-09T15:30:08.747Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1478,6 +1478,13 @@
       "command": "claim",
       "agent": "wil-sol-sv010-20261106-replenishment",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-09T15:30:08.747Z",
+      "taskId": "SV-015",
+      "command": "heartbeat",
+      "agent": "wil-sol-sv015-20261105-b9c2",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1978,7 +1985,7 @@
         "owner": "wil",
         "leaseId": "f7192137-6264-439c-abd3-ac719f2e2acc",
         "claimedAt": "2026-11-09T15:29:05.663Z",
-        "expiresAt": "2026-11-09T17:29:05.663Z"
+        "expiresAt": "2026-11-09T17:30:08.747Z"
       },
       "blockedReason": null,
       "reviewNote": "Bounded references-only consistency repair authorized: current main has 15 added illustrative models missing from register coverage, so seven of eight reference tests fail. Original owner wil-sol-sv015-20261105-b9c2 alone may normally reclaim and update packages/scene/references records, hashes, tests and documentation against inspected authored current-main values. Preserve original twelve GLBs, zero measured elements, no architectural-accuracy claim and fail-closed authorized-review gate. PR6 is already merged; its draft wording was historical. External permissions, measured drawings, synthetic-to-real mapping, approved equipment placement and facilities/ward-staff sign-off remain unresolved and must stay documented. This readies only the consistency repair, not physical validation. Tested local commit first; publication approval separate. No scene geometry/assets/shared web/auth/root/CI edits, credentials, provisioning, merge or deployment; preserve prior operation-specific stops."
