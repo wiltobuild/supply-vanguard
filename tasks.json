@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 250,
-  "updatedAt": "2026-11-09T23:39:23.750Z",
+  "revision": 251,
+  "updatedAt": "2026-11-09T23:44:56.125Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1759,6 +1759,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-09T23:44:56.125Z",
+      "taskId": "SV-017",
+      "command": "release",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2281,7 +2288,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2299,13 +2306,7 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "f1186662-8ed4-49d8-8384-9f44a65da9d5",
-        "claimedAt": "2026-11-09T23:39:23.750Z",
-        "expiresAt": "2026-11-10T01:39:23.750Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T14:31:17.407Z",
