@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 242,
-  "updatedAt": "2026-11-09T23:16:34.521Z",
+  "revision": 243,
+  "updatedAt": "2026-11-09T23:23:24.029Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1703,6 +1703,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-09T23:23:24.029Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2225,7 +2232,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2243,17 +2250,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "3ece7456-07bb-41b1-b551-740b6d7c127d",
-        "claimedAt": "2026-11-09T23:16:34.521Z",
-        "expiresAt": "2026-11-10T01:16:34.521Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T14:31:17.407Z",
-      "blockedReason": null,
+      "blockedReason": "One isolated PostgreSQL18.6 CHECK parse/deparse diagnostic at frozen a87df9844183453c46aa21516202a522834ed088 exited0: exact retained before/after default hashes reproduced, second reparse stable, pretty renderer converged, catalog enforcement/validation/inheritance/deferral and NOTNULL flags matched, 33 outcomes across11 boundary cases and2 AND/OR precedence controls confirmed. Exact database/root/credentials removed, no archives, known run PIDs exited and port55439 empty. Source and old receipts unchanged; no CIM retry, publication or full recovery run. Prior native recovery remains failed. Narrow next repair requires separate coordinator review of ops-only CHECK renderer pg_get_constraintdef(oid,true) plus explicit flags and precedence regressions; no generic stripping/hash allowlist or source/comparator edit performed.",
       "reviewNote": "Coordinator clears only one isolated PostgreSQL18.6 CHECK parse/deparse diagnostic under existing temporary synthetic recovery approval. Frozen a87df984 unchanged. Compare source BETWEEN expansion and explicit AND reparse, exact retained hashes, catalog enforcement flags and boundary rejection/acceptance. Normal original-owner claim required; verify prior cleanup first. No full recovery run, comparator/source/migration edits, publication, merge or deployment."
     },
     {
