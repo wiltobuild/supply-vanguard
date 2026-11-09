@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 194,
-  "updatedAt": "2026-11-09T14:31:17.407Z",
+  "revision": 195,
+  "updatedAt": "2026-11-09T14:34:40.630Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1365,6 +1365,13 @@
       "command": "submit",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T14:34:40.630Z",
+      "taskId": "SV-011",
+      "command": "unblock",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1694,7 +1701,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1716,8 +1723,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-06T01:34:45.472Z",
-      "blockedReason": "Manager-requested PR22 repairs are committed and tested locally at d8147c177533b6e8b2a3e5afa640f061aa9ffd65. Automatic approval review denied git push to the public repository because explicit user approval for publishing these repairs is missing. Read-only check confirms remote and draft PR22 remain at 56edcffadef7ae9ac31a5594d5c4a50a4b1155cf; denied push did not execute and was not retried or rerouted. Scoped51/51, permitted repository38/38, offline Chrome actual-adapter authorization/lifecycle regressions and syntax27GLB checks passed. Await explicit approval to publish the same local commit, then verify exact-head CI and submit normally. Scope and policy unchanged.",
-      "reviewNote": "Exact head56edcff maintenance review found two reproduced P2 UI gaps: https://github.com/wiltobuild/supply-vanguard/pull/22#pullrequestreview-5794633966. (1) After initial list, start panel.refresh with pending list, close panel, reject list403: refresh throws TypeError reading replaceChildren on null via clearHistory/detail. Guard late failed reads after close and add401/403 unmount/disconnect regressions. (2) Non-JSON/empty403 response is reclassified status0 in api.js before panel authorization cleanup; after prior load/draft, cache and draft remain visible. Preserve HTTP401/403 even with malformed bodies and clear appropriate equipment/draft/history caches; test401/403 variants while preserving exact uncertain-write retry keys/body. Original maintenance owner wil-sol-sv011-20261106-maintenance alone should reclaim normally, fix only apps/web/maintenance and services/api/maintenance tests/docs as needed, and resubmit same draft PR22. Do not edit held/shared web files, root/CI/auth/bootstrap, scopes or SV021 policy; keep service completion unavailable. Scoped18/18 and exact-microsecond/ready-pagination checks passed. No root board-race/native/socket or denied-stage retry. Keep draft until defects and separately coordinated integration gates close."
+      "blockedReason": null,
+      "reviewNote": "Resume only already-authorized local maintenance correctness work: current main dd770606 adds active holds that the ready query must exclude before pagination. This transition permits the original maintenance owner to claim and make/test task-local source changes; it DOES NOT resolve or authorize the previously denied public push. Retain unpublished UI repair d8147c1 and the exact publication hold; do not push any commit or create alternate publication routes until applicable explicit approval. After normally confirmed claim, integrate main safely, add tenant-correlated active-hold exclusion, actual holds migration/read-only ephemeral fixture grants, stacked/cleared/all-kind/tenant/pagination regressions, and current runbook prerequisites within apps/web/maintenance and services/api/maintenance only. No shared/held files, scope change, operational roles/policy, SV019/root/CI/native/loopback/board-race retry. When local repair is concrete and tested, if publication approval remains absent, record exact new retained commit and block again without claiming remote CI/submission or readiness."
     },
     {
       "id": "SV-012",
