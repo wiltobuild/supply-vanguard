@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 248,
-  "updatedAt": "2026-11-09T23:36:51.697Z",
+  "revision": 249,
+  "updatedAt": "2026-11-09T23:38:00.405Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1745,6 +1745,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T23:38:00.405Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2267,7 +2274,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2289,8 +2296,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T14:31:17.407Z",
-      "blockedReason": "Local ops-only CHECK comparison repair frozen at 1557b4f5ebc344f6dd903e2b74704c586853bdc4, clean tree; 8 ops files +296/-6. All35 ops tests, inventory8 migrations/26 tables, npm run check and diff checks pass. CHECK uses pg_get_constraintdef(oid,true) only; other definitions and digest remain strict. Explicit catalog/column identity, enforcement capability, validation, inheritance, deferral, linkage and NOTNULL checks added with PG16-safe extraction. Six prior receipts unchanged. Await independent coordinator review and specific native runtime clearance: no setup or full recovery retry performed; prior full native acceptance remains failed. No source migrations, auth/core/root/CI edits, publication, merge or deployment.",
-      "reviewNote": "Diagnostic confirmed same receipt CHECK semantics with exact hash reproduction, matching catalog flags and 33 boundary outcomes. Original owner may claim for smallest local ops-only CHECK renderer repair with explicit catalog enforcement/security flags and regressions rejecting material predicate/metadata changes. Preserve strict other metadata, redaction, assertions and cleanup. No source migration/auth/core/root/CI changes or publication. Full recovery run remains held until frozen tested commit and independent coordinator review."
+      "blockedReason": null,
+      "reviewNote": "Independent frozen 1557b4f5ebc344f6dd903e2b74704c586853bdc4 review passed: clean eight ops-only files, 35 scoped tests plus eight manager schema/security/redaction regressions; strict digest and protection/cleanup preserved. Coordinator clears ONE full instrumented PostgreSQL18.6 disposable local synthetic backup/restore acceptance at this exact head, after prior cleanup reconciliation. Original owner normal claim required; distinct immutable receipts, capture post-restore AND post-protection outcomes, verified unconditional cleanup. Stop on new failure after cleanup, no blind retry or weakened checks. No publication, merge, deployment or unrelated changes."
     },
     {
       "id": "SV-018",
