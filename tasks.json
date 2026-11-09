@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 199,
-  "updatedAt": "2026-11-09T14:42:49.734Z",
+  "revision": 200,
+  "updatedAt": "2026-11-09T14:53:13.713Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1400,6 +1400,13 @@
       "command": "block",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T14:53:13.713Z",
+      "taskId": "SV-011",
+      "command": "unblock",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1729,7 +1736,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -1751,8 +1758,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-06T01:34:45.472Z",
-      "blockedReason": "Local-code-only repair completed and retained at b52e924080b54c013fddf979ba35bc22068ad830 on the original branch. Includes unchanged current main afe17ebc52c125ae1e3d1d95881a5b294e9dee16 via clean local merge 8c29202592b79b1a572bf74fa3f685c41250682f and preserves unpublished UI repair d8147c177533b6e8b2a3e5afa640f061aa9ffd65. Active holds are excluded before ready pagination; actual holds migration and ephemeral SELECT fixture grants, all-kind/stacked/cleared/tenant/pagination/service-history/fail-closed regressions and current prerequisites are verified. New hold suite 7 failures before fix to 8/8 pass; full scoped59/59, permitted repository40/40, offline Chrome actual-adapter keyboard/axe/lifecycle checks and syntax27GLB pass. Existing explicit public-push denial remains unresolved: no push, alternate publication or PR submission attempted; no repaired-head remote CI/readiness claim. Blocked awaiting applicable explicit publication approval and coordinator integration handoff. Native/loopback/temp-Git denied operations and all held/shared/SV019 scopes remain untouched.",
-      "reviewNote": "Resume only already-authorized local maintenance correctness work: current main dd770606 adds active holds that the ready query must exclude before pagination. This transition permits the original maintenance owner to claim and make/test task-local source changes; it DOES NOT resolve or authorize the previously denied public push. Retain unpublished UI repair d8147c1 and the exact publication hold; do not push any commit or create alternate publication routes until applicable explicit approval. After normally confirmed claim, integrate main safely, add tenant-correlated active-hold exclusion, actual holds migration/read-only ephemeral fixture grants, stacked/cleared/all-kind/tenant/pagination regressions, and current runbook prerequisites within apps/web/maintenance and services/api/maintenance only. No shared/held files, scope change, operational roles/policy, SV019/root/CI/native/loopback/board-race retry. When local repair is concrete and tested, if publication approval remains absent, record exact new retained commit and block again without claiming remote CI/submission or readiness."
+      "blockedReason": null,
+      "reviewNote": "Explicit user approval verified for publishing tested retained repair b52e924080b54c013fddf979ba35bc22068ad830 to the existing public PR22 branch. Resume normal original-owner claim and publication/submission only; no merge or deployment."
     },
     {
       "id": "SV-012",
