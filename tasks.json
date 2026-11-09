@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 188,
-  "updatedAt": "2026-11-06T08:33:59.478Z",
+  "revision": 189,
+  "updatedAt": "2026-11-09T14:17:41.546Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1323,6 +1323,13 @@
       "command": "submit",
       "agent": "cheich-agent-10",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T14:17:41.546Z",
+      "taskId": "SV-021",
+      "command": "complete",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1956,7 +1963,7 @@
     {
       "id": "SV-021",
       "title": "Independent stacked equipment holds",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-006",
@@ -1985,7 +1992,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/23",
       "submittedBy": "cheich-agent-10",
-      "submittedAt": "2026-11-06T08:33:59.478Z"
+      "submittedAt": "2026-11-06T08:33:59.478Z",
+      "completedAt": "2026-11-09T14:17:41.546Z",
+      "reviewedBy": "wil-sol-pr-manager-20261105",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/23",
+        "mergeCommit": "dd770606db334de80e40800506d9ab399af8c5cd",
+        "mergedAt": "2026-11-06T08:34:17Z"
+      }
     },
     {
       "id": "SV-022",
