@@ -1,8 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
 import {loadRecoveryInventory, recoveryMigrations, recoveryTables, validateMigrationPaths} from '../recovery-inventory.mjs';
 import {fixtureSetupSql, legacyEventSql} from '../recovery-fixture.mjs';
 import {verifySnapshot} from '../recovery-integrity.mjs';
+import {constraintDefinitionSql, constraintMetadataSql, columnMetadataSql} from '../recovery-schema.mjs';
+import {checkRenderings} from './fixtures/check-renderings.mjs';
 
 test('recovery inventory covers current repository migrations once and includes all additive tables', () => {
   const inventory = loadRecoveryInventory();
@@ -58,7 +61,18 @@ function snapshot() {
       ...['dirty','fault','maintenance','unknown'].map(kind => row({id: `active-${kind}`, equipment_id: 'equipment-2', kind,
         placed_by: 'user:user', placed_at: '2026-11-05T10:02:00Z', active: true, cleared_by: null, cleared_at: null}))],
   };
-  return {tables, metadata: {rls: recoveryTables.map(table => ({table, enabled: true, forced: table !== 'auth_user', owner: 'existing_owner', acl: null})),
+  // Minimal catalog facts for logic tests; these are not a native schema capture.
+  const columns = recoveryTables.map(table => ({schema:'public',table,name:Object.keys(tables[table][0])[0],position:1,type:'text',notNull:true}));
+  columns.push({schema:'public',table:'equipment_command_receipt',name:'idempotency_key',position:2,type:'text',notNull:true},
+    {schema:'public',table:'equipment_command_receipt',name:'equipment_id',position:3,type:'uuid',notNull:true},
+    {schema:'public',table:'equipment',name:'id',position:2,type:'uuid',notNull:true});
+  const check = {schema:'public',table:'equipment_command_receipt',name:'equipment_command_receipt_idempotency_key_check',type:'c',
+    definition:checkRenderings.pretty,enforcementAvailable:true,enforced:true,validated:true,deferrable:false,deferred:false,
+    isLocal:true,inheritanceCount:0,noInherit:false,parent:null,columns:['idempotency_key'],referencedSchema:null,referencedTable:null,referencedColumns:[]};
+  const constraints = [check,
+    {...check,table:'equipment',name:'equipment_pkey',type:'p',definition:'PRIMARY KEY (id)',columns:['id']},
+    {...check,name:'receipt_equipment_fk',type:'f',definition:'FOREIGN KEY (equipment_id) REFERENCES equipment(id)',columns:['equipment_id'],referencedSchema:'public',referencedTable:'equipment',referencedColumns:['id']}];
+  return {tables, metadata: {constraints,columns,rls: recoveryTables.map(table => ({table, enabled: true, forced: table !== 'auth_user', owner: 'existing_owner', acl: null})),
     indexes: ['item_assignment_one_active_per_equipment', 'item_assignment_one_active_per_item', 'equipment_hold_one_active_per_kind'].map(name => ({name, unique: true, valid: true})),
     triggers: [{table: 'item_assignment', name: 'item_assignment_block_on_hold', enabled: 'O', definition: 'EXECUTE FUNCTION block_assignment_on_hold()'},
       {table: 'equipment_hold', name: 'equipment_hold_guard_trigger', enabled: 'O', definition: 'EXECUTE FUNCTION equipment_hold_guard()'}],
@@ -147,4 +161,120 @@ test('hold RLS, history trigger, assignment trigger and active-kind index cannot
     input => { input.metadata.triggers.find(row => row.table === 'item_assignment').enabled = 'D'; },
     input => { input.metadata.triggers.find(row => row.table === 'equipment_hold').definition = 'unprotected'; },
   ]) { const input = snapshot(); corrupt(input); assert.throws(() => verifyInternal(input)); }
+});
+
+test('public CHECK fixtures reproduce all isolated PostgreSQL 18.6 renderer fingerprints', () => {
+  const expected = {
+    original:'40db3d04079639d4f7a253603326d0e3c65a83d4b79447926a6e59c603be6917',
+    reparsed:'83fb2793046e743b5e910fd084bb4a9079b3f94d82aa6d1bd5d8b4f4bfae31ab',
+    pretty:'a0c79a9d6a5107f31144e525cbac56be98a8a9d0643287aad8e97ca4c88cc186',
+    precedenceAnd:'64038ea7f92db38fde6829f6c8a9fe507d9472d90c5cb507bacdf0af8854e29e',
+    precedenceOr:'e1e1597baa0761413558df0b772c2819060e8506b1b0dfe75051592a2482eeb1',
+  };
+  for (const [name,value] of Object.entries(checkRenderings)) {
+    assert.equal(createHash('sha256').update(JSON.stringify(value)).digest('hex'), expected[name], name);
+  }
+});
+
+test('SQL uses the PostgreSQL pretty renderer only for CHECK and safely captures older catalogs', () => {
+  assert.equal(constraintDefinitionSql, `CASE WHEN k.contype = 'c'
+  THEN pg_get_constraintdef(k.oid, true) ELSE pg_get_constraintdef(k.oid) END`);
+  assert.ok(constraintMetadataSql.includes(constraintDefinitionSql));
+  assert.ok(constraintMetadataSql.includes("'enforcementAvailable',to_jsonb(k) ? 'conenforced','enforced',to_jsonb(k)->'conenforced'"));
+  assert.doesNotMatch(constraintMetadataSql, /\bk\.conenforced\b/);
+  assert.ok(columnMetadataSql.includes("'notNull',a.attnotnull"));
+  assert.ok(columnMetadataSql.includes('NOT a.attisdropped'));
+});
+
+test('captured server-rendered same-AND pair has stable strict snapshots without JavaScript normalization', () => {
+  const before = snapshot(), after = structuredClone(before);
+  assert.notEqual(checkRenderings.original,checkRenderings.reparsed);
+  // Both observed server pretty outputs have the same verified fingerprint above.
+  before.metadata.constraints[0].definition = checkRenderings.pretty;
+  after.metadata.constraints[0].definition = checkRenderings.pretty;
+  assert.equal(verifySnapshot(before,after).metadataSha256,verifyInternal(before).metadataSha256);
+  before.metadata.constraints[0].definition = checkRenderings.original;
+  after.metadata.constraints[0].definition = checkRenderings.reparsed;
+  assert.throws(()=>verifySnapshot(before,after), /differs/);
+});
+
+test('bounds, prefix, equality/operator and AND/OR precedence changes remain strict failures', () => {
+  const before = snapshot();
+  for (const definition of [checkRenderings.pretty.replace('>= 7','>= 6'),
+    checkRenderings.pretty.replace('<= 106','<= 107'),checkRenderings.pretty.replace("'admin:'","'other:'"),
+    checkRenderings.pretty.replace(" = 'admin:'"," <> 'admin:'"),
+    checkRenderings.pretty.replace(' AND ',' OR '),checkRenderings.precedenceAnd,checkRenderings.precedenceOr]) {
+    const after = structuredClone(before); after.metadata.constraints[0].definition = definition;
+    assert.throws(()=>verifySnapshot(before,after),/differs/);
+  }
+  const orBefore = snapshot(); orBefore.metadata.constraints[0].definition=checkRenderings.precedenceOr;
+  const andAfter = structuredClone(orBefore); andAfter.metadata.constraints[0].definition=checkRenderings.precedenceAnd;
+  assert.throws(()=>verifySnapshot(orBefore,andAfter),/differs/);
+});
+
+test('non-CHECK definitions preserve strict default spelling as well as relational semantics', () => {
+  const before = snapshot();
+  for (const [index,definition] of [[1,'PRIMARY KEY  (id)'],[1,'UNIQUE (id)'],
+    [2,'FOREIGN KEY (equipment_id) REFERENCES equipment(id) ON DELETE CASCADE']]) {
+    const after = structuredClone(before); after.metadata.constraints[index].definition=definition;
+    assert.throws(()=>verifySnapshot(before,after),/differs/);
+  }
+});
+
+test('constraint identity, enforcement, validation, inheritance, deferral and column drift fail comparison', () => {
+  const before=snapshot();
+  const changes=[
+    after=>{after.metadata.constraints[0].schema='other';},after=>{after.metadata.constraints[0].table='equipment';},
+    after=>{after.metadata.constraints[0].name='renamed';},after=>{after.metadata.constraints[0].type='u';},
+    after=>{after.metadata.constraints[0].enforced=false;},after=>{after.metadata.constraints[0].enforcementAvailable=false;},
+    after=>{after.metadata.constraints[0].validated=false;},after=>{after.metadata.constraints[0].deferrable=true;},
+    after=>{after.metadata.constraints[0].deferred=true;},after=>{after.metadata.constraints[0].isLocal=false;},
+    after=>{after.metadata.constraints[0].inheritanceCount=1;},after=>{after.metadata.constraints[0].noInherit=true;},
+    after=>{after.metadata.constraints[0].parent={schema:'public',table:'equipment',name:'equipment_pkey'};},
+    after=>{after.metadata.constraints[0].columns=['equipment_id'];},
+    after=>{after.metadata.constraints[2].referencedSchema='other';},
+    after=>{after.metadata.constraints[2].referencedTable='request';},
+    after=>{after.metadata.constraints[2].referencedColumns=['external_id'];},
+    after=>{after.metadata.columns.find(column=>column.name==='idempotency_key').notNull=false;},
+    after=>{after.metadata.columns.find(column=>column.name==='idempotency_key').type='character varying(106)';},
+    after=>{after.metadata.columns.find(column=>column.name==='idempotency_key').position=4;},
+  ];
+  for(const change of changes){const after=structuredClone(before);change(after);assert.throws(()=>verifySnapshot(before,after),/differs/);}
+});
+
+test('PostgreSQL 16/17 enforcement absence is explicit and cannot disguise disabled or missing flags', () => {
+  const older=snapshot();
+  for(const constraint of older.metadata.constraints){constraint.enforcementAvailable=false;constraint.enforced=null;}
+  assert.equal(verifyInternal(older).tableCount,26);
+  for(const change of [input=>{input.metadata.constraints[0].enforced=true;},
+    input=>{delete input.metadata.constraints[0].enforcementAvailable;},
+    input=>{delete input.metadata.constraints[0].enforced;}]) {
+    const invalid=structuredClone(older);change(invalid);assert.throws(()=>verifyInternal(invalid),/constraint\/column metadata/);
+  }
+});
+
+test('matching incomplete or disabled source catalog evidence fails before archiving', () => {
+  for(const change of [input=>{input.metadata.constraints=[];},input=>{input.metadata.columns=[];},
+    input=>{input.metadata.constraints[0].enforced=false;},input=>{input.metadata.constraints[0].validated=false;},
+    input=>{input.metadata.constraints[0].columns=[];},input=>{input.metadata.constraints[1].columns=[];},
+    input=>{input.metadata.constraints[2].referencedColumns=['missing'];},
+    input=>{input.metadata.constraints[0].parent={schema:'public',table:'equipment',name:'missing'};},
+    input=>{input.metadata.constraints.push(structuredClone(input.metadata.constraints[0]));},
+    input=>{input.metadata.columns.push(structuredClone(input.metadata.columns[0]));},
+    input=>{input.metadata.columns=input.metadata.columns.filter(column=>column.table!=='organization');},
+    input=>{input.metadata.columns.find(column=>column.name==='idempotency_key').notNull=false;}]) {
+    const invalid=snapshot();change(invalid);assert.throws(()=>verifyInternal(invalid),/constraint\/column metadata/);
+  }
+});
+
+test('CHECK rendering never exempts RLS, policy, trigger, index, function or data changes', () => {
+  const before=snapshot();
+  for(const change of [after=>{after.metadata.rls[0].forced=false;},
+    after=>{after.metadata.policies.push({qual:'true'});},after=>{after.metadata.triggers[0].enabled='D';},
+    after=>{after.metadata.triggers[0].definition='different';},after=>{after.metadata.indexes[0].definition='different';},
+    after=>{after.metadata.indexes[0].unique=false;},after=>{after.metadata.functions[0].securityDefiner=false;},
+    after=>{after.metadata.functions[0].config=['search_path=public'];},after=>{after.metadata.functions[0].definition='different';},
+    after=>{after.tables.equipment[0].status='dirty';}]) {
+    const after=structuredClone(before);change(after);assert.throws(()=>verifySnapshot(before,after),/differs/);
+  }
 });

@@ -8,6 +8,7 @@ import {inventoryEvidence, loadRecoveryInventory} from './recovery-inventory.mjs
 import {fixtureSetupSql} from './recovery-fixture.mjs';
 import {verifySnapshot} from './recovery-integrity.mjs';
 import {mismatchDiagnosticLine, retainMismatchDiagnostics} from './recovery-diagnostics.mjs';
+import {constraintMetadataSql, columnMetadataSql} from './recovery-schema.mjs';
 export {verifySnapshot} from './recovery-integrity.mjs';
 
 export const marker = 'sv-ops-disposable';
@@ -74,7 +75,8 @@ export function runDrill({env = process.env, args = process.argv.slice(2)} = {})
       'rls', (SELECT jsonb_agg(jsonb_build_object('table',c.relname,'enabled',c.relrowsecurity,'forced',c.relforcerowsecurity,'owner',pg_get_userbyid(c.relowner),'acl',c.relacl) ORDER BY c.relname) FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind='r'),
       'indexes', (SELECT jsonb_agg(jsonb_build_object('name',i.relname,'unique',x.indisunique,'valid',x.indisvalid,'definition',pg_get_indexdef(x.indexrelid)) ORDER BY i.relname) FROM pg_index x JOIN pg_class c ON c.oid=x.indrelid JOIN pg_class i ON i.oid=x.indexrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
       'policies', (SELECT jsonb_agg(to_jsonb(p) ORDER BY tablename,policyname) FROM pg_policies p WHERE schemaname='public'),
-      'constraints', (SELECT jsonb_agg(jsonb_build_array(c.relname,k.conname,pg_get_constraintdef(k.oid)) ORDER BY c.relname,k.conname) FROM pg_constraint k JOIN pg_class c ON c.oid=k.conrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public'),
+      'constraints', (${constraintMetadataSql}),
+      'columns', (${columnMetadataSql}),
       'triggers', (SELECT jsonb_agg(jsonb_build_object('table',c.relname,'name',t.tgname,'enabled',t.tgenabled,'definition',pg_get_triggerdef(t.oid)) ORDER BY c.relname,t.tgname) FROM pg_trigger t JOIN pg_class c ON c.oid=t.tgrelid JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND NOT t.tgisinternal),
       'functions', (SELECT jsonb_agg(jsonb_build_object('definition',pg_get_functiondef(p.oid),'owner',pg_get_userbyid(p.proowner),'acl',p.proacl,'securityDefiner',p.prosecdef,'config',p.proconfig) ORDER BY p.proname,p.oid::regprocedure::text) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='public' AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid=p.oid AND d.classid='pg_proc'::regclass AND d.deptype='e'))
     );`));

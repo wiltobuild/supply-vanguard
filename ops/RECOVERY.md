@@ -52,8 +52,8 @@ receipt. Do not infer completion of later stages from a missing receipt.
 
 The receipt contains SHA-256 hashes of the complete before/after JSON snapshots and at most
 eight mismatch entries, each with a structural `path`, `kind` and before/after subtree hashes.
-Hashes use the existing JSON serialization, including key and array order; no comparison is
-normalized or relaxed. Missing fields have a separate hashed presence marker. Paths contain
+Hashes use strict JSON serialization of the captured snapshot, including key and array order.
+JavaScript does not normalize or omit fields. Missing fields have a separate hashed presence marker. Paths contain
 only fixed public schema/contract labels and numeric positions. Arbitrary object keys become
 `property[n]` positions in that object's combined before/after key order; these positions are
 not row identifiers and may require a separately approved local investigation to resolve.
@@ -75,6 +75,33 @@ phases, so neither the exact differing field nor protection-probe completion is 
 Its finalized receipt confirms cluster shutdown and removal of the generated root and credential
 files. This instrumentation does not reinterpret that failure or constitute another native run.
 An instrumented rerun requires separate coordinator clearance and the approved disposable setup.
+
+## Constraint capture
+
+The isolated PostgreSQL 18.6 diagnostic reproduced the receipt CHECK's two different default
+renderings after parse/deparse, while `pg_get_constraintdef(oid,true)` converged across the
+original and two reparses. All catalog flags and 33 synthetic boundary outcomes agreed; two
+AND/OR controls retained different renderings and behavior. This explains the recorded
+post-restore mismatch; it is not a full recovery pass or a general proof of SQL equivalence.
+
+[Schema capture](recovery-schema.mjs) uses PostgreSQL's pretty renderer **only for CHECK**
+constraints. Other constraint types retain default rendering. The existing strict snapshot
+digest comparison remains unchanged. There is no JavaScript parenthesis stripping, semantic
+rewrite, ignored field or production hash allowlist. Original default-rendering fingerprints
+remain in the immutable diagnostic receipts and public regression fixture; volatile default
+CHECK strings are not included in semantic snapshots.
+
+Constraint records include stable schema/table/name/type, ordered local and foreign column
+links, parent identity, validation, enforcement capability, locality, inheritance and deferral
+flags. Column capture includes stable identity, ordinal, type and NOT NULL. Source validation
+rejects missing table-column evidence, invalid links, duplicate identities, disabled/unvalidated
+constraints and missing receipt-key CHECK/NOT NULL evidence before an archive is made.
+PostgreSQL 16/17 lack `conenforced`: capability-safe `to_jsonb` lookup records availability false
+and value null, rather than referencing an absent catalog column or claiming it was measured.
+When the field exists, source constraints must be enforced. Both availability and value compare
+strictly across the restore. Native execution of this updated capture still requires validation.
+Catalog references: [PostgreSQL 16](https://www.postgresql.org/docs/16/catalog-pg-constraint.html)
+and [PostgreSQL 18](https://www.postgresql.org/docs/18/catalog-pg-constraint.html).
 
 ## What the script does
 
@@ -111,7 +138,7 @@ An instrumented rerun requires separate coordinator clearance and the approved d
    proof of historical clearance authorization: the holds schema does not version past rule changes.
    Security metadata includes RLS flags,
    table ownership/ACLs, policies, all indexes (including partial active-assignment uniqueness),
-   constraints, triggers and function definitions/owners/ACLs/security settings. Runs rejected
+   constraints and columns as described above, triggers and function definitions/owners/ACLs/security settings. Runs rejected
    append-only mutations, duplicate replay/assignment inserts, stock-conflict rollback and the
    deferred override-audit FK check, then compares all data again. Hold probes reject deletion,
    rewriting and reactivation, wrong-role or unconfigured clearance, duplicate active kinds and

@@ -3,6 +3,7 @@ import {validateTableInventory} from './recovery-inventory.mjs';
 import {locationPolicy} from '../packages/domain/location/index.js';
 import {summarizeHolds, validateRuleInput} from '../packages/domain/holds/index.js';
 import {SnapshotMismatchError} from './recovery-diagnostics.mjs';
+import {validateSchemaMetadata} from './recovery-schema.mjs';
 
 const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const requireThat = (condition, message) => { if (!condition) throw Error(message); };
@@ -22,6 +23,7 @@ const counts = {organization: 1, facility: 1, ward: 1, location: 10, equipment_t
 
 export function verifySnapshot(before, after, options) {
   if (digest(after) !== digest(before)) throw new SnapshotMismatchError(before, after, options);
+  validateSchemaMetadata(before.metadata);
   const t = before.tables;
   validateTableInventory(t);
   for (const [name, count] of Object.entries(counts)) requireThat(Array.isArray(t[name]) && t[name].length === count, `Missing synthetic evidence: ${name}`);

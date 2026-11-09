@@ -5,7 +5,8 @@ export const diagnosticLimits = Object.freeze({entries: 8, depth: 12, nodes: 10_
 const phases = new Set(['source-fixture', 'post-restore', 'post-protection-probes']);
 // Only public schema/contract labels may appear in paths. Never echo an arbitrary JSON key:
 // a key itself can contain a token, connection string, SQL body or other sensitive value.
-const labels = new Set([...recoveryTables, ...(`tables metadata rls indexes policies constraints triggers functions
+const labels = new Set([...recoveryTables, ...(`tables metadata rls indexes policies constraints triggers functions columns
+ schema type position notNull enforcementAvailable enforced validated deferrable deferred isLocal inheritanceCount noInherit parent referencedSchema referencedTable referencedColumns
  table enabled forced owner acl name unique valid definition schemaname tablename policyname permissive roles cmd qual with_check securityDefiner config
  id organization_id facility_id ward_id parent_id external_key kind created_at equipment_type_id location_id status version note last_admin_edit_at
  last_verified_location_id last_verified_at last_verified_source provenance equipment_id observed_at received_at source actor correlation_id idempotency_key

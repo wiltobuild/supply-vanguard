@@ -1,5 +1,51 @@
 # SV-017 validation record
 
+## Local CHECK renderer repair (2026-11-09)
+
+Coordinator unblock at revision 244 was rechecked on the live board. Original-owner claim
+exited 0 at **245**, owner `wil`, agent `wil-sol-sv017-20261105-ops`, same branch/checkout,
+clean base `a87df9844183453c46aa21516202a522834ed088`. Heartbeat exited 0 at revision 246.
+Only `ops/` changes are authorized, for a tested local commit and independent review. No native
+setup, recovery retry, publication, PR metadata/403 retry, merge or deployment occurs here.
+
+The prior instrumented full run failed at `post-restore` on one CHECK-definition value. The
+subsequent isolated 18.6 roundtrip matched both retained default JSON-string fingerprints,
+stabilized after the first reparse and converged using the server's pretty renderer. Constraint
+and NOT NULL flags agreed; 33 boundary probes across three tables and two AND/OR precedence
+controls confirmed the bounded diagnosis. Both runs completed cleanup; the full recovery result
+remains **failed**, and its protection probes did not run. No historical outcome is overwritten.
+
+The new capture uses the server's pretty renderer only for CHECK; other constraints use their
+strict default rendering. Strict JSON digest equality and all original domain/RLS/protection/
+cleanup operations remain unchanged. Explicit constraint/column metadata and fail-closed source
+validation cover identity, type, enforcement availability/value, validation, inheritance, deferral,
+parent and ordered column links, type/position and NOT NULL. PG16/17 `conenforced` absence is
+recorded via `to_jsonb`, never a direct reference to the newer catalog column. Tests preserve
+this SQL extraction contract; they do not claim native execution on PostgreSQL 16/17/18.
+
+Regressions verify the public source-derived strings against the exact native renderer hashes,
+then require stable rendered snapshots while rejecting changed bounds, prefix, operators,
+AND/OR precedence, non-CHECK spelling, flags/linkage and unrelated data/security changes.
+Incomplete or disabled matching source metadata also fails. The production comparison contains
+no hash allowlist, regex semantic rewrite or ignored raw-definition field.
+
+| Local command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 35 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: 8 migrations, 26 expected public tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 task definitions validated |
+| `git diff --check` | Exit 0 |
+| SHA-256 of six prior native/diagnostic/cleanup receipts | All unchanged |
+
+All six prior native/diagnostic/cleanup receipts were SHA-256 checked and remain unchanged.
+The latest diagnostic and cleanup fingerprints are respectively
+`6DBD935F91524C08F361080F44325ED1DAEF7B78BAAC74F3E11B5E5C5BA7D802` and
+`08571B1A81A99CC682E72CA5F30C74E7B0971A13B753CD69567CE31D3FDA07CB`.
+Their inherited `freshCimProcessQuery` text describes the earlier historical failure; no CIM
+enumeration was repeated. No denied root board-race fixture is retried. Full `npm test` and new
+CI/native acceptance passes are not claimed. Independent review and specific coordinator runtime
+clearance are required before a further full instrumented exercise.
+
 ## Local failure diagnostics (2026-11-09)
 
 Separate-reviewer rework exited 0 at revision 230; original-owner claim exited 0 at **revision
