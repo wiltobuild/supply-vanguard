@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 213,
-  "updatedAt": "2026-11-09T15:35:25.553Z",
+  "revision": 214,
+  "updatedAt": "2026-11-09T15:35:48.561Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1499,6 +1499,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv015-20261105-b9c2",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T15:35:48.561Z",
+      "taskId": "SV-015",
+      "command": "block",
+      "agent": "wil-sol-sv015-20261105-b9c2",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1972,7 +1979,7 @@
     {
       "id": "SV-015",
       "title": "Validate ward reference geometry",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-002"
@@ -1988,14 +1995,8 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv015-20261105-b9c2",
-        "owner": "wil",
-        "leaseId": "f7192137-6264-439c-abd3-ac719f2e2acc",
-        "claimedAt": "2026-11-09T15:29:05.663Z",
-        "expiresAt": "2026-11-09T17:35:25.553Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Software register drift repaired in LOCAL-ONLY commit e99088024a10f7bf06e8e3dbb2ce6941c42de170 on task/sv-015-wil-sol-sv015-20261105-b9c2-register-refresh-20261109, based on main afe17ebc52c125ae1e3d1d95881a5b294e9dee16. All 15 additions/placements covered; original 35 records and 12 GLBs retained; 12 focused tests and npm run check pass; consistency exit 0, authorized gate expected exit 2. Full npm test has missing PGlite dependency (52 passed, 47 skipped, 1 import failure). No push/new PR: publication remains separate. PR6 is already merged (6b03e804), not draft. PHYSICAL VALIDATION STILL BLOCKED: owner-approved access/reuse permission, current measured drawings or authorized measurements/tolerances, synthetic-to-real mapping, approved equipment dimensions/placement and facilities/ward-staff approval remain unavailable. Zero measured claims, architecturalAccuracyClaimed=false, authorizedReview=null; exact required evidence retained in packages/scene/references/register.json.",
       "reviewNote": "Bounded references-only consistency repair authorized: current main has 15 added illustrative models missing from register coverage, so seven of eight reference tests fail. Original owner wil-sol-sv015-20261105-b9c2 alone may normally reclaim and update packages/scene/references records, hashes, tests and documentation against inspected authored current-main values. Preserve original twelve GLBs, zero measured elements, no architectural-accuracy claim and fail-closed authorized-review gate. PR6 is already merged; its draft wording was historical. External permissions, measured drawings, synthetic-to-real mapping, approved equipment placement and facilities/ward-staff sign-off remain unresolved and must stay documented. This readies only the consistency repair, not physical validation. Tested local commit first; publication approval separate. No scene geometry/assets/shared web/auth/root/CI edits, credentials, provisioning, merge or deployment; preserve prior operation-specific stops."
     },
     {
