@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 236,
-  "updatedAt": "2026-11-09T19:15:12.824Z",
+  "revision": 237,
+  "updatedAt": "2026-11-09T19:16:16.810Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1661,6 +1661,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-09T19:16:16.810Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2183,7 +2190,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2201,17 +2208,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "c35b8beb-9c9d-4c9d-94e9-ebbafa1bd562",
-        "claimedAt": "2026-11-09T19:06:26.045Z",
-        "expiresAt": "2026-11-09T21:15:12.824Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T14:31:17.407Z",
-      "blockedReason": null,
+      "blockedReason": "Local-only ops diagnostics frozen at a87df9844183453c46aa21516202a522834ed088: 26 ops tests pass, inventory 8 migrations/26 tables and check pass. Native PostgreSQL 18.6 acceptance at 1cf34f3e exited 1 with strict data/security/schema mismatch; cleanup verified, differing field and protection-probe completion unresolved. No publication performed. Coordinator diagnostic review and explicit clearance for one instrumented disposable native run are required; no further runtime setup/rerun authorized. Existing draft PR17 remains unmerged.",
       "reviewNote": "Native PostgreSQL18.6 recovery at exact1cf34f3e executed and failed strict data/security/schema comparison after successful dump/restore; protection-probe completion and exact differing field are unproven. Shutdown/root/credential cleanup verified. Original ops owner alone should normally reclaim for LOCAL ops-only diagnostics: distinguish post-restore from post-probe phase, emit capped mismatch paths and before/after hashes with no raw rows, SQL bodies, credentials or sensitive values. Preserve strict comparisons, RLS/protection assertions, inventory and unconditional cleanup. Test diagnostic accuracy, bounds and redaction; freeze a tested local commit. No auth/core/root/CI/workflow edits, code publication, PR metadata403 retry, merge or deployment. No new native setup/rerun until coordinator clearance after diagnostic review; prior one-retry runtime direction is not expanded by this rework. Keep existing source/runtime evidence and exact failure truthful."
     },
     {
