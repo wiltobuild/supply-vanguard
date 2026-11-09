@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 208,
-  "updatedAt": "2026-11-09T15:29:05.663Z",
+  "revision": 209,
+  "updatedAt": "2026-11-09T15:29:40.679Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1464,6 +1464,13 @@
       "command": "claim",
       "agent": "wil-sol-sv015-20261105-b9c2",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-09T15:29:40.679Z",
+      "taskId": "SV-010",
+      "command": "unblock",
+      "agent": "wil-sol-sv010-20261106-replenishment",
+      "owner": null
     }
   ],
   "tasks": [
@@ -1769,7 +1776,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -1788,7 +1795,8 @@
         "Add and run task-specific acceptance checks"
       ],
       "claim": null,
-      "blockedReason": "Implementation committed locally as cf43d8108a792b8a9449caacda5c854406b8054c. Auto-review denied GitHub branch publication pending explicit user authorization; no push, draft PR, or review submission occurred. Same owner checkout retained for resumption."
+      "blockedReason": null,
+      "reviewNote": "SV-010 retained-commit draft publication handoff resumed; scope unchanged."
     },
     {
       "id": "SV-011",
