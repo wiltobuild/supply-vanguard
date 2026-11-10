@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 263,
-  "updatedAt": "2026-11-10T00:23:12.829Z",
+  "revision": 264,
+  "updatedAt": "2026-11-10T00:26:05.795Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1851,6 +1851,13 @@
       "command": "block",
       "agent": "Wil-request-ui-20261110-b83f",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:26:05.795Z",
+      "taskId": "SV-027",
+      "command": "unblock",
+      "agent": "Wil-request-ui-20261110-b83f",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2782,7 +2789,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "blocked",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -2822,7 +2829,8 @@
         "Use the frozen SV-022 contract when available and coordinate adapter shapes through the sole coordinator. Do not copy unreviewed implementation or mutate another owner's checkout. No integration/E2E/pilot or operational sign-off is implied by module tests."
       ],
       "claim": null,
-      "blockedReason": "Tested local-only UI commit ec8a5436000f08e09dd8d246e81ba6e00afe4367 in C:\\Users\\Wil\\sv-request-ui-20261110; 19 focused tests and npm run check pass. Publication is not authorized. Shared-host mounting needs explicit SV-008 ownership handoff and verified SV-022 lifecycle backend; browser keyboard/layout/screenshots and backend E2E remain unrun under existing runtime/fixture restrictions. Hold clearance actor/time are captured; acceptance of existing provenance as required evidence remains unresolved. No PR submitted or integration completion claimed."
+      "blockedReason": null,
+      "reviewNote": "Resume same-owner local repair of independently reviewed UI defects; publication and integration remain held."
     }
   ]
 }
