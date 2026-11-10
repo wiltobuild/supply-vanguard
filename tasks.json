@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 299,
-  "updatedAt": "2026-11-10T02:26:42.315Z",
+  "revision": 300,
+  "updatedAt": "2026-11-10T02:31:21.855Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2104,6 +2104,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T02:31:21.855Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-pr-coordinator",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2629,7 +2636,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2651,8 +2658,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "Single cleared recovery-only supervisor launch exited1 before resources: Get-Command node returned two executable sources and the joined array was not a command. Separate read-only validation passed11/32; ops ea63 and reviewed wrapper hashes unchanged. No root/controller/tools/credentials/cluster/drill created; fresh recovery receipts/plan absent,55439 has0listeners. Safe launch-failure receipt sv017-supervised-recovery-launch-failure-20261110.json retained. Native recovery unrun,racesNotRuntrue,fullCycleAcceptedfalse. Stopped without repair/rerun; await coordinator source/control review and explicit continuation under unchanged global04:13:42.068Z deadline. Clear matching lease; no denied read, publication,merge or deployment.",
-      "reviewNote": "Parent directed approved recovery-only phase evaluation independent of denied harness access. Same original ops owner may claim to add explicit recovery-only wrapper mode: strict reviewed11/32 backup-restore-integrity-protection plus unconditional native cleanup, partial receipt with four races pending. No harness read, copy, alternate route or race execution. Use existing functional executor shared clock; no new resource clock. No feature source/publication/merge/deploy."
+      "blockedReason": null,
+      "reviewNote": "Parent explicitly cleared one reviewed corrected native launcher retry: initial joined-Node-path command failed before resources with no access denial. Same original owner may fix only explicit tested Node executable resolution with multi-install regression/provenance, preserve launch-failure receipt, then source review before one retry. Original04:13:42.068Z deadline; recovery-only strict11/32 cleanup; no denied harness reads/races/alternate path/publication."
     },
     {
       "id": "SV-018",
