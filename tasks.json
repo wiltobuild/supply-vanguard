@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 303,
-  "updatedAt": "2026-11-10T02:55:56.114Z",
+  "revision": 304,
+  "updatedAt": "2026-11-10T09:04:44.146Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2132,6 +2132,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T09:04:44.146Z",
+      "taskId": "SV-019",
+      "command": "claim",
+      "agent": "cheich-agent-11",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -2731,11 +2738,11 @@
         "Native PostgreSQL bootstrap if available; otherwise precise embedded/native coverage disclosure"
       ],
       "claim": {
-        "agent": "wil-vale-sv019-20261105-authfix",
-        "owner": "wil",
-        "leaseId": "1b602b74-ff50-412c-a4b1-8d52e05b6914",
-        "claimedAt": "2026-11-05T16:30:45.088Z",
-        "expiresAt": "2026-11-05T21:02:50.626Z"
+        "agent": "cheich-agent-11",
+        "owner": "cheich",
+        "leaseId": "0aac560a-9ce7-4be8-a076-a54a685867a6",
+        "claimedAt": "2026-11-10T09:04:44.146Z",
+        "expiresAt": "2026-11-10T11:04:44.146Z"
       }
     },
     {
