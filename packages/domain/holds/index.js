@@ -37,7 +37,10 @@ export const EVIDENCE_LIMITS=Object.freeze({reference:128,note:500,idempotencyKe
 // How a cleared hold was cleared. Legacy clearances (the original /clear route) carry NO evidence and are never read as having it.
 export const CLEARANCE_BASIS=Object.freeze({evidence:'evidence-v1',legacy:'legacy-no-additional-evidence'});
 const REFERENCE=/^[A-Za-z0-9][A-Za-z0-9 ._:#/-]{0,127}$/;
-const OBSERVED_AT=/^(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)(\.\d{1,6})?Z$/;
+// Millisecond precision at most (SV-033). Finer input is refused, never silently truncated, so two different instants can never share a request
+// hash and a sub-millisecond instant can never slip under the not-in-the-future check. One gate: the fraction may be written with up to nine digits
+// so it can be recognised and refused with a clear message below.
+const OBSERVED_AT=/^(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d)(\.\d{1,9})?Z$/;
 const CONTROL=/[\u0000-\u001f\u007f]/;
 const KEY=/^[A-Za-z0-9._:-]{1,88}$/;
 const plain=o=>o!==null&&typeof o==='object'&&!Array.isArray(o);
@@ -55,6 +58,7 @@ export function validateClearanceInput(body,{now=Date.now()}={}){
  if(typeof e.reference!=='string'||!REFERENCE.test(e.reference))fail(`evidence.reference is required: 1 to ${EVIDENCE_LIMITS.reference} letters, digits, spaces or . _ : # / -`);
  const m=typeof e.observedAt==='string'?OBSERVED_AT.exec(e.observedAt):null;
  if(!m)fail('evidence.observedAt is required as a UTC timestamp like 2026-11-10T09:30:00Z');
+ if(m[2]&&m[2].length>4)fail('evidence.observedAt supports at most millisecond precision, like 2026-11-10T09:30:00.123Z');
  const ms=Date.parse(e.observedAt),iso=Number.isFinite(ms)?new Date(ms).toISOString():'';
  if(!iso||iso.slice(0,19)!==m[1])fail('evidence.observedAt is not a real date and time');
  if(ms>now)fail('evidence.observedAt must not be in the future');

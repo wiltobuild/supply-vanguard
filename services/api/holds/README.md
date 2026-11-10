@@ -46,7 +46,7 @@ Idempotency-Key: <1-88 chars: letters, digits, . _ : ->        (required)
 Content-Type: application/json
 { "schemaVersion": 1,
   "evidence": { "reference": "Cleaning log #12",              (required, 1-128 chars: letters, digits, space, . _ : # / -; starts with a letter or digit)
-                "observedAt": "2026-11-10T09:30:00Z",         (required, UTC, a real date, not in the future)
+                "observedAt": "2026-11-10T09:30:00Z",         (required, UTC, a real date, not in the future, at most millisecond precision: .123Z)
                 "note": "wiped and dried" } }                 (optional, up to 500 characters, single line, no control characters)
 ```
 
@@ -54,9 +54,9 @@ Permission and role are exactly the original rule: any member reaches the route,
 
 | Result | When |
 | --- | --- |
-| 201 | Cleared. Body `{hold, replayed:false, summary, holds}` where `summary` and `holds` list the equipment's remaining active holds. |
-| 200 + `Idempotent-Replay: true` | Exact retry of an earlier success: the original result, nothing stored twice (`replayed:true`). |
-| 400 `invalid_request` | Missing or malformed evidence, body or `Idempotency-Key`. Nothing is stored. |
+| 201 | Cleared. Body `{hold, replayed:false, summaryBasis:"current", summary, holds}` where `summary` and `holds` list the equipment's remaining active holds. |
+| 200 + `Idempotent-Replay: true` | Exact retry of an earlier success by a caller who **still holds the current configured role**: the original cleared hold and evidence, nothing stored twice (`replayed:true`). Otherwise the retry gets the same 403 `wrong_role` or 422 `no_clearance_rule` a first attempt would (see SV-033 below). |
+| 400 `invalid_request` | Missing or malformed evidence, body or `Idempotency-Key`, including an `observedAt` finer than a millisecond. Nothing is stored. |
 | 422 `evidence_invalid` | Only if malformed evidence somehow reaches the database: the database re-checks the same rules. Nothing is stored. |
 | 403 `wrong_role` / 422 `no_clearance_rule` | Same as the original clear. Nothing is stored. |
 | 404 `hold_not_found` | Unknown hold, or a hold of another tenant. |
@@ -69,15 +69,27 @@ Permission and role are exactly the original rule: any member reaches the route,
 
 **Untrusted text.** `reference` is restricted to a safe character set. `note` is bounded single-line free text, stored and returned verbatim as a JSON string. Clients must render it as text (never as HTML).
 
-**Retries.** The request hash covers the hold, the reference, the observed instant and the note, so the same instant spelled differently is the same request. Receipts are visible only to their own actor (row-level security), which is what keeps conflicts private.
+**Retries.** The request hash covers the hold, the reference, the observed instant (to the millisecond) and the note, so the same instant spelled differently (`.5Z` and `.500Z`) is the same request, and two different instants never are. Receipts are visible only to their own actor (row-level security), which is what keeps conflicts private.
 
 ## Migration (additive)
 
 `migrations/0002_hold_clearance_evidence.up.sql` (undo with `.down.sql`) after `0001_holds`. It does not rewrite 0001 and does not touch `clear_equipment_hold()` or the `equipment_hold` triggers. It adds `hold_clearance_evidence` (one row per cleared hold), `hold_clearance_receipt`, append-only triggers on both, row-level security, and `clear_equipment_hold_with_evidence()`.
 
-- **Order:** apply 0002 before deploying this service code, because hold queries now read the evidence table. Rolling 0002 back is safe for 0001 data.
+- **Order:** apply 0002, then 0003 (see SV-033 below), before deploying this service code, because hold queries now read the evidence table. Rolling either back is safe for 0001 data.
 - **Runtime privileges (as with the other service migrations, nothing is granted here):** `SELECT, INSERT` on both new tables (no `UPDATE` or `DELETE`) and `EXECUTE` on the new function.
 - **Atomic:** the clearance, the evidence row and the receipt are written by one function call, so a failure at any step leaves the hold active and stores nothing.
+
+## SV-033 repairs (evidence contract, still version 1)
+
+Independent review of the first version (source `5f2f30c`) found two real gaps and one contract gap. They are fixed without rewriting the shipped 0002.
+
+1. **A replay must pass the current role check.** The first version returned a stored receipt before checking the caller's role, so someone whose role had since been downgraded, or after the organization changed or removed the rule for that kind, could still get a success response by repeating the old request. Nothing new was ever written, but the answer was wrong. Now a replay is allowed only while the caller still holds the **current** configured role for that hold's kind: otherwise 403 `wrong_role` (also for a changed payload under a lost role) or 422 `no_clearance_rule`. A revoked or inactive membership still fails at authorization before any of this (403). Receipt privacy and the 409 `idempotency_conflict` behavior for other actors are unchanged, and a replay still writes nothing.
+2. **`observedAt` precision is milliseconds.** The first version accepted six fractional digits and then lost them in JavaScript: `.123001Z` and `.123999Z` became one request with one hash, and `.000999Z` passed a present-time boundary of `.000Z`. Now finer input is refused with 400 instead of truncated. **Compatibility:** a client that sent more than three fractional digits must send at most three. This ships before any UI wiring, so no known client is affected. Only the spelling of an instant may vary (`.5Z` equals `.500Z`).
+3. **What a replay returns.** The cleared `hold` and its `clearance.evidence` in a replay are exactly the original. `summary` and `holds` are the **current** stack for that equipment when the response is made, so they can differ from the first response if another hold has since been placed or cleared. The response now says so with `summaryBasis:"current"` on both 201 and replay. Consumers must not treat the whole response as immutable receipt history. Only `hold` is the receipt.
+
+**Migration 0003** (`0003_hold_evidence_replay_role.up/down.sql`) replaces `clear_equipment_hold_with_evidence()` (same signature, so existing `EXECUTE` grants stay in force; `down` restores the 0002 body). Apply it after 0002. The first-clearance path, grants, row-level security, append-only records, authenticated actor and time, and the stacked-hold and assignment guards are unchanged. No role, evidence policy or administrator exception was added.
+
+**Tests:** the new regressions fail on `5f2f30c` and pass now (3 failing on the original). `node --test services/api/holds/tests/evidence.test.mjs services/api/holds/tests/holds.test.mjs` runs 25 tests on PGlite with none skipped: the replay cases (role downgrade, rule change, rule removed, revoked membership, no extra writes, original outcome untouched), precision at and around the boundary, the current-stack contract, and 0003 up/down. They are still outside root `npm test`.
 
 ## Decisions still open (not made here)
 
@@ -93,4 +105,4 @@ Use the request, response and `clearance` shapes above. The UI must send an `Ide
 
 `node --test services/api/holds/tests/evidence.test.mjs` (domain rules plus HTTP and SQL on PGlite) and `holds.test.mjs` (the original tests, now run with 0002 applied, proving legacy clients still work). They are not yet in the root `npm test` (`tests/holds.test.mjs` imports only the original two files); adding one import there is a later root change outside this task.
 
-**Not run (explicit gates):** PGlite is a single session, so these were **not** exercised: concurrent clearing of one hold with the same or different keys (the per-hold advisory lock is untested under real concurrency), a clear racing a claim or a new hold on native PostgreSQL, behavior with multiple pooled connections, and the migration on a populated production-like database. A native opt-in test for these needs native database setup that this task did not use.
+**Not run (explicit gates; unchanged by SV-033):** PGlite is a single session, so these were **not** exercised: concurrent clearing of one hold with the same or different keys (the per-hold advisory lock is untested under real concurrency), a clear racing a claim or a new hold on native PostgreSQL, behavior with multiple pooled connections, and the migration on a populated production-like database. A native opt-in test for these needs native database setup that this task did not use.
