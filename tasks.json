@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 290,
-  "updatedAt": "2026-11-10T01:22:02.921Z",
+  "revision": 291,
+  "updatedAt": "2026-11-10T01:24:57.646Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2041,6 +2041,13 @@
       "command": "claim",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": "Wil"
+    },
+    {
+      "at": "2026-11-10T01:24:57.646Z",
+      "taskId": "SV-022",
+      "command": "block",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2747,7 +2754,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2771,14 +2778,8 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": {
-        "agent": "wil-vale-sv022-20261110-safe-a72c",
-        "owner": "Wil",
-        "leaseId": "828b0829-42e3-4dae-baf0-8ea18e3a31ef",
-        "claimedAt": "2026-11-10T01:22:02.921Z",
-        "expiresAt": "2026-11-10T03:22:02.921Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Source-only native harness review fixes complete at local test-branch commit e50679daf862c76a0582fbb8afb89137387ff382. Independent exact-commit review resolved both ownership/RLS findings with no remaining material source finding. Nine pure/mock checks pass; four native races skipped. Frozen application branch and implementation/migrations remain 7348eb66abdd90dc68cd8745c6920e66465bfd53 byte-identical. No native process, cluster, role, listener or credential setup executed. Coordinator-assigned approved native runner/fixtures and actual race evidence still pending. Unpublished; lease cleared after source-only deliverable.",
       "reviewNote": "Source-only corrections for exact native harness review: reject database/schema ownership and require full protected-relation RLS. Frozen application remains unchanged."
     },
     {
