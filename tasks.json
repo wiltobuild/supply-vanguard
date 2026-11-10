@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 262,
-  "updatedAt": "2026-11-10T00:22:32.881Z",
+  "revision": 263,
+  "updatedAt": "2026-11-10T00:23:12.829Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1844,6 +1844,13 @@
       "command": "heartbeat",
       "agent": "Wil-request-ui-20261110-b83f",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:23:12.829Z",
+      "taskId": "SV-027",
+      "command": "block",
+      "agent": "Wil-request-ui-20261110-b83f",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2775,7 +2782,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -2814,13 +2821,8 @@
         "Current approval is local implementation only. No feature publication, new PR, metadata/PR-creation 403 retry, merge, deployment, production data, persistent access/security configuration, business-policy invention or denied filesystem/native/CIM retry. A task-board registration is not feature publication authority.",
         "Use the frozen SV-022 contract when available and coordinate adapter shapes through the sole coordinator. Do not copy unreviewed implementation or mutate another owner's checkout. No integration/E2E/pilot or operational sign-off is implied by module tests."
       ],
-      "claim": {
-        "agent": "Wil-request-ui-20261110-b83f",
-        "owner": "Wil",
-        "leaseId": "acf23eb9-7914-4789-ad0e-dc25f9dab4ba",
-        "claimedAt": "2026-11-10T00:16:21.445Z",
-        "expiresAt": "2026-11-10T02:22:32.881Z"
-      }
+      "claim": null,
+      "blockedReason": "Tested local-only UI commit ec8a5436000f08e09dd8d246e81ba6e00afe4367 in C:\\Users\\Wil\\sv-request-ui-20261110; 19 focused tests and npm run check pass. Publication is not authorized. Shared-host mounting needs explicit SV-008 ownership handoff and verified SV-022 lifecycle backend; browser keyboard/layout/screenshots and backend E2E remain unrun under existing runtime/fixture restrictions. Hold clearance actor/time are captured; acceptance of existing provenance as required evidence remains unresolved. No PR submitted or integration completion claimed."
     }
   ]
 }
