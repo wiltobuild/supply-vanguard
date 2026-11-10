@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 267,
-  "updatedAt": "2026-11-10T00:30:07.570Z",
+  "revision": 268,
+  "updatedAt": "2026-11-10T00:30:13.105Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1880,6 +1880,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Authorized separate local app composition by existing shared owner; add lifecycle and replenishment integration tests, hold defective UI head, preserve frozen/public heads and all other owners/claims/holds"
+    },
+    {
+      "at": "2026-11-10T00:30:13.105Z",
+      "taskId": "SV-027",
+      "command": "block",
+      "agent": "Wil-request-ui-20261110-b83f",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2814,7 +2821,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -2853,14 +2860,8 @@
         "Current approval is local implementation only. No feature publication, new PR, metadata/PR-creation 403 retry, merge, deployment, production data, persistent access/security configuration, business-policy invention or denied filesystem/native/CIM retry. A task-board registration is not feature publication authority.",
         "Use the frozen SV-022 contract when available and coordinate adapter shapes through the sole coordinator. Do not copy unreviewed implementation or mutate another owner's checkout. No integration/E2E/pilot or operational sign-off is implied by module tests."
       ],
-      "claim": {
-        "agent": "Wil-request-ui-20261110-b83f",
-        "owner": "Wil",
-        "leaseId": "348931f6-4bbd-441c-8516-0146b8767337",
-        "claimedAt": "2026-11-10T00:26:12.746Z",
-        "expiresAt": "2026-11-10T02:26:12.746Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Reviewed local-only commit f29a38f17931fdc095e197d5723d565faf6ef273 fixes all three UI findings; independent recheck passed, 23 focused tests and npm run check pass. Publication not authorized. Shared-host mount requires explicit SV-008 ownership handoff and verified SV-022 backend integration. Browser keyboard/layout/screenshots and backend E2E unrun. Root npm test NOT RUN: existing aggregate imports restricted Git fixtures, runtime roles/listeners and native clusters. Hold evidence acceptance remains unresolved; actor/time provenance is present. No PR, merge, deploy or integrated completion claimed.",
       "reviewNote": "Resume same-owner local repair of independently reviewed UI defects; publication and integration remain held."
     }
   ]
