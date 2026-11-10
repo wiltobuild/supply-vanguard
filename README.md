@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 314. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 315. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|

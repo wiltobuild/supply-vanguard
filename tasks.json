@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 314,
-  "updatedAt": "2026-11-10T16:13:10.076Z",
+  "revision": 315,
+  "updatedAt": "2026-11-10T16:14:48.053Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2210,6 +2210,14 @@
       "command": "block",
       "agent": "cheich-sv028-benchmark-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:14:48.053Z",
+      "taskId": "SV-008",
+      "command": "migration-add-fixture-source-regression",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Source-only idempotent-seed fixture compatibility regression; original shared-file owner, preserve every live claim/state/history and existing source/runtime/publication holds"
     }
   ],
   "tasks": [
@@ -2469,7 +2477,8 @@
         "apps/web/tests/api-fixture.mjs",
         "apps/web/tests/check-in-integration.test.mjs",
         "apps/web/tests/request-lifecycle-integration.test.mjs",
-        "apps/web/tests/replenishment-integration.test.mjs"
+        "apps/web/tests/replenishment-integration.test.mjs",
+        "apps/web/tests/api-fixture-seeding.test.mjs"
       ],
       "acceptance": [
         "Scan/type ID, validate location, attributed idempotent check-in; unknown IDs and duplicate requests handled."
@@ -2487,7 +2496,8 @@
       "reviewNote": "User approved one supervised synthetic local acceptance cycle up to two hours: reviewed b62667f8 functional API on 4181 and dev-owner candidate frontend 4182, in-memory eleven-migration thirty-two-table fictional fixture, existing limited memberships and fifteen-minute memory-only tokens, verified cleanup. Preserve served 4180 and PID27772, source publication holds and unrelated denials. Same original owner may claim normally for task-local fixture and approved runtime; no merge or deploy.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
-        "Authorized LOCAL application composition: same original SV-008 owner after normal unblock/claim, on a separate local branch. Preserve frozen dd8f1111bb8ca9c28dbbf8a1f963f42d9ebe7e42 publication target and all public heads. Consume immutable SV-022 7348eb66abdd90dc68cd8745c6920e66465bfd53 and replenishment bcfd05ceb49c08c3155e99bec82aa93726ab8894 only as local dependencies. UI ec8a5436000f08e09dd8d246e81ba6e00afe4367 is held for material request-identity, focus and async-conflict findings: do not import or accept it; wait for the corrected frozen SV-027 commit and independent review. Existing owned shared paths and services/api/check-in host may compose existing request/holds/replenishment handlers through one authorization, add navigation/mount/session lifecycle and canonical refresh, and add apps/web/tests/request-lifecycle-integration.test.mjs and apps/web/tests/replenishment-integration.test.mjs. SV-022 keeps backend/domain/root-wrapper files; SV-027 keeps apps/web/requests and apps/web/tests/request-lifecycle.test.mjs; SV-010 keeps apps/web/supplies and services/api/replenishment; SV-011 keeps maintenance modules/test; ops remains with SV-017. Never edit those inherited dependency files. No new fixture/credential/role/grant provisioning, listener/native/browser denial retry, feature publication, PR creation or metadata retry, merge or deployment. Local dependency composition is not a workaround for publication/403 holds. Run only permitted local checks and disclose unrun mounted/browser/native gates. No hold-clearance observation field or invented policies/roles/thresholds; retain the stated acceptance limitation. Original ops owner must later reconcile lifecycle plus replenishment into final explicit 11-migration/32-table coverage; 9/27 and historical 8/26 receipts remain distinct."
+        "Authorized LOCAL application composition: same original SV-008 owner after normal unblock/claim, on a separate local branch. Preserve frozen dd8f1111bb8ca9c28dbbf8a1f963f42d9ebe7e42 publication target and all public heads. Consume immutable SV-022 7348eb66abdd90dc68cd8745c6920e66465bfd53 and replenishment bcfd05ceb49c08c3155e99bec82aa93726ab8894 only as local dependencies. UI ec8a5436000f08e09dd8d246e81ba6e00afe4367 is held for material request-identity, focus and async-conflict findings: do not import or accept it; wait for the corrected frozen SV-027 commit and independent review. Existing owned shared paths and services/api/check-in host may compose existing request/holds/replenishment handlers through one authorization, add navigation/mount/session lifecycle and canonical refresh, and add apps/web/tests/request-lifecycle-integration.test.mjs and apps/web/tests/replenishment-integration.test.mjs. SV-022 keeps backend/domain/root-wrapper files; SV-027 keeps apps/web/requests and apps/web/tests/request-lifecycle.test.mjs; SV-010 keeps apps/web/supplies and services/api/replenishment; SV-011 keeps maintenance modules/test; ops remains with SV-017. Never edit those inherited dependency files. No new fixture/credential/role/grant provisioning, listener/native/browser denial retry, feature publication, PR creation or metadata retry, merge or deployment. Local dependency composition is not a workaround for publication/403 holds. Run only permitted local checks and disclose unrun mounted/browser/native gates. No hold-clearance observation field or invented policies/roles/thresholds; retain the stated acceptance limitation. Original ops owner must later reconcile lifecycle plus replenishment into final explicit 11-migration/32-table coverage; 9/27 and historical 8/26 receipts remain distinct.",
+        "Authorized source-only compatibility repair by original SV-008 owner: apps/web/tests/api-fixture.mjs must create its second fictional organization explicitly without undoing main80a9041a idempotent bootstrap. Add apps/web/tests/api-fixture-seeding.test.mjs using injected fake SQL collaborators only: no database/fixture/role/token/listener/socket/runtime setup. Preserve frozen065b1026/dd8f1111 and served source; narrow maintenance compatibility base53c49b94 if already accessible. Other maintenance source remains original SV011 ownership. Normal SV008 claim before edits; no publication/merge/deploy, prior denied maintenance block or other stopped-operation retry. Actual SQL acceptance remains unrun for this repair."
       ]
     },
     {
