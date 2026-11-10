@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 328. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 329. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -34,3 +34,4 @@ Revision 328. Live state is on the task-board branch. Use npm run board -- claim
 | SV-027 Build task-local request, holds and returns UI | blocked | — | — | SV-007, SV-020, SV-021 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
 | SV-028 Prepare read-only performance benchmark tooling | done | — | — | SV-001 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/27) |
 | SV-029 Harden benchmark workload bounds and diagnostics | ready | — | — | SV-028 | tools/benchmarks |
+| SV-030 Prepare equipment discovery model and accessible component | ready | — | — | SV-001, SV-006 | apps/web/discovery |

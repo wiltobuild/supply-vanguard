@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 328,
-  "updatedAt": "2026-11-10T16:48:04.718Z",
+  "revision": 329,
+  "updatedAt": "2026-11-10T16:48:29.945Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2310,6 +2310,14 @@
       "command": "release",
       "agent": "cheich-sv029-benchmark-hardening-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:48:29.945Z",
+      "taskId": "SV-030",
+      "command": "migration-add-discovery-preparation",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "User requested two useful Cheich tasks; bounded discovery preparation from existing plan, injected projection/callbacks, completed-contract dependencies and explicit later shared-host/scene/browser gates; preserve all existing claims/history/publication/runtime holds"
     }
   ],
   "tasks": [
@@ -3373,6 +3381,43 @@
         "Parent owns Slack and has already sent candidate findings to Cheich. Return confirmed new ID/claim route to parent; no duplicate Slack. Normal claim: npm run board -- claim SV-029 --owner Cheich --agent cheich-sv029-benchmark-hardening-UNIQUE.",
         "This follow-up receives the same tools/benchmarks scope from completed SV028; original done task/history stays unchanged. No overlap with active SV008 fixture repair, lifecycle, requests UI, maintenance, replenishment, operations or references.",
         "User directed useful ongoing work for Cheich and coordinated plan/task division. Registration publishes only board metadata. The implementation-plan patch remains local until publication is authorized. No extension or restart of the ended runtime cycle, denied-operation reroute, identity/security change or feature publication is granted."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-030",
+      "title": "Prepare equipment discovery model and accessible component",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-001",
+        "SV-006"
+      ],
+      "scope": [
+        "apps/web/discovery"
+      ],
+      "acceptance": [
+        "Deliver a task-local reusable pure query/grouping/selection model and accessible DOM list/filter component with nested tests and README, exclusively in apps/web/discovery. Begin from published main a4438dbf709c0457d575bc9d0de1d0e5f96eed04. Read AGENTS.md, design/README.md and its selected UI reference before UI work. Same Cheich owner in his ordered queue, after a normal unique confirmed claim; one task per active claim.",
+        "Consume an injected already-authorized equipment projection and injected group-highlight/select callbacks. Search stable ID, label and equipment type; filter location, readiness and freshness independently using supplied canonical values. Invent no freshness thresholds, role policy, readiness rule, coordinates or live tracking.",
+        "Retain unknown/stale equipment in truthful matching totals and distinguish located/unknown/stale counts without falsely treating location as readiness. Keep selected instance distinct from matching group; output stable matching IDs for later scene integration.",
+        "On refresh remove no-longer-authorized IDs from results, selection, caches and highlights. Clear obsolete highlighted IDs when filters change, records disappear, access is lost or the component is destroyed. Preserve selection only while still authorized and valid under the documented contract.",
+        "Provide clear filter/clear actions and loading, empty and error states. Keep keyboard navigation and focus usable through filtering, selection, async refresh and repeated mount/destroy. Use safe DOM text for supplied labels; preserve list equivalence without WebGL.",
+        "Use deterministic synthetic model/DOM tests for type/ID/label matching, independent status/location/freshness fields, unknown/stale counts, grouping/selection, revoked records, stale callbacks, safe text and cleanup. No fetch, credentials, new dependencies, backend/scene/shared app/root/CI changes, browser infrastructure or runtime setup.",
+        "This is standalone feature preparation from the existing equipment discovery plan, not a replacement shared ward UI or an end-to-end delivery claim. Final mounting, API authorization projection and actual scene highlighting require later explicit shared-host/scene ownership coordination with SV008 and approved browser/accessibility acceptance. SV016 final gates remain unchanged."
+      ],
+      "verification": [
+        "Run focused deterministic synthetic tests using already available permitted tooling. If a DOM prerequisite is absent, report it; do not install dependencies, change root loaders or route around a denied path. Model tests alone do not prove DOM/browser acceptance.",
+        "Run applicable syntax/static checks and document the injected interface, cleanup behavior, source commit and unrun integration/browser stages. No actual performance or production data claim.",
+        "Freeze a tested LOCAL patch/commit and clear the normal matching lease with precise remaining gates. No source publication, PR creation, merge, deployment, live acceptance or policy changes are authorized by task registration."
+      ],
+      "sourceNotes": [
+        "Existing implementation plan: Search and matching equipment in the ward. This task prepares that model/component without editing the current text/status filters in apps/web/src/lib.js or app.js, without replacing ward UI and without touching lifecycle work.",
+        "User: give cheich more work to do. User: try to give him 2. User: make sure to give him work as he asks, if we dont have anything come up with stuff that would be good for the app and updae the plan to include it then divide it out."
+      ],
+      "coordinationNotes": [
+        "Parent owns Slack and is assigning two ordered tasks: SV029 benchmark hardening first, this discovery preparation second. Return confirmed ID/scope/claim route to parent; do not duplicate messages or proxy-claim for Cheich.",
+        "Normal claim: npm run board -- claim SV-030 --owner Cheich --agent cheich-sv030-discovery-UNIQUE. Confirm exit0 and maintain heartbeat before edits. Source-only work stays task-local; SV008 remains sole shared-host owner, with active fixture repair untouched.",
+        "All lifecycle/backend, requests UI, replenishment, maintenance, operations and reference owners retain their paths and frozen work. No publication, live runtime, denied filesystem/CIM/403 operation retry, identity/security change or restart of the ended acceptance cycle. The implementation-plan update stays local pending publication authorization."
       ],
       "claim": null
     }
