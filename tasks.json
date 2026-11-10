@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 316,
-  "updatedAt": "2026-11-10T16:21:17.151Z",
+  "revision": 317,
+  "updatedAt": "2026-11-10T16:21:24.503Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2225,6 +2225,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:21:24.503Z",
+      "taskId": "SV-028",
+      "command": "unblock",
+      "agent": "wil-pr-coordinator",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3211,7 +3218,7 @@
     {
       "id": "SV-028",
       "title": "Prepare read-only performance benchmark tooling",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001"
@@ -3243,7 +3250,8 @@
         "Stable implementation base: 80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79. The parent owns Slack communication; coordinator must return confirmed task and claim instructions, not send a duplicate assignment."
       ],
       "claim": null,
-      "blockedReason": "Source-only work frozen at local commit e4c6441 (tools/benchmarks only; 15 deterministic tests pass; npm run check passes; no live run, no measurements). Waiting on the publication decision: push, PR and merge are not authorized by the task registration."
+      "blockedReason": null,
+      "reviewNote": "User-directed continuing useful source-only benchmark work for SAME Cheich owner. Preserve frozen e4c6441; first map existing deterministic tests, then add only missing adversarial regressions for global workload and concurrency bounds across endpoints, cancellation and late/noncooperative mocked transport, redirects/destination rejection before transport, mixed failures/empty results and secret-safe errors. Justified runner repairs only within tools/benchmarks. Deliver isolated tested LOCAL patch and full hashes. Normal Cheich claim required; no proxy claim, live target/network/fixture/runtime setup, publication, PR, merge/deploy or SV-016 acceptance/dependency changes."
     }
   ]
 }
