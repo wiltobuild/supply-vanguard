@@ -160,3 +160,80 @@ test('the list is plain DOM: no WebGL, canvas, network, HTML injection or third-
     for (const m of source.matchAll(/^import .* from '([^']+)'/gm)) assert.match(m[1], /^\.\//, `${file} imports ${m[1]}`);
   }
 });
+
+// ---- SV-032 repairs: focus is preserved, and an oversized list is reported honestly ----
+test('focus follows the control: a focused type group that disappears moves to the nearest remaining group', {skip}, () => {
+  const t = setup(); t.view.setItems(ITEMS);
+  const groups = () => t.$$('[data-group]').map(b => b.dataset.group);
+  assert.deepEqual(groups(), ['incubator', 'infusion', 'monitor']);
+  t.$('[data-group="infusion"]').focus();
+  t.view.setItems(ITEMS.filter(i => i.equipmentType !== 'infusion'));
+  assert.deepEqual(groups(), ['incubator', 'monitor']);
+  assert.equal(t.document.activeElement, t.$('[data-group="monitor"]'), 'next group in the old order');
+  t.$('[data-group="monitor"]').focus();
+  t.view.setItems(ITEMS.filter(i => i.equipmentType === 'incubator'));
+  assert.equal(t.document.activeElement, t.$('[data-group="incubator"]'), 'previous group when no later one remains');
+  t.$('[data-group="incubator"]').focus();
+  t.view.setItems([]);
+  assert.equal(t.document.activeElement, t.$('.discovery-results'), 'no group left: the results list, not the page');
+  assert.notEqual(t.document.activeElement, t.document.body);
+  t.view.destroy();
+});
+
+test('a surviving focused result keeps focus when the list is reordered', {skip}, () => {
+  const t = setup(); t.view.setItems(ITEMS);
+  const button = t.$('[data-id="EQ-001"]'); button.focus();
+  t.view.setItems([...ITEMS].reverse());
+  assert.deepEqual(t.ids(), ['EQ-004', 'EQ-003', 'EQ-002', 'EQ-001'], 'the list really was reordered');
+  assert.equal(t.$('[data-id="EQ-001"]'), button, 'same element'); assert.equal(t.document.activeElement, button);
+  const mid = t.$('[data-id="EQ-003"]'); mid.focus();
+  t.view.setItems([ITEMS[2], ITEMS[0], ITEMS[3], ITEMS[1]]);
+  assert.equal(t.document.activeElement, t.$('[data-id="EQ-003"]'));
+  t.$('[data-group="monitor"]').focus();
+  t.view.setItems([...ITEMS].reverse());
+  assert.equal(t.document.activeElement, t.$('[data-group="monitor"]'), 'a focused group survives a reorder too');
+  t.view.destroy();
+});
+
+test('a refresh never steals focus from the search box, a filter, or the clear button', {skip}, () => {
+  const t = setup(); t.view.setItems(ITEMS);
+  for (const control of [t.$('input[type=search]'), t.$('[data-filter=location]'), t.$('[data-action=clear]')]) {
+    control.focus();
+    t.view.setItems([...ITEMS].reverse());
+    t.view.setItems(ITEMS.filter(i => i.equipmentType !== 'infusion'));
+    assert.equal(t.document.activeElement, control, control.outerHTML.slice(0, 30));
+    t.view.setItems(ITEMS);
+  }
+  // Focus outside the component is left alone.
+  const outside = t.document.createElement('button'); t.document.body.append(outside); outside.focus();
+  t.view.setItems([...ITEMS].reverse()); assert.equal(t.document.activeElement, outside);
+  t.view.destroy();
+});
+
+test('selection and highlight semantics survive the focus repair', {skip}, () => {
+  const t = setup(); t.view.setItems(ITEMS);
+  t.$('[data-group="infusion"]').click(); t.$('[data-id="EQ-001"]').click();
+  assert.deepEqual([t.calls.highlight.at(-1), t.calls.select.at(-1)], [['EQ-002', 'EQ-003'], 'EQ-001']);
+  t.view.setItems([...ITEMS].reverse());
+  assert.equal(t.$('[data-group="infusion"]').getAttribute('aria-pressed'), 'true'); assert.equal(t.$('[data-id="EQ-001"]').getAttribute('aria-pressed'), 'true');
+  const lost = t.view.beginRefresh(); t.view.failRefresh(lost, 'denied');
+  assert.equal(t.$$('[data-id]').length, 0); assert.deepEqual([t.calls.highlight.at(-1), t.calls.select.at(-1)], [[], null]);
+  assert.equal(t.view.finishRefresh(lost, ITEMS), false, 'a late success after denial brings nothing back');
+  assert.equal(t.$$('[data-id]').length, 0); assert.ok(!t.host.textContent.includes('Infusion pump'));
+  t.view.destroy();
+});
+
+test('an oversized list shows an honest error, never a complete-looking list or a false "no match"', {skip}, () => {
+  const t = setup();
+  const make = n => Array.from({length: n}, (_, i) => ({id: `E${i}`, label: `Item ${i}`, equipmentType: 'pump', locationId: 'store', readiness: 'ready', freshness: 'fresh'}));
+  t.view.setItems(ITEMS);
+  t.view.setItems(make(5001));
+  assert.match(t.$('.discovery-state').textContent, /too large to show safely/i); assert.match(t.$('.discovery-state').textContent, /5000/);
+  assert.equal(t.$('.discovery-state').getAttribute('role'), 'alert'); assert.ok(!/no equipment matches/i.test(t.$('.discovery-state').textContent));
+  assert.match(t.$('.discovery-state').textContent, /last loaded list, which may be out of date/);
+  assert.equal(t.ids().length, 4, 'only the previously loaded list is shown, flagged');
+  assert.ok(!t.host.textContent.includes('Item 5000'));
+  t.view.setItems(make(5000));
+  assert.equal(t.$('.discovery-state').hidden, true); assert.match(t.$('.discovery-summary').textContent, /^5000 of 5000 items match/);
+  t.view.destroy();
+});

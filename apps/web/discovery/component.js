@@ -1,6 +1,6 @@
 // Accessible equipment discovery list (SV-030). Plain DOM, no dependencies. Every supplied string is written with textContent,
 // never as HTML. It is a plain list that needs no 3D support and does not touch the scene. See README.md for the injected interface.
-import { createDiscoveryModel, FILTER_NAMES } from './model.js';
+import { createDiscoveryModel, FILTER_NAMES, LIMITS } from './model.js';
 
 const FILTER_LABELS = { location: ['Location', 'All locations'], readiness: ['Readiness', 'Any readiness'], freshness: ['Location freshness', 'Any freshness'] };
 let instances = 0;
@@ -49,6 +49,9 @@ export function mountDiscovery(container, { onHighlight, onSelect, onRetry, docu
 
   function render() {
     const s = model.snapshot(), active = doc.activeElement;
+    // Only focus that is inside this component is ever managed, and only to keep it where it was. Anything else keeps its focus.
+    const focused = active && root.contains(active) ? active : null;
+    const oldGroupOrder = [...groups.children].map(li => li.firstChild.dataset.group);
     if (search.value !== s.query) search.value = s.query;
     for (const name of FILTER_NAMES) syncOptions(selects[name], s.options[name], s.filters[name]);
 
@@ -56,6 +59,7 @@ export function mountDiscovery(container, { onHighlight, onSelect, onRetry, docu
     let message = '';
     if (s.phase === 'loading') message = 'Loading equipment…';
     else if (s.phase === 'error' && s.errorCode === 'denied') message = 'You no longer have access to this equipment list.';
+    else if (s.phase === 'error' && s.errorCode === 'too_large') message = `This list is too large to show safely (more than ${LIMITS.maxItems} items).${s.outdated ? ' Showing the last loaded list, which may be out of date.' : ''}`;
     else if (s.phase === 'error') message = s.outdated ? 'Could not refresh. Showing the last loaded list, which may be out of date.' : 'Could not load equipment.';
     else if (!s.authorizedTotal) message = 'No equipment to show.';
     else if (!s.results.length) message = 'No equipment matches these filters.';
@@ -78,6 +82,7 @@ export function mountDiscovery(container, { onHighlight, onSelect, onRetry, docu
       b.setAttribute('aria-pressed', s.highlight && s.highlight.type === g.type ? 'true' : 'false');
     });
     reorder(groups, s.groups.map(g => groupRows.get(g.type)));
+    const groupFocusLost = focused && focused.dataset.group !== undefined && !wantedGroups.has(focused.dataset.group);
 
     // Results: nodes are reused by ID so a focused button is never replaced while its record is still listed.
     const wantedIds = new Set(s.results.map(i => i.id));
@@ -92,7 +97,14 @@ export function mountDiscovery(container, { onHighlight, onSelect, onRetry, docu
       b.setAttribute('aria-pressed', s.selectedId === item.id ? 'true' : 'false');
     });
     reorder(list, s.results.map(i => rows.get(i.id)));
-    if (lostFocus) list.focus();   // the focused record left the list: keep keyboard users inside the results, not on <body>
+    // Moving or removing a focused node drops focus to <body>. Put it back where the user was.
+    if (focused && root.contains(focused)) { if (doc.activeElement !== focused) focused.focus(); }   // survived (possibly reordered)
+    else if (groupFocusLost) {
+      // The focused type group is gone: the next remaining group in the old order, else the previous one, else the results list.
+      const at = oldGroupOrder.indexOf(focused.dataset.group), keep = t => wantedGroups.has(t);
+      const target = oldGroupOrder.slice(at + 1).find(keep) ?? oldGroupOrder.slice(0, at).reverse().find(keep);
+      (target !== undefined && groupRows.get(target) ? groupRows.get(target).firstChild : list).focus();
+    } else if (lostFocus) list.focus();   // the focused record left the list: keep keyboard users inside the results, not on <body>
   }
   function reorder(parent, wanted) {
     wanted.forEach((node, index) => { if (parent.children[index] !== node) parent.insertBefore(node, parent.children[index] || null); });

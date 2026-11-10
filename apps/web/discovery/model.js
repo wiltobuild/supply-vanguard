@@ -12,7 +12,7 @@
 //   freshness     canonical location-freshness value, e.g. fresh | aging | stale | unknown ('unknown' if missing)
 
 export const FILTER_NAMES = Object.freeze(['location', 'readiness', 'freshness']);
-export const ERROR_CODES = Object.freeze(['unavailable', 'denied']);
+export const ERROR_CODES = Object.freeze(['unavailable', 'denied', 'too_large']);
 export const LIMITS = Object.freeze({ maxItems: 5000, maxQuery: 100, maxValue: 64 });
 const text = (v, max) => (typeof v === 'string' ? v.slice(0, max) : '');
 
@@ -72,7 +72,7 @@ export const optionsFor = items => ({ location: unique(items.map(i => i.location
 export function createDiscoveryModel({ onHighlight, onSelect } = {}) {
   let items = [], byId = new Map(), query = '', filters = { location: '', readiness: '', freshness: '' };
   let selectedId = null, highlight = null, highlightedIds = [];
-  let phase = 'loading', errorCode = null, outdated = false, refreshing = true, generation = 0, destroyed = false;
+  let phase = 'loading', errorCode = null, outdated = false, refreshing = true, generation = 0, pendingToken = null, destroyed = false;
   const listeners = new Set();
 
   // A throwing callback must never corrupt model state, so callbacks are isolated.
@@ -93,27 +93,45 @@ export function createDiscoveryModel({ onHighlight, onSelect } = {}) {
   function clearHighlight() { highlight = null; emitHighlight([]); }
   function load(rawItems) {
     const next = [], seen = new Set();
-    for (const raw of Array.isArray(rawItems) ? rawItems.slice(0, LIMITS.maxItems) : []) {
+    for (const raw of Array.isArray(rawItems) ? rawItems : []) {   // never truncated here: finishRefresh refuses oversized input first
       const item = normalizeItem(raw);
       if (item && !seen.has(item.id)) { seen.add(item.id); next.push(item); }
     }
     items = next; byId = new Map(next.map(i => [i.id, i]));
   }
+  // The failure outcome, shared by failRefresh and by an oversized finishRefresh. The caller has already consumed the token.
+  // "denied" means access was lost: everything is dropped. Any other failure keeps the last list, flagged outdated, and drops the highlight.
+  function settleFailure(code) {
+    phase = 'error'; refreshing = false; errorCode = ERROR_CODES.includes(code) ? code : 'unavailable';
+    if (errorCode === 'denied') { load([]); outdated = false; setSelected(null); } else outdated = items.length > 0;
+    clearHighlight(); changed(); return true;
+  }
 
   const model = {
-    // Start a refresh. Only the most recent token may deliver data or an error: older results are ignored.
-    beginRefresh() { if (destroyed) return 0; refreshing = true; changed(); return ++generation; },
+    // One settlement per refresh. beginRefresh makes a new token the ONLY one that may settle, and it does so BEFORE any subscriber is
+    // told, so a subscriber cannot settle the previous refresh. finishRefresh and failRefresh each accept the active pending token
+    // exactly once: the token is consumed before any callback or listener runs. A superseded, repeated, never-issued or late token
+    // changes nothing and returns false (so a late success after "denied" cannot bring records back).
+    beginRefresh() {
+      if (destroyed) return 0;
+      const token = ++generation;
+      pendingToken = token; refreshing = true;
+      changed();
+      return token;
+    },
+    // Returns true when it settled the active refresh: with the new list, or, if the input is larger than LIMITS.maxItems, as a
+    // 'too_large' error. An oversized list is refused, never truncated, so the summary can never claim a complete list it does not have.
     finishRefresh(token, rawItems) {
-      if (destroyed || token !== generation) return false;
+      if (destroyed || pendingToken === null || token !== pendingToken) return false;
+      pendingToken = null;
+      if (Array.isArray(rawItems) && rawItems.length > LIMITS.maxItems) return settleFailure('too_large');
       load(rawItems); phase = 'ready'; errorCode = null; outdated = false; refreshing = false;
       reconcile(); changed(); return true;
     },
-    // "denied" means access was lost: everything is dropped. Any other failure keeps the last list, flagged outdated, and drops the highlight.
     failRefresh(token, code) {
-      if (destroyed || token !== generation) return false;
-      phase = 'error'; refreshing = false; errorCode = ERROR_CODES.includes(code) ? code : 'unavailable';
-      if (errorCode === 'denied') { load([]); outdated = false; setSelected(null); } else outdated = items.length > 0;
-      clearHighlight(); changed(); return true;
+      if (destroyed || pendingToken === null || token !== pendingToken) return false;
+      pendingToken = null;
+      return settleFailure(code);
     },
     setItems(rawItems) { return model.finishRefresh(model.beginRefresh(), rawItems); },
     setQuery(value) { if (destroyed) return; query = text(value, LIMITS.maxQuery); clearHighlight(); reconcile(); changed(); },
@@ -147,7 +165,7 @@ export function createDiscoveryModel({ onHighlight, onSelect } = {}) {
     destroy() {
       if (destroyed) return;
       clearHighlight(); setSelected(null);
-      destroyed = true; generation++; items = []; byId = new Map(); listeners.clear(); onHighlight = onSelect = undefined;
+      destroyed = true; generation++; pendingToken = null; items = []; byId = new Map(); listeners.clear(); onHighlight = onSelect = undefined;
     },
   };
   return model;

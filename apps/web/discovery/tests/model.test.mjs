@@ -2,7 +2,7 @@
 // Run: node --test apps/web/discovery/tests/*.test.mjs
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createDiscoveryModel,matches,countLocationStates,groupByType,locationState,normalizeItem,LIMITS} from '../model.js';
+import {createDiscoveryModel,matches,countLocationStates,groupByType,locationState,normalizeItem,LIMITS,ERROR_CODES} from '../model.js';
 
 const item = (id, label, equipmentType, locationId, readiness, freshness) => ({id, label, equipmentType, locationId, readiness, freshness});
 const FIXTURE = [
@@ -63,7 +63,9 @@ test('normalization is defensive: bad records are dropped, missing values are la
   assert.deepEqual([s.results[0].label, s.results[0].readiness, s.results[0].freshness], ['A', 'unknown', 'unknown']);
   assert.equal(s.results[1].label.length, 200); assert.equal(s.results[1].locationId, '');
   model.setItems('not a list'); assert.deepEqual(model.snapshot().results, []);
-  model.setItems(Array.from({length: LIMITS.maxItems + 50}, (_, i) => ({id: `X${i}`}))); assert.equal(model.snapshot().authorizedTotal, LIMITS.maxItems);
+  // SV-032: an oversized input used to be silently cut to the bound and reported as a complete list. It is now refused (see the size-bound test).
+  model.setItems(Array.from({length: LIMITS.maxItems + 50}, (_, i) => ({id: `X${i}`}))); assert.deepEqual([model.snapshot().phase, model.snapshot().errorCode, model.snapshot().authorizedTotal], ['error', 'too_large', 0]);
+  model.setItems(Array.from({length: LIMITS.maxItems}, (_, i) => ({id: `X${i}`}))); assert.deepEqual([model.snapshot().phase, model.snapshot().authorizedTotal], ['ready', LIMITS.maxItems]);
   model.destroy();
 });
 
@@ -134,7 +136,9 @@ test('losing access clears everything; other failures keep a flagged list; stale
   s = model.snapshot();
   assert.deepEqual([s.errorCode, s.outdated, s.authorizedTotal, s.results.length, s.selectedId], ['denied', false, 0, 0, null]);
   assert.deepEqual(r.calls.select.at(-1), null);
-  assert.equal(model.failRefresh(token, 'bogus'), true); assert.equal(model.snapshot().errorCode, 'unavailable', 'unknown codes become the generic one');
+  assert.equal(model.failRefresh(token, 'bogus'), false, 'a token settles once: a second settlement is rejected');
+  assert.equal(model.snapshot().errorCode, 'denied', 'and the earlier outcome stands');
+  assert.equal(model.failRefresh(model.beginRefresh(), 'bogus'), true); assert.equal(model.snapshot().errorCode, 'unavailable', 'unknown codes become the generic one');
   // Out-of-order refreshes: only the newest token may deliver.
   const first = model.beginRefresh(), second = model.beginRefresh();
   assert.equal(model.finishRefresh(second, FIXTURE.slice(0, 2)), true);
@@ -173,4 +177,90 @@ test('invalid filter names and values cannot change the filters', () => {
   assert.deepEqual(model.snapshot().filters, {location: '', readiness: '', freshness: ''});
   model.setQuery('q'.repeat(500)); assert.equal(model.snapshot().query.length, LIMITS.maxQuery);
   model.destroy();
+});
+
+// ---- SV-032 repairs: one settlement per refresh, reentrancy, and a truthful size bound ----
+test('a refresh settles once: denial then a late success cannot bring records, selection or highlight back', () => {
+  const r = recorder(), model = createDiscoveryModel(r);
+  model.setItems(FIXTURE); model.selectInstance('EQ-003'); model.highlightGroup('infusion');
+  const token = model.beginRefresh();
+  assert.equal(model.failRefresh(token, 'denied'), true);
+  assert.deepEqual([model.snapshot().authorizedTotal, model.snapshot().selectedId, model.snapshot().highlight], [0, null, null]);
+  const calls = [r.calls.highlight.length, r.calls.select.length];
+  assert.equal(model.finishRefresh(token, FIXTURE), false, 'late success on the same token is rejected');
+  assert.equal(model.failRefresh(token, 'unavailable'), false);
+  const s = model.snapshot();
+  assert.deepEqual([s.phase, s.errorCode, s.authorizedTotal, s.results.length, s.selectedId, s.highlight], ['error', 'denied', 0, 0, null, null]);
+  assert.deepEqual([r.calls.highlight.length, r.calls.select.length], calls, 'no callback fired for the rejected settlement');
+  // A genuinely new authorized refresh still works.
+  const next = model.beginRefresh();
+  assert.equal(model.finishRefresh(next, FIXTURE.slice(0, 2)), true);
+  assert.deepEqual([model.snapshot().phase, model.snapshot().authorizedTotal], ['ready', 2]);
+  model.destroy();
+});
+
+test('success then a late error, or a repeated completion, is rejected', () => {
+  const model = createDiscoveryModel();
+  const token = model.beginRefresh();
+  assert.equal(model.finishRefresh(token, FIXTURE), true);
+  assert.equal(model.failRefresh(token, 'denied'), false, 'late error after success');
+  assert.equal(model.finishRefresh(token, FIXTURE.slice(0, 1)), false, 'repeated completion');
+  const s = model.snapshot();
+  assert.deepEqual([s.phase, s.errorCode, s.authorizedTotal, s.refreshing], ['ready', null, 6, false]);
+  // A token that was never issued, or issued before this one, settles nothing.
+  assert.equal(model.finishRefresh(0, FIXTURE), false); assert.equal(model.finishRefresh(999, FIXTURE), false); assert.equal(model.finishRefresh('1', FIXTURE), false);
+  model.destroy();
+});
+
+test('a reentrant subscriber cannot settle the previous refresh or clear the new refreshing state', () => {
+  const model = createDiscoveryModel();
+  const first = model.beginRefresh();
+  const attempts = [];
+  model.subscribe(() => { if (!attempts.length) attempts.push(model.finishRefresh(first, FIXTURE), model.failRefresh(first, 'denied')); });
+  const second = model.beginRefresh();          // the subscriber runs during this call and tries to settle `first`
+  assert.deepEqual(attempts, [false, false], 'the old token was already superseded when subscribers ran');
+  let s = model.snapshot();
+  assert.deepEqual([s.refreshing, s.phase, s.authorizedTotal], [true, 'loading', 0], 'still refreshing; nothing was loaded by the old token');
+  assert.equal(model.finishRefresh(second, FIXTURE), true);
+  s = model.snapshot(); assert.deepEqual([s.refreshing, s.phase, s.authorizedTotal], [false, 'ready', 6]);
+  model.destroy();
+});
+
+test('a token is consumed before listeners run, so a listener cannot settle it again', () => {
+  const model = createDiscoveryModel();
+  const token = model.beginRefresh();
+  const again = [];
+  model.subscribe(() => { if (model.snapshot().phase === 'ready' && !again.length) again.push(model.finishRefresh(token, []), model.failRefresh(token, 'denied')); });
+  assert.equal(model.finishRefresh(token, FIXTURE), true);
+  assert.deepEqual(again, [false, false]);
+  assert.deepEqual([model.snapshot().phase, model.snapshot().authorizedTotal], ['ready', 6]);
+  model.destroy();
+});
+
+test('the size bound is explicit: 5000 items are accepted, 5001 are rejected and never shown as a complete list', () => {
+  const make = n => Array.from({length: n}, (_, i) => ({id: `E${String(i).padStart(5, '0')}`, label: `Item ${i}`, equipmentType: 'pump', locationId: i === n - 1 && n > 5000 ? '' : 'store', readiness: 'ready', freshness: i === n - 1 && n > 5000 ? 'unknown' : 'fresh'}));
+  const at = createDiscoveryModel(); at.setItems(make(LIMITS.maxItems));
+  let s = at.snapshot();
+  assert.deepEqual([s.phase, s.authorizedTotal, s.counts.total, s.errorCode], ['ready', 5000, 5000, null]);
+  at.setQuery('E04999'); assert.equal(at.snapshot().results.length, 1, 'search reaches the last item at the bound');
+  at.destroy();
+  const over = createDiscoveryModel(), r = recorder(); over.setItems(make(100));
+  const token = over.beginRefresh();
+  assert.equal(over.finishRefresh(token, make(LIMITS.maxItems + 1)), true, 'the refresh settled (as a refusal)');
+  s = over.snapshot();
+  assert.equal(s.phase, 'error'); assert.equal(s.errorCode, 'too_large');
+  assert.ok(ERROR_CODES.includes('too_large'));
+  assert.equal(s.authorizedTotal, 100, 'the last loaded list is kept, flagged as out of date'); assert.equal(s.outdated, true);
+  assert.ok(!s.matchingIds.includes('E05000'), 'the 5001st item is not silently in or out of the list');
+  over.setQuery('E05000'); s = over.snapshot();
+  assert.equal(s.phase, 'error', 'a search cannot turn the refusal into a complete "no match" result'); assert.equal(s.results.length, 0);
+  over.destroy();
+  // With nothing loaded before, the refusal leaves an empty list that is plainly an error, not "ready".
+  const fresh = createDiscoveryModel();
+  fresh.setItems(make(LIMITS.maxItems + 1)); s = fresh.snapshot();
+  assert.deepEqual([s.phase, s.errorCode, s.authorizedTotal, s.outdated], ['error', 'too_large', 0, false]);
+  fresh.destroy();
+  // The caller can also report it.
+  const reported = createDiscoveryModel(); assert.equal(reported.failRefresh(reported.beginRefresh(), 'too_large'), true); assert.equal(reported.snapshot().errorCode, 'too_large'); reported.destroy();
+  void r;
 });
