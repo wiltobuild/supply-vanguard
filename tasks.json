@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 368,
-  "updatedAt": "2026-11-10T17:58:19.411Z",
+  "revision": 369,
+  "updatedAt": "2026-11-10T17:58:28.772Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2603,6 +2603,13 @@
       "command": "submit",
       "agent": "cheich-sv033-hold-evidence-repair-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T17:58:28.772Z",
+      "taskId": "SV-033",
+      "command": "complete",
+      "agent": "cheich-sv033-hold-evidence-repair-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3833,7 +3840,7 @@
     {
       "id": "SV-033",
       "title": "Repair hold-evidence replay authorization and timestamp precision",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-031"
@@ -3869,7 +3876,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/32",
       "submittedBy": "cheich-sv033-hold-evidence-repair-01",
-      "submittedAt": "2026-11-10T17:58:19.411Z"
+      "submittedAt": "2026-11-10T17:58:19.411Z",
+      "completedAt": "2026-11-10T17:58:28.772Z",
+      "completedBy": "cheich-sv033-hold-evidence-repair-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/32",
+        "mergeCommit": "b4e008b7896b113f8fc8409b997ac4fbd338cc22",
+        "mergedAt": "2026-11-10T17:58:22Z"
+      }
     }
   ]
 }
