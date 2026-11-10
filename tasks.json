@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 305,
-  "updatedAt": "2026-11-10T09:10:01.432Z",
+  "revision": 306,
+  "updatedAt": "2026-11-10T09:10:10.191Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2146,6 +2146,13 @@
       "command": "submit",
       "agent": "cheich-agent-11",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T09:10:10.191Z",
+      "taskId": "SV-019",
+      "command": "complete",
+      "agent": "cheich-agent-11",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2722,7 +2729,7 @@
     {
       "id": "SV-019",
       "title": "Repair auth bootstrap and clean test setup",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-005"
@@ -2747,7 +2754,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/26",
       "submittedBy": "cheich-agent-11",
-      "submittedAt": "2026-11-10T09:10:01.432Z"
+      "submittedAt": "2026-11-10T09:10:01.432Z",
+      "completedAt": "2026-11-10T09:10:10.191Z",
+      "completedBy": "cheich-agent-11",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/26",
+        "mergeCommit": "1796cb8588471eae09fe97eb04026eec9c041f8b",
+        "mergedAt": "2026-11-10T09:10:04Z"
+      }
     },
     {
       "id": "SV-020",
