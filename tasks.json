@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 310,
-  "updatedAt": "2026-11-10T16:09:02.010Z",
+  "revision": 311,
+  "updatedAt": "2026-11-10T16:09:33.282Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2182,6 +2182,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "User-authorized ready source-only benchmark preparation for Cheich; transfer tools/benchmarks from unclaimed SV-016, preserve all final acceptance dependencies, existing owners, leases, states and history; no feature publication or runtime authority"
+    },
+    {
+      "at": "2026-11-10T16:09:33.282Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-pr-coordinator",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2712,7 +2719,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2734,8 +2741,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "Corrected single approved recovery-only launch exited1 at pre-resource port gate. Failure hash a479b0e3 matches Port55439 occupied or uncertain; underlying socket outcome not retained. resourcesStartedfalse/controllerBoundfalse; exact proposed root30bfec92d0d746188be281c9 absent; plan/acceptance absent; read-only listener count0 but supervisor portEmptyfalse. No tools/credentials/cluster/drill started; no further retry or repair. Final supervisor receipt A4EC13EE5A656004D902A5C00D0C9CE077633EAA385072AE7A9500ECA0C57736 plus separate reconciliation retained; sourceea63, original failure and old native receipts unchanged. Native11/32 unrun, races pending/fullCycleAcceptedfalse. Await coordinator causal review under unchanged04:13:42.068Z deadline; clear lease. No denied harness read, publication,merge,deployment.",
-      "reviewNote": "Parent explicitly cleared one reviewed corrected native launcher retry: initial joined-Node-path command failed before resources with no access denial. Same original owner may fix only explicit tested Node executable resolution with multi-install regression/provenance, preserve launch-failure receipt, then source review before one retry. Original04:13:42.068Z deadline; recovery-only strict11/32 cleanup; no denied harness reads/races/alternate path/publication."
+      "blockedReason": null,
+      "reviewNote": "Authorized source-only ops supervisor diagnosis repair after original-owner proposal: retain frozen ea63db9a and historical receipts; edit only local sv017-supervised-run.ps1 and new sv017-supervised-port.psm1 / sv017-supervised-port.test.ps1 under original owner. Injected fake clients/tasks/clocks only, no sockets/network/resources. Preserve structured connected/refused/timeout/uncertain observations, permit setup only on explicit refusal, bounded redacted diagnostics and disposal uncertainty. Normal original-owner claim before edits. No runtime retry, denied harness-directory/CIM/filesystem/403 retry, publication, merge or deployment."
     },
     {
       "id": "SV-018",
