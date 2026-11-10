@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 253,
-  "updatedAt": "2026-11-09T23:50:59.499Z",
+  "revision": 254,
+  "updatedAt": "2026-11-10T00:07:53.546Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1780,6 +1780,13 @@
       "command": "submit",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:07:53.546Z",
+      "taskId": "SV-017",
+      "command": "rework",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2302,7 +2309,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "review",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2325,7 +2332,7 @@
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
       "blockedReason": null,
-      "reviewNote": "Independent frozen 1557b4f5ebc344f6dd903e2b74704c586853bdc4 review passed: clean eight ops-only files, 35 scoped tests plus eight manager schema/security/redaction regressions; strict digest and protection/cleanup preserved. Coordinator clears ONE full instrumented PostgreSQL18.6 disposable local synthetic backup/restore acceptance at this exact head, after prior cleanup reconciliation. Original owner normal claim required; distinct immutable receipts, capture post-restore AND post-protection outcomes, verified unconditional cleanup. Stop on new failure after cleanup, no blind retry or weakened checks. No publication, merge, deployment or unrelated changes."
+      "reviewNote": "Authorized LOCAL combined acceptance follow-up only: preserve published PR17 at 1557b4f5 and frozen SV008 dd8f1111. Original ops owner may normally claim and build a separate unpublished combined branch with exact dependency commits, then extend ops-only recovery inventory/fixtures/integrity/protection to nine migrations and27 tables including check_in_receipt. No shared/API/migration edits, publication, merge/deployment or new runtime. Preserve existing eight-migration native receipt; later9/27 native scope needs coordinator clearance after local review."
     },
     {
       "id": "SV-018",
