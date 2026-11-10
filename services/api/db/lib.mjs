@@ -43,4 +43,26 @@ export function migrateDown(url,steps=1){
   psql(url,`BEGIN;\n${readFileSync(m.down,'utf8')}\nDELETE FROM schema_migrations WHERE id = '${id}';\nCOMMIT;`);ran.push(id);}
  return ran;
 }
-export function seed(url){psql(url,'',{file:join(here,'seed','seed.sql')});}
+// Owner-only bootstrap (SV-019). Forced row-level security (SV-005) applies even to the table owner, and no policy lets anyone
+// create the first organization, so a plain seed fails for a non-superuser owner. Instead of weakening a policy or adding a
+// runtime bypass, the owner switches FORCE off for the already-forced tables, loads the rows, and switches it back on, all in
+// ONE transaction: if anything fails, nothing is loaded and FORCE is exactly as it was. A role that does not own the tables
+// fails at the first ALTER ("must be owner"). Running again is a no-op because seed.sql skips an already-seeded database.
+export const BOOTSTRAP_BEGIN=`BEGIN;
+CREATE TEMP TABLE sv_forced ON COMMIT DROP AS
+  SELECT c.oid::regclass AS rel FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+  WHERE n.nspname = 'public' AND c.relkind = 'r' AND c.relforcerowsecurity;
+DO $$ DECLARE r record; BEGIN
+  FOR r IN SELECT rel FROM sv_forced LOOP EXECUTE format('ALTER TABLE %s NO FORCE ROW LEVEL SECURITY', r.rel); END LOOP;
+END $$;
+`;
+export const BOOTSTRAP_END=`
+DO $$ DECLARE r record; BEGIN
+  FOR r IN SELECT rel FROM sv_forced LOOP EXECUTE format('ALTER TABLE %s FORCE ROW LEVEL SECURITY', r.rel); END LOOP;
+  IF EXISTS (SELECT 1 FROM sv_forced f JOIN pg_class c ON c.oid = f.rel::oid WHERE NOT (c.relrowsecurity AND c.relforcerowsecurity)) THEN
+    RAISE EXCEPTION 'row-level security was not restored';
+  END IF;
+END $$;
+COMMIT;`;
+export function bootstrap(url,sql){psql(url,BOOTSTRAP_BEGIN+sql+BOOTSTRAP_END);}
+export function seed(url){bootstrap(url,readFileSync(join(here,'seed','seed.sql'),'utf8'));}
