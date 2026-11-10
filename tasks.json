@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 324,
-  "updatedAt": "2026-11-10T16:43:58.998Z",
+  "revision": 325,
+  "updatedAt": "2026-11-10T16:46:31.055Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2281,6 +2281,14 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:46:31.055Z",
+      "taskId": "SV-029",
+      "command": "migration-add-benchmark-hardening",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "User-authorized Cheich follow-up after verified PR27 merge; concrete independent ignored-abort concurrency and diagnostic-echo reproductions; preserve SV028 merged history, SV016 gates, all current claims and source/runtime/publication holds"
     }
   ],
   "tasks": [
@@ -3311,6 +3319,41 @@
         "mergeCommit": "a4438dbf709c0457d575bc9d0de1d0e5f96eed04",
         "mergedAt": "2026-11-10T16:40:47Z"
       }
+    },
+    {
+      "id": "SV-029",
+      "title": "Harden benchmark workload bounds and diagnostics",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-028"
+      ],
+      "scope": [
+        "tools/benchmarks"
+      ],
+      "acceptance": [
+        "Preserve merged SV-028/PR27 source e4c6441a3546b4860e21f489c9fe6d186f3fa521 and work from public main a4438dbf709c0457d575bc9d0de1d0e5f96eed04. Same original Cheich owner after his own normal confirmed claim; no proxy claim or second implementation owner.",
+        "First map existing coverage, then add deterministic regressions and the smallest justified runner repair for ignored-abort, late and non-cooperative mocked transports. Track ACTUAL outstanding transports across multiple endpoints and warmup/measurement boundaries, not only unsettled attempt wrappers. Stop or report unconfirmed transport termination without exceeding configured concurrency or hanging; keep the global workload bound and late-result accounting truthful.",
+        "Add synthetic-marker regressions for unknown CLI arguments and config/endpoint/label setting names. Return bounded generic diagnostics that do not echo arbitrary supplied text, credentials or raw transport exceptions. Preserve useful fixed validation categories and documented redaction.",
+        "Cover only missing cancellation, redirect/destination rejection before transport, mixed failures/empty results and percentile/warmup boundaries after reviewing the existing tests. Do not add mirror tests or invent changes when coverage already proves the requirement.",
+        "Keep all authored changes, tests and usage documentation exclusively under tools/benchmarks. No live target/network, fixture, server, database, role/token setup, credential persistence, root/shared/backend/CI changes or performance-measurement claim. SV-016 final dependencies and acceptance remain unchanged."
+      ],
+      "verification": [
+        "Demonstrate concrete failing regression on exact published e4c6441 before the justified fix, then run the focused deterministic suite using injected/mock transport and clocks only. Record real outstanding counts and cleanup of mock completions/timers.",
+        "Run applicable source syntax/static checks without unrelated aggregate runtime fixtures. Freeze a tested LOCAL commit/patch with full hashes and exact commands/results. New publication/PR/merge/deployment and real measurements require separate applicable authorization.",
+        "Normally clear the matching lease when delivery is frozen; do not submit an unpublished commit or mark this task complete from intent. Preserve historical merged SV-028 evidence."
+      ],
+      "sourceNotes": [
+        "Independent coordinator review reproduced on exact published source: concurrency1, two endpoints/two samples, ignored abort and fake10ms deadlines yielded four simultaneous outstanding transports and four timeouts. Late mock completion did not alter the result, and all mock promises/timers were cleaned up.",
+        "Independent synthetic-marker checks confirmed parseArgs unknown-argument and validateConfig unknown-setting errors echo the marker. Existing15 tests passed but do not cover these combinations. These are mock/source findings, not live workload or performance evidence.",
+        "PR27 is verified merged as a4438dbf709c0457d575bc9d0de1d0e5f96eed04; SV028 normal completion already recorded at board323. Preserve that completion rather than reopening a merged task."
+      ],
+      "coordinationNotes": [
+        "Parent owns Slack and has already sent candidate findings to Cheich. Return confirmed new ID/claim route to parent; no duplicate Slack. Normal claim: npm run board -- claim SV-029 --owner Cheich --agent cheich-sv029-benchmark-hardening-UNIQUE.",
+        "This follow-up receives the same tools/benchmarks scope from completed SV028; original done task/history stays unchanged. No overlap with active SV008 fixture repair, lifecycle, requests UI, maintenance, replenishment, operations or references.",
+        "User directed useful ongoing work for Cheich and coordinated plan/task division. Registration publishes only board metadata. The implementation-plan patch remains local until publication is authorized. No extension or restart of the ended runtime cycle, denied-operation reroute, identity/security change or feature publication is granted."
+      ],
+      "claim": null
     }
   ]
 }
