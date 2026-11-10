@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 393. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 394. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -21,7 +21,7 @@ Revision 393. Live state is on the task-board branch. Use npm run board -- claim
 | SV-014 Location confidence and RTLS adapter boundary | done | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/18) |
 | SV-015 Validate ward reference geometry | blocked | — | — | SV-002 | packages/scene/references |
 | SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e |
-| SV-017 Deployment and operational readiness | claimed | wil / wil-sol-sv017-20261105-ops | 2026-11-10T21:08:56.565Z | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/17) |
+| SV-017 Deployment and operational readiness | claimed | wil / wil-sol-sv017-20261105-ops | 2026-11-10T21:15:57.405Z | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/17) |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
 | SV-019 Repair auth bootstrap and clean test setup | done | — | — | SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/26) |
 | SV-020 Requests and atomic item assignments | done | — | — | SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/11) |
