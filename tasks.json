@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 365,
-  "updatedAt": "2026-11-10T17:54:26.476Z",
+  "revision": 366,
+  "updatedAt": "2026-11-10T17:56:14.425Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2582,6 +2582,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-10T17:56:14.425Z",
+      "taskId": "SV-033",
+      "command": "release",
+      "agent": "cheich-sv033-hold-evidence-repair-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3812,7 +3819,7 @@
     {
       "id": "SV-033",
       "title": "Repair hold-evidence replay authorization and timestamp precision",
-      "status": "claimed",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-031"
@@ -3845,13 +3852,7 @@
         "SV027 wiring waits for corrected exact-source contract and lawful frozen UI artifact access. Public source is sufficient for this backend/domain repair now. No public publication permission follows from historical third-party merges or this registration.",
         "User-directed existing backlog transfer: give some of it so chiech, I shouldnt have all the work; he keeps running out of stuff to do vale you need to keep him busy. Ordinary local finish/unblock work is authorized; genuine runtime/access/publication decisions remain action-specific."
       ],
-      "claim": {
-        "agent": "cheich-sv033-hold-evidence-repair-01",
-        "owner": "cheich",
-        "leaseId": "82b3935a-7634-4088-a91c-fb44ae8ed7e4",
-        "claimedAt": "2026-11-10T17:52:21.851Z",
-        "expiresAt": "2026-11-10T19:52:21.851Z"
-      }
+      "claim": null
     }
   ]
 }
