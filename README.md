@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 311. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 312. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -32,4 +32,4 @@ Revision 311. Live state is on the task-board branch. Use npm run board -- claim
 | SV-025 Build illustrative pediatric intensive care ward (PICU) | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/20) |
 | SV-026 Build illustrative pediatric cardiac step-down ward (PCU) | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/21) |
 | SV-027 Build task-local request, holds and returns UI | blocked | — | — | SV-007, SV-020, SV-021 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
-| SV-028 Prepare read-only performance benchmark tooling | ready | — | — | SV-001 | tools/benchmarks |
+| SV-028 Prepare read-only performance benchmark tooling | claimed | cheich / cheich-sv028-benchmark-01 | 2026-11-10T18:10:00.844Z | SV-001 | tools/benchmarks |
