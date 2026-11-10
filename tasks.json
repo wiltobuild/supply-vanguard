@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 288,
-  "updatedAt": "2026-11-10T01:19:06.168Z",
+  "revision": 289,
+  "updatedAt": "2026-11-10T01:21:58.092Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2027,6 +2027,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-10T01:21:58.092Z",
+      "taskId": "SV-022",
+      "command": "unblock",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2733,7 +2740,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "blocked",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2758,8 +2765,8 @@
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
       "claim": null,
-      "blockedReason": "Source-only native harness prepared at local commit ac080eb190469b25f4952f3c5e90d8f42d53fdf0 on task/sv-022-native-harness-source-20261110 in retained DESKTOP-7MCLSFR checkout. Frozen application implementation/branch remains 7348eb66abdd90dc68cd8745c6920e66465bfd53 unchanged. Six pure/mock tests passed; four native races skipped; no native tools, roles, database or listener started. Independent source review and coordinator-assigned approved runner fixture/native slot remain pending. No publication, merge or deploy. Lease cleared after source-only deliverable.",
-      "reviewNote": "Authorized source-only Windows native harness preparation on a separate test branch; frozen backend 7348eb66abdd90dc68cd8745c6920e66465bfd53 remains unchanged and runtime approval is pending."
+      "blockedReason": null,
+      "reviewNote": "Source-only corrections for exact native harness review: reject database/schema ownership and require full protected-relation RLS. Frozen application remains unchanged."
     },
     {
       "id": "SV-023",
