@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 294,
-  "updatedAt": "2026-11-10T01:45:53.943Z",
+  "revision": 295,
+  "updatedAt": "2026-11-10T01:46:05.428Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2069,6 +2069,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T01:46:05.428Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2311,7 +2318,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -2338,17 +2345,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "b0a59ed5-bc52-4376-9d8b-0e0f57409730",
-        "claimedAt": "2026-11-10T01:15:49.197Z",
-        "expiresAt": "2026-11-10T03:34:41.274Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Runner preparation complete and independently source-reviewed: clean local065b1026b6d2df0510e2f421bdd2ac1a9ddbf68f, parent35230344cd47c490965a1eb2591f1c54e290b721, library SHA2561eb0103e37a86415c9bed8bb85f17e04b5afb8343f4e67b72debe81c56465e18. Explicit11 migrations/32 tables, source-only syntax/import/repository checks passed; no runtime/token/resource clock created. Waiting for parent to bind one supported persistent Windows Node executor, session topology and supervised cleanup ownership. Approved bounded runtime remains available after that handoff; original owner must not start independently or add browser infrastructure. withToken/explicit renewToken/bounded readEvidence/idempotent close are frozen. Protected4180/PID27772, b626/dd8 publication targets and all public heads unchanged; no publication, merge or deployment.",
       "reviewNote": "User approved one supervised synthetic local acceptance cycle up to two hours: reviewed b62667f8 functional API on 4181 and dev-owner candidate frontend 4182, in-memory eleven-migration thirty-two-table fictional fixture, existing limited memberships and fifteen-minute memory-only tokens, verified cleanup. Preserve served 4180 and PID27772, source publication holds and unrelated denials. Same original owner may claim normally for task-local fixture and approved runtime; no merge or deploy.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
