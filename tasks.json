@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 321,
-  "updatedAt": "2026-11-10T16:40:40.890Z",
+  "revision": 322,
+  "updatedAt": "2026-11-10T16:40:43.734Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2260,6 +2260,13 @@
       "command": "claim",
       "agent": "cheich-sv028-benchmark-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T16:40:43.734Z",
+      "taskId": "SV-028",
+      "command": "submit",
+      "agent": "cheich-sv028-benchmark-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3246,7 +3253,7 @@
     {
       "id": "SV-028",
       "title": "Prepare read-only performance benchmark tooling",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-001"
@@ -3277,15 +3284,12 @@
         "User: make sure to give him work as he asks, if we dont have anything come up with stuff that would be good for the app and updae the plan to include it then divide it out.",
         "Stable implementation base: 80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79. The parent owns Slack communication; coordinator must return confirmed task and claim instructions, not send a duplicate assignment."
       ],
-      "claim": {
-        "agent": "cheich-sv028-benchmark-01",
-        "owner": "cheich",
-        "leaseId": "aadfd722-4d2f-4bd9-93f5-1be22f1f06c5",
-        "claimedAt": "2026-11-10T16:40:40.890Z",
-        "expiresAt": "2026-11-10T18:40:40.890Z"
-      },
+      "claim": null,
       "blockedReason": null,
-      "reviewNote": "User-directed continuing useful source-only benchmark work for SAME Cheich owner. Preserve frozen e4c6441; first map existing deterministic tests, then add only missing adversarial regressions for global workload and concurrency bounds across endpoints, cancellation and late/noncooperative mocked transport, redirects/destination rejection before transport, mixed failures/empty results and secret-safe errors. Justified runner repairs only within tools/benchmarks. Deliver isolated tested LOCAL patch and full hashes. Normal Cheich claim required; no proxy claim, live target/network/fixture/runtime setup, publication, PR, merge/deploy or SV-016 acceptance/dependency changes."
+      "reviewNote": "User-directed continuing useful source-only benchmark work for SAME Cheich owner. Preserve frozen e4c6441; first map existing deterministic tests, then add only missing adversarial regressions for global workload and concurrency bounds across endpoints, cancellation and late/noncooperative mocked transport, redirects/destination rejection before transport, mixed failures/empty results and secret-safe errors. Justified runner repairs only within tools/benchmarks. Deliver isolated tested LOCAL patch and full hashes. Normal Cheich claim required; no proxy claim, live target/network/fixture/runtime setup, publication, PR, merge/deploy or SV-016 acceptance/dependency changes.",
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/27",
+      "submittedBy": "cheich-sv028-benchmark-01",
+      "submittedAt": "2026-11-10T16:40:43.734Z"
     }
   ]
 }
