@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 286,
-  "updatedAt": "2026-11-10T01:17:59.873Z",
+  "revision": 287,
+  "updatedAt": "2026-11-10T01:18:24.537Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2013,6 +2013,13 @@
       "command": "unblock",
       "agent": "wil-pr-coordinator",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T01:18:24.537Z",
+      "taskId": "SV-022",
+      "command": "block",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2713,7 +2720,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2737,14 +2744,8 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": {
-        "agent": "wil-vale-sv022-20261110-safe-a72c",
-        "owner": "Wil",
-        "leaseId": "22dab01b-5c75-48cc-abf1-35585a07d8d8",
-        "claimedAt": "2026-11-10T01:13:03.650Z",
-        "expiresAt": "2026-11-10T03:13:03.650Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Source-only native harness prepared at local commit ac080eb190469b25f4952f3c5e90d8f42d53fdf0 on task/sv-022-native-harness-source-20261110 in retained DESKTOP-7MCLSFR checkout. Frozen application implementation/branch remains 7348eb66abdd90dc68cd8745c6920e66465bfd53 unchanged. Six pure/mock tests passed; four native races skipped; no native tools, roles, database or listener started. Independent source review and coordinator-assigned approved runner fixture/native slot remain pending. No publication, merge or deploy. Lease cleared after source-only deliverable.",
       "reviewNote": "Authorized source-only Windows native harness preparation on a separate test branch; frozen backend 7348eb66abdd90dc68cd8745c6920e66465bfd53 remains unchanged and runtime approval is pending."
     },
     {
