@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 408,
-  "updatedAt": "2026-11-10T19:44:44.534Z",
+  "revision": 409,
+  "updatedAt": "2026-11-10T19:51:23.031Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2886,6 +2886,13 @@
       "command": "claim",
       "agent": "cheich-sv035-request-ui-ownership-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T19:51:23.031Z",
+      "taskId": "SV-035",
+      "command": "release",
+      "agent": "cheich-sv035-request-ui-ownership-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4232,7 +4239,7 @@
     {
       "id": "SV-035",
       "title": "Repair request UI replacement ownership and read-only capability controls",
-      "status": "claimed",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-027"
@@ -4259,13 +4266,7 @@
         "Original SV008 exclusively owns shared host composition; frozen b54911/32 and ops source remain separate. Cheich currently owns SV034 evidence native test preparation. Finish/release that normal claim before claiming this task.",
         "Normal claim after prior release: npm run board -- claim SV-035 --owner Cheich --agent cheich-sv035-request-ui-ownership-UNIQUE. Parent's existing Slack worker owns the single external assignment. Local source work is authorized; no new publication, runtime or access permission is granted."
       ],
-      "claim": {
-        "agent": "cheich-sv035-request-ui-ownership-01",
-        "owner": "cheich",
-        "leaseId": "c57f677e-4057-4f11-89fb-588039121ade",
-        "claimedAt": "2026-11-10T19:44:44.534Z",
-        "expiresAt": "2026-11-10T21:44:44.534Z"
-      }
+      "claim": null
     }
   ]
 }
