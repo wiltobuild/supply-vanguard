@@ -1,8 +1,13 @@
--- Synthetic data only. Mirrors packages/domain/seed.js and the 3D ward rooms. Safe to run once per empty database.
+-- Synthetic data only. Mirrors packages/domain/seed.js and the 3D ward rooms. Run through bootstrap() in lib.mjs (owner-only, one
+-- transaction). Running it again on a seeded database does nothing.
 DO $$
 DECLARE
   org uuid; fac uuid; w uuid;
 BEGIN
+  IF EXISTS (SELECT 1 FROM organization WHERE name = 'Demo organization (synthetic)') THEN
+    RAISE NOTICE 'Already seeded; nothing to do';
+    RETURN;
+  END IF;
   INSERT INTO organization (name) VALUES ('Demo organization (synthetic)') RETURNING id INTO org;
   INSERT INTO facility (organization_id, name) VALUES (org, 'Demo facility') RETURNING id INTO fac;
   INSERT INTO ward (organization_id, facility_id, name) VALUES (org, fac, 'NICU reference section') RETURNING id INTO w;

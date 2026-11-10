@@ -9,9 +9,12 @@ Requires Node.js 22+, Git, and GitHub CLI for shared task operations.
 ```sh
 npm run dev
 # Open http://localhost:4180
+npm run setup:test   # once per clean checkout: installs PGlite, the test-only embedded database
 npm test
 npm run check
 ```
+
+The demo itself needs no install. Only `npm test` needs `npm run setup:test` first; without it the run stops with a message saying so instead of a stack trace. PostgreSQL 16+ is optional: the native database tests are skipped, and say so, when it is not installed.
 
 Select equipment, change its room/status, and locate it in the 3D ward. Changes and recent history persist in this browser. Orbit, walk, inspect equipment models, and explore supply locations in the embedded viewer. No hosted services or API keys are needed for this demo.
 

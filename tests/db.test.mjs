@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {mkdtempSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
-import {pgBin,startCluster,stopCluster,createDatabase,psql,migrateUp,migrateDown,applied,seed} from '../services/api/db/lib.mjs';
+import {readFileSync} from 'node:fs';
+import {pgBin,startCluster,stopCluster,createDatabase,psql,migrateUp,migrateDown,applied,seed,bootstrap} from '../services/api/db/lib.mjs';
 // Needs PostgreSQL 16+ on the machine. Without it these tests are skipped, not passed silently: see the skip message.
 const skip=pgBin()?false:'PostgreSQL not installed (brew install postgresql@16); database tests skipped';
 const dir=skip?null:mkdtempSync(join(tmpdir(),'sv-db-test-'));
@@ -73,6 +74,37 @@ test('equipment guard: versioned edits, allowed transitions, retired is final, l
  fails(set('EQ-001',"status = 'available', version = version + 1"),/retired/);
  fails(set('EQ-001',"note = 'x', version = version + 1"),/retired/);
  fails(set('EQ-003',"external_id = 'EQ-RENAMED'"),/identity/);
+});
+// SV-019. Native PostgreSQL only (skipped without it; the embedded PGlite auth tests do not cover bootstrap).
+// The superuser used above bypasses row-level security, so this uses a NON-superuser table owner, the case that used to fail.
+test('owner bootstrap: seeds under forced RLS, is atomic and idempotent, and leaves RLS enforced',{skip},()=>{
+ q("CREATE ROLE sv_owner LOGIN NOSUPERUSER");
+ q("CREATE ROLE sv_runtime LOGIN NOSUPERUSER");
+ q("CREATE DATABASE sv_boot OWNER sv_owner");
+ const owner=admin.replace(/\/[^/]*$/,'/sv_boot').replace('sv@','sv_owner@'),runtime=owner.replace('sv_owner@','sv_runtime@');
+ const as=(u,sql)=>psql(u,sql),forced=()=>as(admin.replace(/\/[^/]*$/,'/sv_boot'),"SELECT string_agg(relname, ',' ORDER BY relname) FROM pg_class WHERE relnamespace = 'public'::regnamespace AND relkind = 'r' AND relrowsecurity AND relforcerowsecurity");
+ assert.deepEqual(migrateUp(owner),['0001_core']);
+ as(owner,readFileSync(new URL('../services/api/auth/migrations/0001_auth.up.sql',import.meta.url),'utf8'));
+ const before=forced();
+ assert.match(before,/organization/);
+ // A plain seed fails: no policy lets anyone create the first organization.
+ assert.throws(()=>as(owner,readFileSync(new URL('../services/api/db/seed/seed.sql',import.meta.url),'utf8')),/row-level security/);
+ // A failure inside the bootstrap transaction loads nothing and restores FORCE exactly.
+ assert.throws(()=>bootstrap(owner,"INSERT INTO organization (name) VALUES ('Half loaded'); SELECT 1/0;"),/division by zero/);
+ assert.equal(forced(),before);
+ assert.equal(as(admin.replace(/\/[^/]*$/,'/sv_boot'),'SELECT count(*) FROM organization'),'0');
+ // A role that does not own the tables cannot bootstrap.
+ as(admin.replace(/\/[^/]*$/,'/sv_boot'),'GRANT ALL ON ALL TABLES IN SCHEMA public TO sv_runtime');
+ assert.throws(()=>seed(runtime),/must be owner|permission denied/);
+ // The real seed succeeds, twice, and RLS is enforced afterwards.
+ seed(owner);seed(owner);
+ const su=admin.replace(/\/[^/]*$/,'/sv_boot');
+ assert.equal(as(su,'SELECT count(*) FROM organization'),'1');
+ assert.equal(as(su,'SELECT count(*) FROM equipment'),'8');
+ assert.equal(forced(),before);
+ assert.equal(as(owner,'SELECT count(*) FROM equipment'),'0');   // even the owner sees nothing without a tenant context
+ assert.throws(()=>as(owner,"INSERT INTO organization (name) VALUES ('Sneaky')"),/row-level security/);
+ assert.throws(()=>as(runtime,"INSERT INTO organization (name) VALUES ('Sneaky')"),/row-level security|permission denied/);
 });
 test('rollback removes the schema and reapplying restores it; cleanup',{skip},()=>{
  assert.deepEqual(migrateDown(url,1),['0001_core']);
