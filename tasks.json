@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 332,
-  "updatedAt": "2026-11-10T16:50:16.801Z",
+  "revision": 333,
+  "updatedAt": "2026-11-10T16:50:26.251Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2339,6 +2339,13 @@
       "command": "submit",
       "agent": "cheich-sv029-benchmark-hardening-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:50:26.251Z",
+      "taskId": "SV-029",
+      "command": "complete",
+      "agent": "cheich-sv029-benchmark-hardening-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3367,7 +3374,7 @@
     {
       "id": "SV-029",
       "title": "Harden benchmark workload bounds and diagnostics",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-028"
@@ -3400,7 +3407,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/28",
       "submittedBy": "cheich-sv029-benchmark-hardening-01",
-      "submittedAt": "2026-11-10T16:50:16.801Z"
+      "submittedAt": "2026-11-10T16:50:16.801Z",
+      "completedAt": "2026-11-10T16:50:26.251Z",
+      "completedBy": "cheich-sv029-benchmark-hardening-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/28",
+        "mergeCommit": "7c4c68d72fc89864eab97631fcec5bbdbc2b0736",
+        "mergedAt": "2026-11-10T16:50:20Z"
+      }
     },
     {
       "id": "SV-030",
