@@ -45,3 +45,16 @@ Unrun: real browser desktop/narrow layout, keyboard/contrast/reduced-motion rend
 ## Integration and review limits
 
 The mountable modules are not reachable in the actual shared app; see the exact host/static route/auth lifecycle requirements in `apps/web/supplies/README.md`. Current CI does not discover this task-local suite; reviewers must explicitly run it. Synthetic preview values are test-only, not defaults. No operational quantities, role grants, notification providers, production services, credentials, patient data, merge or deployment were introduced. Draft PR and normal board submit receipts are reported with the delivery; only the existing independent PR manager may review/merge and mark complete.
+
+## Lifecycle repair: deferred old-session work after destroy() or replacement (SV-010 review follow-up)
+
+Review of the frozen head (`bcfd05ce`, rebuilt here as `cf43d81` plus the approved access-response patch; all 21 authored files matched the manifest) traced reads and writes through `destroy()` and replacement mounting on the same root. Two defects were reproduced and are now fixed in `apps/web/supplies/view.mjs`, each with a regression that **failed on the unrepaired source** and passes now:
+
+1. **Focus taken by an old session.** A save (or a retried save) succeeded, its refresh was still in flight, the session was destroyed or replaced, and when the refresh finished the old handler continued and focused `doc.getElementById('supply-<binId>')`, which matched the **new** session's heading. Fixed two ways that overlap on purpose: the handler returns if the session was disposed, and the focus lookup is scoped to the instance's own bins area instead of the whole document (so a session that was replaced without `destroy()` cannot find another mount's heading either).
+2. **Destroying an old session erased a newer one.** `destroy()` ran `root.replaceChildren()`, so destroying the old session after the new one mounted wiped the new UI. Now it removes only the nodes this instance put in the root, drops the `supplies` class only if nothing else remains, and a second `destroy()` is harmless.
+
+Not a defect (kept as a guard): an old session's draft, pending request or idempotency key, and its late 403, never reach a new session; all per-mount state lives in that mount's closure.
+
+Commands: `node --test services/api/replenishment/tests/lifecycle.test.mjs` (6 tests, controlled synthetic collaborators only: a real client over a fake fetch and jsdom; no SQL fixture, server, network or provisioning). `node services/api/replenishment/tests/lifecycle-mutations.mjs` is a by-hand inventory (not a test) that breaks `view.mjs` nine ways and checks the tests notice: every mutation that should be caught is; the two that remove only the disposed check survive by design because the scoped lookup covers the same hole, and the combined mutations are caught.
+
+Still unrun and outside this repair: live runtime, integration with the shared host (SV-008) and lifecycle owners, native database, browser keyboard checks.

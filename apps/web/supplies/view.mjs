@@ -9,9 +9,10 @@ export function mountSupplies(root,{client,synthetic = false,makeKey = () => cry
   };
   const button = (text,fn) => {const b = el('button',text,{type:'button'});b.addEventListener('click',fn);return b;};
   root.replaceChildren(); root.classList.add('supplies');
-  root.append(el('h1','Supply replenishment'));
-  root.append(el('p',synthetic ? 'Synthetic test fixture — every record, quantity and threshold below is test-only.' :
-    'Declared-unit counts, configured par levels, and assigned replenishment work. No external notifications are sent.',{class:'notice'}));
+  const heading = el('h1','Supply replenishment');
+  const notice = el('p',synthetic ? 'Synthetic test fixture — every record, quantity and threshold below is test-only.' :
+    'Declared-unit counts, configured par levels, and assigned replenishment work. No external notifications are sent.',{class:'notice'});
+  root.append(heading,notice);
   const status = el('p','Loading authorized supplies…',{role:'status','aria-live':'polite'});
   const error = el('p','',{role:'alert',class:'field-error'});
   const refresh = button('Refresh counts and queue',() => load());
@@ -19,6 +20,7 @@ export function mountSupplies(root,{client,synthetic = false,makeKey = () => cry
   const binsArea = el('section',null,{'aria-labelledby':'supplies-bins-title'});
   const tasksArea = el('section',null,{'aria-labelledby':'supplies-tasks-title'});
   root.append(status,error,refresh,pendingArea,tasksArea,binsArea);
+  const own = [heading,notice,status,error,refresh,pendingArea,tasksArea,binsArea];   // the only nodes this instance may remove from the shared root
   let bins = [],tasks = [],binCursor = null,taskCursor = null,canWrite = false,busy = false,disposed = false,generation = 0,stale = false;
   const pending = new Map(),drafts = new Map();
   const sayError = e => {
@@ -44,8 +46,9 @@ export function mountSupplies(root,{client,synthetic = false,makeKey = () => cry
         try{
           const result=await client.command(operation,input);if(disposed)return;saved=true;
           pending.delete(key);drafts.delete(key);renderPending();await load(true);
+          if(disposed)return;   // destroyed (or replaced) while the refresh ran: touch nothing, least of all focus
           status.textContent=result.replayed?'Original saved result confirmed. Counts and queue refreshed.':'Saved. Counts and queue refreshed.';
-          (doc.getElementById(`supply-${input.binId}`)||refresh).focus();
+          (binsArea.querySelector(`[id="supply-${input.binId}"]`)||refresh).focus();   // only this instance's own heading, never another mount's
         }catch(ex){if(disposed)return;
           if(!ex.uncertain&&!saved){pending.delete(key);renderPending();}
           if([401,403].includes(ex.status))clearAccess();sayError(ex);
@@ -95,9 +98,10 @@ export function mountSupplies(root,{client,synthetic = false,makeKey = () => cry
         drafts.delete(formKey);
         renderPending();
         await load(true);
+        if (disposed) return;   // destroyed (or replaced) while the refresh ran: touch nothing, least of all focus
         status.textContent = result.replayed ? 'Original saved result confirmed. Counts and queue refreshed.' :
           result.created === false && operation === 'detect' ? 'Check complete. Existing alert retained, or no low-par alert needed.' : 'Saved. Counts and queue refreshed.';
-        const focus = doc.getElementById(`supply-${identity.binId}`) || refresh;
+        const focus = binsArea.querySelector(`[id="supply-${identity.binId}"]`) || refresh;   // only this instance's own heading
         focus.focus();
       } catch (ex) {
         if (disposed) return;
@@ -189,5 +193,10 @@ export function mountSupplies(root,{client,synthetic = false,makeKey = () => cry
     }finally{if(!fromSave){busy=false;refresh.disabled=false;}}
   }
   const ready=load();
-  return {ready,refresh:() => load(),destroy(){disposed=true;generation++;clearAccess();root.replaceChildren();}};
+  return {ready,refresh:() => load(),destroy(){
+    disposed=true;generation++;clearAccess();
+    // Remove only this instance's nodes. A newer mount on the same root keeps its content, and a second destroy() is harmless.
+    for(const node of own)if(node.parentNode===root)root.removeChild(node);
+    if(!root.firstChild)root.classList.remove('supplies');
+  }};
 }
