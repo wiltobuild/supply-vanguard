@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 390,
-  "updatedAt": "2026-11-10T19:08:56.565Z",
+  "revision": 391,
+  "updatedAt": "2026-11-10T19:14:20.902Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2759,6 +2759,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-10T19:14:20.902Z",
+      "taskId": "SV-027",
+      "command": "claim",
+      "agent": "cheich-sv027-evidence-ui-01",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -3712,7 +3719,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -3754,7 +3761,13 @@
         "Handoff condition met at the recipient's request: SV027-f29-ui-handoff.zip downloaded and verified (zip 829F76AD..., patch b4dc7cd4... and all 5 files equal the manifest for f29a38f on sha256, git blob and bytes; frozen 23 tests pass in a scratch rebuild). Unblocking only the bounded evidence-UI claim in apps/web/requests; publication, SV-008 shared-host mounting and SV-022 integration stay separate and unchanged.",
         "CURRENT SV027 handoff supersedes older delivery/contract prerequisites: approved ZIP F0CHD60FB6C shared exactly once in C0CEJ1BKBPU, recipient confirmed all five f29a38f files against SHA256/Git blobs/bytes on afe17ebc and23 frozen tests. Normal unblock already succeeded at revision381; do not duplicate it or proxy-claim. Cheich owns the next normal claim cheich-sv027-evidence-ui-01. Corrected backend contract is independently reviewed PR32/SV033 source8bba1f8b0bae8dd06106b4bf1140a2674afb9406: POST holds/:holdId/clearances, Idempotency-Key, schemaVersion1 evidence{reference,observedAt,note?}, UTC at most3 fractional digits. Keep identical prepared key/body for interrupted-response retries, matching current-role authority, 403 role-loss and422 missing-rule semantics, immutable hold/evidence versus current summaryBasis/stack, safe text and honest legacy history. Preserve original request/return implementation and session/focus/disposal protections; add only task-local client/view/docs/regressions in apps/web/requests and apps/web/tests/request-lifecycle.test.mjs. Shared host, backend/lifecycle/scene and ops remain separately owned; no extra runtime/security setup, dependency/root/CI edits, source publication, merge or deployment. SV019 auth repair is done; its old Linux access blocker in historical notes is obsolete, not a current UI prerequisite. Evidence schema/mounted UI remain outside frozen b54911/32 acceptance until deliberate later integration."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "cheich-sv027-evidence-ui-01",
+        "owner": "cheich",
+        "leaseId": "397617ef-3cf6-42aa-8c47-e93b828e4f9e",
+        "claimedAt": "2026-11-10T19:14:20.902Z",
+        "expiresAt": "2026-11-10T21:14:20.902Z"
+      },
       "blockedReason": null,
       "reviewNote": "CURRENT SV027 handoff supersedes older delivery/contract prerequisites: approved ZIP F0CHD60FB6C shared exactly once in C0CEJ1BKBPU, recipient confirmed all five f29a38f files against SHA256/Git blobs/bytes on afe17ebc and23 frozen tests. Normal unblock already succeeded at revision381; do not duplicate it or proxy-claim. Cheich owns the next normal claim cheich-sv027-evidence-ui-01. Corrected backend contract is independently reviewed PR32/SV033 source8bba1f8b0bae8dd06106b4bf1140a2674afb9406: POST holds/:holdId/clearances, Idempotency-Key, schemaVersion1 evidence{reference,observedAt,note?}, UTC at most3 fractional digits. Keep identical prepared key/body for interrupted-response retries, matching current-role authority, 403 role-loss and422 missing-rule semantics, immutable hold/evidence versus current summaryBasis/stack, safe text and honest legacy history. Preserve original request/return implementation and session/focus/disposal protections; add only task-local client/view/docs/regressions in apps/web/requests and apps/web/tests/request-lifecycle.test.mjs. Shared host, backend/lifecycle/scene and ops remain separately owned; no extra runtime/security setup, dependency/root/CI edits, source publication, merge or deployment. SV019 auth repair is done; its old Linux access blocker in historical notes is obsolete, not a current UI prerequisite. Evidence schema/mounted UI remain outside frozen b54911/32 acceptance until deliberate later integration."
     },
