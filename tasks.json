@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 400,
-  "updatedAt": "2026-11-10T19:30:14.762Z",
+  "revision": 401,
+  "updatedAt": "2026-11-10T19:33:34.374Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2829,6 +2829,14 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T19:33:34.374Z",
+      "taskId": "SV-035",
+      "command": "migration-add-request-ui-ownership-repair",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Independent PR34 review reproduced stale instance disposal/reset ownership and explicit empty-permissions contract defects; bounded same-owner follow-up after active SV034, preserve all existing task history and scopes"
     }
   ],
   "tasks": [
@@ -4161,6 +4169,38 @@
         "claimedAt": "2026-11-10T19:19:39.668Z",
         "expiresAt": "2026-11-10T21:19:39.668Z"
       }
+    },
+    {
+      "id": "SV-035",
+      "title": "Repair request UI replacement ownership and read-only capability controls",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-027"
+      ],
+      "scope": [
+        "apps/web/requests",
+        "apps/web/tests/request-lifecycle.test.mjs"
+      ],
+      "acceptance": [
+        "Use exact public PR34 source 7d13ebc7922b3189ac3bd717c75c4fbdd90da59d as the frozen baseline. Preserve completed SV027 history, original UI implementation and evidence contract. This bounded follow-up is queued for Cheich only after his active SV034 claim closes; no proxy claim or competing implementation.",
+        "Repair the reproduced replacement-ownership defect in view.js: mount A, replace with B on the same root, then call retained A.dispose() again. Old or repeated disposal must not empty B DOM, remove B registration, change B session or styling, or steal external focus. Disposal must remain effective for its current owned instance and be idempotent.",
+        "Apply equivalent instance-ownership protection to stale resetAccess handles. Preserve current-instance access-loss cleanup and suppression of late protected writes, while an old instance cannot clear/unregister/focus a newer mount. Add exact failing-before/passing-after replacement, repeated-dispose and stale-reset regressions demonstrating B remains usable.",
+        "Reconcile the existing documented empty-permissions read-only component contract with clearance controls: explicit permissions:[] must not offer or submit local mutation commands solely because a configured role matches. Clarify role versus advertised UI-capability semantics in task-local documentation and test empty, sufficient and missing projections consistently. Do not add server permissions, alter configured-role authorization, invent new hold policy, or treat client projection as server authority.",
+        "Preserve corrected PR32/SV033 v1 endpoint, UTC timestamp maximum three fractional digits, exact prepared Idempotency-Key/body across uncertain retries, command blocking while uncertain, wrong_role versus other401/403 cleanup, safe text and legacy labeling, immutable hold/evidence versus current summary, and existing task-local test coverage."
+      ],
+      "verification": [
+        "Map existing tests first and add only meaningful missing controlled pure/DOM regressions. Show affected regressions fail on the frozen old source and pass on the repaired source. Declare the DOM collaborator/dependency, pass/fail/skip counts and evidence limits; handmade DOM or JSDOM is not real browser acceptance.",
+        "Use inert injected transport/DOM/clock collaborators and applicable syntax/static checks. No real HTTP/database/auth fixture, server/listener, browser infrastructure, native runtime, credentials, grants, installation or new dependencies.",
+        "Freeze a clean small local commit and exact authored diff with tests and source hashes. No shared host, API/domain/migration, scene, root/CI/loader or unrelated owner edits. Existing publication/merge/deployment authorization and access restrictions remain separate.",
+        "Mounted shared-app, native browser keyboard/layout/screen-reader, real HTTP/SQL, SV022 integration and final SV016 acceptance remain explicitly unproven. Do not mark the integrated application or policy sign-off complete from component tests."
+      ],
+      "coordinationNotes": [
+        "Independent Sol review of exact PR34 source reproduced the P2 stale-dispose defect and P3 empty-permissions documentation/control mismatch; ten other targeted evidence checks passed with zero skips. Do not repeat the passing baseline review or reimplement evidence UI.",
+        "Original SV008 exclusively owns shared host composition; frozen b54911/32 and ops source remain separate. Cheich currently owns SV034 evidence native test preparation. Finish/release that normal claim before claiming this task.",
+        "Normal claim after prior release: npm run board -- claim SV-035 --owner Cheich --agent cheich-sv035-request-ui-ownership-UNIQUE. Parent's existing Slack worker owns the single external assignment. Local source work is authorized; no new publication, runtime or access permission is granted."
+      ],
+      "claim": null
     }
   ]
 }
