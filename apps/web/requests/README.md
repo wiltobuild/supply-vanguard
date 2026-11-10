@@ -6,7 +6,7 @@ This is a mountable module, not shared-app integration. No host entry point, rou
 
 Load `styles.css`, then import `createRequestApi` from `client.js` and `mountRequests` from `view.js`. Call `createRequestApi({organizationId, transport})`; transport receives `(organizationScopedPath, {method, body, signal, headers?})` (`headers` only for the clearance-with-evidence command, see below) and must return parsed JSON or throw an error with HTTP `status` and an honest `uncertain` flag for potentially committed writes. It is the existing authenticated host's responsibility to add authentication, JSON encoding, no-store semantics, timeout and access handling. Do not inject a transport that treats non-2xx HTTP as success. This module stores no credentials or browser persistence.
 
-Mount with `mountRequests(element, {api, permissions, role, equipment, equipmentTypes})`. Permissions and role must be the current authenticated membership, never UI-selected authority. Equipment must be current authorized inventory records (`id`, `modelKind`, `version`, `status`); selecting one is not proof it is assignable. Equipment types are authorized strings for the creation form. Empty permissions deny mutation controls. Server authorization is always authoritative.
+Mount with `mountRequests(element, {api, permissions, role, equipment, equipmentTypes})`. Permissions and role must be the current authenticated membership, never UI-selected authority. Equipment must be current authorized inventory records (`id`, `modelKind`, `version`, `status`); selecting one is not proof it is assignable. Equipment types are authorized strings for the creation form. Empty or missing permissions deny every mutation control, clearance included (see "Role versus advertised capability"). Server authorization is always authoritative.
 
 The host must call `resetAccess()` immediately on identity, organization, role, or view changes; this aborts work and drops protected records, inventory and drafts. Dispose and mount anew with a new API after the host establishes the next authorized context. `dispose()` removes listeners, aborts reads/writes and clears DOM. Repeated mount on the same element automatically disposes its prior module. Closing during a write does not roll back the server; host navigation must disclose that possibility and load server truth upon return.
 
@@ -38,9 +38,25 @@ Clearing a hold can now carry **evidence**: a reference, an observed time and an
 - **Permission.** The evidence form is shown only for a hold whose kind has a configured rule naming the current role. Without a rule, or for another role, there is no form (the legacy button stays, disabled).
 - **Cleanup.** Reset, dispose and access loss erase the last clearance, the issue message, inline errors, drafts and the pending command.
 
-**Tests.** `node --test apps/web/tests/request-lifecycle.test.mjs` runs 34 tests: the 23 frozen ones plus 11 for this wiring (wire format and header, validation and non-echo, first success, replay, role refusal and the other error kinds, invalid precision, exact retry with the same body and key, cleanup and late results, and the rendered form, escaping, legacy and unreported labels, inline errors). `node apps/web/requests/mutation-check.mjs` is a by-hand inventory (not a test) that breaks the module 17 ways and confirms the tests notice each. Everything uses hand-made stand-ins for the DOM, the transport and the clock: no browser, network, server or database.
+**Tests.** `node --test apps/web/tests/request-lifecycle.test.mjs` runs 41 tests: the 23 frozen ones, 11 for the evidence wiring and 7 for SV-035 (replacement ownership, idempotent dispose, stale reset, late writes, and the empty, missing, sufficient and insufficient capability projections) (wire format and header, validation and non-echo, first success, replay, role refusal and the other error kinds, invalid precision, exact retry with the same body and key, cleanup and late results, and the rendered form, escaping, legacy and unreported labels, inline errors). `node apps/web/requests/mutation-check.mjs` is a by-hand inventory (not a test) that breaks the module 29 ways and confirms the tests notice each (3 entries survive by design: each is one of two overlapping protections, and the combined change is caught). Everything uses hand-made stand-ins for the DOM, the transport and the clock: no browser, network, server or database.
 
 **Still not run:** real browser keyboard and screen-reader checks, narrow-layout screenshots, an HTTP integration with the real hold endpoints and database, mounting in the shared host (SV-008), and the request lifecycle backend (SV-022).
+
+## Role versus advertised capability, and who owns a shared root (SV-035)
+
+**Two inputs, two meanings.** `role` is the current member's role, used only to mirror the **server's configured clearance rule** for display (`canClear`: a rule names this role for this kind of hold). `permissions` is the host's **advertised UI-capability projection** of the same authenticated membership. Neither is authority: the server enforces its own permission and role checks on every command, and the component adds no permission and no policy. A control is offered only when **both** allow it:
+
+| Projection (`permissions`) | Create, assign, dispatch, return, place hold | Clear a hold (evidence form and legacy button) |
+|---|---|---|
+| `[]` or not supplied (**read-only**) | no | **no, even if `role` matches a configured rule** |
+| `['inventory:read']` | no | yes, if a rule names `role` |
+| `['equipment:write']` | yes | yes, if a rule names `role` |
+| both | yes | yes, if a rule names `role` |
+| anything else only (for example `audit:read`) | no | no |
+
+Clearance is offered with `inventory:read` (the server's route permission for both clearance routes, so a member whose configured clearing role lacks `equipment:write`, such as a supply manager, can still clear) **or** `equipment:write` (the mutation gate this component has always used; every server role that has it also has `inventory:read`). If the projection stops allowing it, no form is drawn, the legacy button is disabled, and a stale or synthetic click or submit sends **nothing** and shows no invented error. `resetAccess({permissions, role, ...})` applies a new projection immediately.
+
+**One instance owns a root.** Mounting on a root disposes the previous instance on that root. Only the **registered owner** may empty the root, unregister it or reset it. A retained handle of an instance that has been replaced (or already disposed) is inert: `dispose()` is idempotent and a stale `dispose()` or `resetAccess()` cannot empty, unregister, restyle, refocus or reset the newer mount, nor content the host placed on the root afterwards. Disposal and access-loss cleanup of the **current** instance, and the suppression of its late protected writes, are unchanged.
 
 ## Interaction and truthfulness
 

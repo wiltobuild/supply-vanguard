@@ -273,3 +273,117 @@ test('view: role refusal and missing rule show fixed explanations and keep the r
   view.dispose();
  }
 });
+
+// ---------------- SV-035: instance ownership of a shared root, and read-only capability controls ----------------
+// A root stand-in with REAL listener semantics (removeEventListener removes only the function it is given), unlike rootStub above.
+function ownedRoot(){
+  const handlers=new Map(),classes=new Set(),doc={activeElement:null};let html='';
+  const status={focus(){this.focused=true;},setAttribute(){},textContent:''};
+  const root={ownerDocument:doc,classList:{add:c=>classes.add(c),remove:c=>classes.delete(c),contains:c=>classes.has(c)},
+    get innerHTML(){return html;},set innerHTML(v){html=v;},replaceChildren(){html='';},contains:n=>Boolean(n&&n.insideRoot),   // only elements flagged insideRoot belong to it
+    querySelectorAll:()=>[],querySelector:q=>q==='[data-status]'?status:null,
+    addEventListener(type,fn){if(!handlers.has(type))handlers.set(type,new Set());handlers.get(type).add(fn);},
+    removeEventListener(type,fn){handlers.get(type)?.delete(fn);}};
+  return {root,doc,classes,handlers,listenerCount:()=>[...handlers.values()].reduce((n,set)=>n+set.size,0),
+    fire:(type,event)=>[...(handlers.get(type)??[])].forEach(fn=>fn(event))};
+}
+const mountOn=async(root,tag,extra={})=>{const view=mountRequests(root,{api:apiFor({read:async()=>({...record([line({lineNo:7,equipmentType:tag})]),id:tag})}),permissions:['equipment:write','inventory:read'],role:'cleaner',...extra});await tick();await view.session.load(tag);return view;};
+
+test('a retained, already-disposed instance cannot empty, unregister or restyle the instance that replaced it',async()=>{
+  const dom=ownedRoot(),outside={name:'external focus target'};
+  const A=await mountOn(dom.root,'A'),B=await mountOn(dom.root,'B');
+  assert.match(dom.root.innerHTML,/pump|B/);const before=dom.root.innerHTML;assert.ok(before.length>100);
+  dom.doc.activeElement=outside;
+  A.dispose();A.dispose();                                    // the host calls the old handle again, twice
+  assert.equal(dom.root.innerHTML,before,'the newer instance\'s DOM is untouched');
+  assert.ok(dom.classes.has('sv-requests'),'and its styling');
+  assert.equal(dom.doc.activeElement,outside,'external focus is not moved');
+  assert.notEqual(B.session.state.phase,'idle');assert.equal(B.session.state.requestId,'B','its session was not changed');
+  assert.equal(dom.listenerCount(),3,'only the newer instance has listeners');
+  // The newer instance is still the registered owner: mounting a third instance must dispose it (and only it).
+  const C=await mountOn(dom.root,'C');
+  assert.equal(dom.listenerCount(),3,'B\'s listeners were removed when C replaced it, so B was still registered');
+  B.dispose();assert.match(dom.root.innerHTML,/./,'a stale B cannot empty C either');C.dispose();
+  assert.equal(dom.root.innerHTML,'');assert.equal(dom.listenerCount(),0);
+});
+test('disposal is effective for the current owner and idempotent: a second call never touches content the host put there afterwards',async()=>{
+  const dom=ownedRoot(),A=await mountOn(dom.root,'A');
+  assert.ok(dom.root.innerHTML.length>100);A.dispose();
+  assert.equal(dom.root.innerHTML,'');assert.equal(dom.listenerCount(),0);assert.equal(A.session.state.phase,'idle');
+  dom.root.innerHTML='<p>content placed by the host</p>';dom.classes.add('host-class');
+  A.dispose();A.resetAccess({permissions:[],role:null});
+  assert.equal(dom.root.innerHTML,'<p>content placed by the host</p>');assert.ok(dom.classes.has('host-class'));
+});
+test('a stale resetAccess handle cannot clear, unregister or refocus a newer mount; the current handle still clears everything',async()=>{
+  const dom=ownedRoot(),outside={name:'external'};
+  const A=await mountOn(dom.root,'A'),B=await mountOn(dom.root,'B');
+  const before=dom.root.innerHTML;dom.doc.activeElement=outside;
+  A.resetAccess({permissions:[],role:null,equipment:[],equipmentTypes:[]});
+  assert.equal(dom.root.innerHTML,before,'B\'s DOM is untouched');assert.equal(B.session.state.requestId,'B');assert.notEqual(B.session.state.phase,'idle','B\'s session was not reset');
+  assert.equal(dom.doc.activeElement,outside);
+  // B still behaves with its OWN permissions after the stale call (its controls were not switched to read-only).
+  assert.match(dom.root.innerHTML,/data-action="dispatch"/);assert.doesNotMatch(dom.root.innerHTML.replace(/<button[^>]*data-action="dispatch"[^>]*>/g,m=>/disabled/.test(m)?'DISABLED':m),/DISABLED/,'B\'s buttons were not disabled by the stale call');
+  // Current-instance access-loss cleanup is intact.
+  B.resetAccess({permissions:[],role:null});
+  assert.equal(B.session.state.phase,'idle');assert.equal(B.session.state.request,null);assert.doesNotMatch(dom.root.innerHTML,/Request B/);
+  B.dispose();assert.equal(dom.listenerCount(),0);
+});
+test('a late protected write result for a replaced instance cannot repopulate the newer mount',async()=>{
+  const dom=ownedRoot(),gate=deferred();
+  const A=mountRequests(dom.root,{api:apiFor({read:async()=>record([line({holds:[{id:'dirty',kind:'dirty',active:true,placedAt:'t',placedBy:'p'}]})]),rules:async()=>({rules:[{kind:'dirty',role:'cleaner'}]}),clearWithEvidence:async()=>{await gate.promise;return {hold:{id:'dirty',active:false,clearance:null},replayed:false,summaryBasis:'current',summary:{activeKinds:[]},holds:[]};}}),permissions:['inventory:read','equipment:write'],role:'cleaner'});
+  await tick();await A.session.load('r');
+  const pending=A.session.clearWithEvidence('dirty',ev());await tick();
+  const B=await mountOn(dom.root,'B');const before=dom.root.innerHTML;
+  gate.resolve();await pending;await tick();
+  assert.equal(dom.root.innerHTML,before);assert.equal(B.session.state.lastClearance,null);B.dispose();
+});
+
+// Capability projection: the component offers a mutation control only when BOTH the advertised capability and the configured role allow it.
+const holdsForCapability=()=>[{id:'dirty',kind:'dirty',active:true,placedAt:'t',placedBy:'p'}];
+const capabilityMount=async(options,apiExtra={})=>{
+  const dom=ownedRoot(),calls={evidence:0,legacy:0};
+  const api=apiFor({read:async()=>record([line({holds:holdsForCapability()})]),rules:async()=>({rules:[{kind:'dirty',role:'cleaner'}]}),
+    clear:async()=>{calls.legacy++;return {};},clearWithEvidence:async()=>{calls.evidence++;return reply();},...apiExtra});
+  const view=mountRequests(dom.root,{api,role:'cleaner',...options});await tick();await view.session.load('r');
+  return {...dom,view,calls};
+};
+const submitEvidenceEvent=(dom,values={reference:'LOG-1',observedAt:OBSERVED})=>dom.fire('submit',{preventDefault(){},target:{dataset:{evidence:'dirty'},elements:{namedItem:n=>({value:values[n]??''})}}});
+const clickLegacy=dom=>dom.fire('click',{target:{closest:()=>({insideRoot:true,disabled:false,dataset:{clear:'dirty'}})}});
+test('explicit empty permissions and a missing projection are read-only: no clearance form, nothing submitted even for a matching role',async()=>{
+  for(const [name,options] of [['explicit empty',{permissions:[]}],['missing projection',{}]]){
+    const d=await capabilityMount(options);
+    assert.doesNotMatch(d.root.innerHTML,/data-evidence=/,`${name}: no evidence form`);
+    assert.match(d.root.innerHTML,/data-clear="dirty"[^>]* disabled/,`${name}: the legacy button is disabled`);
+    submitEvidenceEvent(d);clickLegacy(d);await tick();await tick();
+    assert.deepEqual(d.calls,{evidence:0,legacy:0},`${name}: no command was sent`);
+    assert.doesNotMatch(d.root.innerHTML,/evidence-error-dirty/,`${name}: and no local error was invented`);
+    d.view.dispose();
+  }
+});
+test('clearance needs inventory:read or equipment:write together with a matching configured role; lifecycle controls need equipment:write',async()=>{
+  const full=await capabilityMount({permissions:['inventory:read','equipment:write']});
+  assert.match(full.root.innerHTML,/<form data-evidence="dirty"/);assert.doesNotMatch(full.root.innerHTML,/data-clear="dirty"[^>]* disabled/);
+  submitEvidenceEvent(full);await tick();await tick();assert.equal(full.calls.evidence,1);
+  clickLegacy(full);await tick();await tick();assert.equal(full.calls.legacy,1,'positive control: the legacy click helper really reaches the handler');
+  full.view.dispose();
+  const readOnlyMember=await capabilityMount({permissions:['inventory:read']});      // e.g. a viewer configured as the clearing role
+  assert.match(readOnlyMember.root.innerHTML,/<form data-evidence="dirty"/,'a configured clearer without write capability can clear (the server route needs only inventory:read)');
+  assert.match(readOnlyMember.root.innerHTML,/data-action="dispatch"[^>]* disabled/,'but lifecycle commands stay disabled');
+  readOnlyMember.view.dispose();
+  const writeOnly=await capabilityMount({permissions:['equipment:write']});          // the historical mutation gate also allows clearing (with a matching role)
+  assert.match(writeOnly.root.innerHTML,/<form data-evidence="dirty"/);assert.doesNotMatch(writeOnly.root.innerHTML,/data-action="dispatch"[^>]* disabled/,'lifecycle controls are enabled by equipment:write');
+  submitEvidenceEvent(writeOnly);await tick();await tick();assert.equal(writeOnly.calls.evidence,1);writeOnly.view.dispose();
+  const unrelated=await capabilityMount({permissions:['audit:read','supplies:write']});     // neither clearance capability is advertised
+  assert.doesNotMatch(unrelated.root.innerHTML,/data-evidence=/);assert.match(unrelated.root.innerHTML,/data-clear="dirty"[^>]* disabled/);
+  submitEvidenceEvent(unrelated);clickLegacy(unrelated);await tick();assert.deepEqual(unrelated.calls,{evidence:0,legacy:0});unrelated.view.dispose();
+  const wrongRole=await capabilityMount({permissions:['inventory:read','equipment:write'],role:'someone-else'});
+  assert.doesNotMatch(wrongRole.root.innerHTML,/data-evidence=/,'a matching capability is not enough without the configured role');wrongRole.view.dispose();
+});
+test('changing the projection through resetAccess takes effect: sufficient becomes read-only, and back',async()=>{
+  const d=await capabilityMount({permissions:['inventory:read','equipment:write']});
+  assert.match(d.root.innerHTML,/<form data-evidence="dirty"/);
+  d.view.resetAccess({permissions:[],role:'cleaner'});assert.equal(d.view.session.state.phase,'idle');
+  await d.view.session.load('r');await tick();
+  assert.doesNotMatch(d.root.innerHTML,/data-evidence=/);submitEvidenceEvent(d);clickLegacy(d);await tick();assert.deepEqual(d.calls,{evidence:0,legacy:0});
+  d.view.dispose();
+});
