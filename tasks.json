@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 317,
-  "updatedAt": "2026-11-10T16:21:24.503Z",
+  "revision": 318,
+  "updatedAt": "2026-11-10T16:36:12.487Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2232,6 +2232,13 @@
       "command": "unblock",
       "agent": "wil-pr-coordinator",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:36:12.487Z",
+      "taskId": "SV-011",
+      "command": "block",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2577,7 +2584,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2596,17 +2603,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv011-20261106-maintenance",
-        "owner": "wil",
-        "leaseId": "003e464d-87b0-4a31-9fea-133c76699c15",
-        "claimedAt": "2026-11-10T16:04:09.080Z",
-        "expiresAt": "2026-11-10T18:06:34.210Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T16:13:29.318Z",
-      "blockedReason": null,
+      "blockedReason": "Local-only compatibility merge 53c49b9420db488f40635f2503f048520a98c548 combines frozen PR22 984e6aec255aa6c880442a8268191360611efd15 and exact main80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79 cleanly; all maintenance and transferred host blobs unchanged. 45 source/DOM/mock tests, 10 static import/export contracts and npm run check pass. Source-only compatibility finding: SV008-owned apps/web/tests/api-fixture.mjs:27-30 invokes now-idempotent seed.sql twice then assumes second organization exists; coordinator/SV008 must reconcile fixture. No SQL/runtime reproduction or combined mounted acceptance run; root/PGlite/native/listener tests held. Candidate remains local; source publication and PR merge decision held. Original checkout/branch remains clean at published984; no runtime restarted.",
       "reviewNote": "User approved finishing maintenance first against merged auth repair on main80a9041a. Original owner retains all maintenance paths and must preserve published984e6aec, prior runtime receipts and transferred shared-file ownership. Prepare a separate LOCAL current-main compatibility branch, verify normal claim before edits, run source-only non-provisioning checks. No fixture/roles/tokens/listeners/native or ended-cycle restart, source publication, merge or deployment.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements.",
