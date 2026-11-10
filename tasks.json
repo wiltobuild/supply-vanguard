@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 358,
-  "updatedAt": "2026-11-10T17:45:33.958Z",
+  "revision": 359,
+  "updatedAt": "2026-11-10T17:45:43.380Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2532,6 +2532,13 @@
       "command": "submit",
       "agent": "cheich-sv032-discovery-repair-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T17:45:43.380Z",
+      "taskId": "SV-032",
+      "command": "complete",
+      "agent": "cheich-sv032-discovery-repair-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3714,7 +3721,7 @@
     {
       "id": "SV-032",
       "title": "Repair discovery refresh settlement, count truthfulness and focus",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-030"
@@ -3750,7 +3757,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/31",
       "submittedBy": "cheich-sv032-discovery-repair-01",
-      "submittedAt": "2026-11-10T17:45:33.958Z"
+      "submittedAt": "2026-11-10T17:45:33.958Z",
+      "completedAt": "2026-11-10T17:45:43.380Z",
+      "completedBy": "cheich-sv032-discovery-repair-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/31",
+        "mergeCommit": "09594323581da0cf236478ae9924e9779310518a",
+        "mergedAt": "2026-11-10T17:45:37Z"
+      }
     }
   ]
 }
