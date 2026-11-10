@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 396,
-  "updatedAt": "2026-11-10T19:19:39.668Z",
+  "revision": 397,
+  "updatedAt": "2026-11-10T19:26:37.986Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2801,6 +2801,13 @@
       "command": "claim",
       "agent": "cheich-sv034-evidence-races-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T19:26:37.986Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3340,7 +3347,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3362,8 +3369,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "LOCAL residual source repair frozen 2f013fe998c28db7d74f45b767316f31bdcb3c14 tree4441c3db25553800667e7ea190413a1bded0ffc4 in task-18/sv017-platform-prep on local/sv017-platform-residual-repair, parenteb43. Five-file clean diff;16 focused checks passed0skips, including2 static and1 explicitly logical ownership model; unchanged45 baseline not rerun. OwnPipe clears raw owner before FileStream and disposes SAME SafeFileHandle on constructor failure. RPC distinguishes expected closure from sticky protocol failure, gates final acceptance on settled health, handles stdout/stderr errors before decoding and promptly rejects pending calls with redaction. Exact Git root, full parent/new tree IDs, old ten-file blob mapping and full raw/blob hashes retained in sv017-platform-residual-source-2f013fe.json. Frozeneb43 branch/receipt/diff,13 historical receipts,3 wrappers and b549/EA/e506 source remain unchanged. Independent residual source re-review pending. Initial PowerShell executable hash-to-image-load lease remains unresolved; minimal missing capability is an already-trusted host launcher holding same-handle hash/identity leases through initial creation. Profiles unarmed; actual C# compile/constructor failures and ALL native/runtime/ACL/secret/SQL/socket operations UNRUN. No publication/merge/deployment. Fresh bounded runtime authorization still required. Clear matching lease.",
-      "reviewNote": "Authorized original-owner source-only repair of residual pipe ownership and terminal transport-health review findings; no runtime"
+      "blockedReason": null,
+      "reviewNote": "Authorized narrow source-only correction for disposal ACK buffered after process exit; no runtime"
     },
     {
       "id": "SV-018",
