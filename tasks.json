@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 360,
-  "updatedAt": "2026-11-10T17:47:13.643Z",
+  "revision": 361,
+  "updatedAt": "2026-11-10T17:49:02.963Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2546,6 +2546,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T17:49:02.963Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3075,7 +3082,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3093,17 +3100,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "63c7f029-8173-4b9d-8b7f-39eb15a1e409",
-        "claimedAt": "2026-11-10T17:40:21.243Z",
-        "expiresAt": "2026-11-10T19:47:13.643Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "Independent source-only adapter/fixture/grant plan frozen LOCAL b4409fec6145512d6779bd21ae9de3c1c2fec547 in task18/sv017-next-prep;18 pure mock tests pass, clean source, plan unarmed and candidateVerifiedfalse. No runtime/credentials/grants/SQL/sockets executed. Exact e506 harness isolated Git checkout succeeded. Candidate b549 clone succeeded but checkout unable to read tree; action-specific original source cat-file read REJECTED by auto-review due earlier served task9 checkout restriction. Stopped that target without fetch/alternate route/retry. Candidate byte binding and future privileged host wiring remain unproven; parent must clarify exact source access before completion. Frozen EA,29-test wrapper/observer and13 historical JSON artifacts preserved. New runtime still needs fresh bounded approval; expired cycle unchanged. Clear matching lease; no publication/merge/deploy.",
       "reviewNote": "Coordinator authorized original-owner source-only adapter and exact candidate-binding preparation; runtime remains held."
     },
     {
