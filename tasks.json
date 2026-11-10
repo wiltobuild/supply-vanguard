@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 405,
-  "updatedAt": "2026-11-10T19:40:23.245Z",
+  "revision": 406,
+  "updatedAt": "2026-11-10T19:40:25.960Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2865,6 +2865,13 @@
       "command": "claim",
       "agent": "cheich-sv034-evidence-races-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T19:40:25.960Z",
+      "taskId": "SV-034",
+      "command": "submit",
+      "agent": "cheich-sv034-evidence-races-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4165,7 +4172,7 @@
     {
       "id": "SV-034",
       "title": "Prepare native hold-evidence concurrency acceptance harness",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-033"
@@ -4196,13 +4203,10 @@
         "Current original SV017 owner is implementing Windows capabilities for frozen b549 with 11 migrations/32 tables, deliberately excluding evidence0002/0003. Do not edit that owner or expand its frozen runtime plan. Existing SV022 native harness is a separate frozen request-lifecycle dependency.",
         "Parent owns external Slack assignment, source-sharing and eventual publication decisions. Return the confirmed ID/base/scope/claim route through parent, with no duplicate Slack. Authoring this harness does not authorize executing or publishing it or declaring integrated/pilot acceptance."
       ],
-      "claim": {
-        "agent": "cheich-sv034-evidence-races-01",
-        "owner": "cheich",
-        "leaseId": "440763c5-8d1b-4542-acd7-11cc7a3d0c28",
-        "claimedAt": "2026-11-10T19:40:23.245Z",
-        "expiresAt": "2026-11-10T21:40:23.245Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/35",
+      "submittedBy": "cheich-sv034-evidence-races-01",
+      "submittedAt": "2026-11-10T19:40:25.960Z"
     },
     {
       "id": "SV-035",
