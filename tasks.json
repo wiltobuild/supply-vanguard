@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 406,
-  "updatedAt": "2026-11-10T19:40:25.960Z",
+  "revision": 407,
+  "updatedAt": "2026-11-10T19:40:35.494Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2872,6 +2872,13 @@
       "command": "submit",
       "agent": "cheich-sv034-evidence-races-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T19:40:35.494Z",
+      "taskId": "SV-034",
+      "command": "complete",
+      "agent": "cheich-sv034-evidence-races-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4172,7 +4179,7 @@
     {
       "id": "SV-034",
       "title": "Prepare native hold-evidence concurrency acceptance harness",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-033"
@@ -4206,7 +4213,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/35",
       "submittedBy": "cheich-sv034-evidence-races-01",
-      "submittedAt": "2026-11-10T19:40:25.960Z"
+      "submittedAt": "2026-11-10T19:40:25.960Z",
+      "completedAt": "2026-11-10T19:40:35.494Z",
+      "completedBy": "cheich-sv034-evidence-races-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/35",
+        "mergeCommit": "11d3344fe3dd79941c39c3ef224ec2381fa04374",
+        "mergedAt": "2026-11-10T19:40:29Z"
+      }
     },
     {
       "id": "SV-035",
