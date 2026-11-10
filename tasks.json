@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 270,
-  "updatedAt": "2026-11-10T00:32:21.599Z",
+  "revision": 271,
+  "updatedAt": "2026-11-10T00:33:16.762Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1901,6 +1901,13 @@
       "command": "unblock",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:33:16.762Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2426,7 +2433,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2444,17 +2451,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "90cccda0-3368-439b-974a-e749ef8186e0",
-        "claimedAt": "2026-11-10T00:09:36.883Z",
-        "expiresAt": "2026-11-10T02:31:17.088Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "LOCAL ONLY: frozen 084dfb2bcdc79bcf7c73b4ed7fd797ee78b5dbc4 on local/sv-017-check-in-recovery-20261109; base a98511d71eb6f875f5439a4cf2b00c00b73afb72 has exact parents1557b4f5 and dd8f1111 (maintenance984e6aec ancestor). Authored13 ops files +518/-14;44 scoped tests, explicit9 migrations/27 tables, check/diff pass. Non-ops blobs identical to fetched dd8f1111; PR17/22 heads and8/26 native receipts preserved. New SQL/probes are unrun. Await independent local review and separately authorized final inventory/runtime scope; lifecycle/replenishment11/32 excluded. Final external git-C source HEAD read was Permission denied and stopped without retry; own-clone immutable source proof retained. No publication, PR submit, feature merge, deployment or new runtime.",
       "reviewNote": "Authorized LOCAL combined acceptance follow-up only: preserve published PR17 at 1557b4f5 and frozen SV008 dd8f1111. Original ops owner may normally claim and build a separate unpublished combined branch with exact dependency commits, then extend ops-only recovery inventory/fixtures/integrity/protection to nine migrations and27 tables including check_in_receipt. No shared/API/migration edits, publication, merge/deployment or new runtime. Preserve existing eight-migration native receipt; later9/27 native scope needs coordinator clearance after local review."
     },
     {
