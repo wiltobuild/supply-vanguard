@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 256,
-  "updatedAt": "2026-11-10T00:09:36.883Z",
+  "revision": 257,
+  "updatedAt": "2026-11-10T00:13:16.810Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1801,6 +1801,14 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-10T00:13:16.810Z",
+      "taskId": "SV-027",
+      "command": "migration-add-task",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Authorized bounded request/holds/returns UI module registration; completed-contract dependencies, explicit SV-022 and shared-host integration gates; preserve all existing claims/scopes/history and publication/access holds"
     }
   ],
   "tasks": [
@@ -2733,6 +2741,50 @@
         "mergeCommit": "f18d8967895b2c9ae52fea96a26f80e821640233",
         "mergedAt": "2026-11-05T23:03:28Z"
       }
+    },
+    {
+      "id": "SV-027",
+      "title": "Build task-local request, holds and returns UI",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-007",
+        "SV-020",
+        "SV-021"
+      ],
+      "scope": [
+        "apps/web/requests",
+        "apps/web/tests/request-lifecycle.test.mjs"
+      ],
+      "acceptance": [
+        "Build an accessible request-to-return UI module using injected, tenant-scoped authenticated transport contracts. Keep all data synthetic and preserve the existing generated ward/assets. Do not require patient identifiers.",
+        "Show per-item reservation, dispatch, acknowledgement and failed handoff states; derive request summaries from item states and quantities. Confirm pre-dispatch cancellation is not in transit before releasing a reservation. Post-dispatch cancellation ends remaining demand while retaining assignment until return or reconciliation.",
+        "Represent dirty returns, missing/overdue items and reconciliation without silently freeing equipment. Display independent DIRTY, FAULT, MAINT. and UNKNOWN holds; any active hold blocks availability/assignment, and clearing one cannot clear another.",
+        "Present hold clearance only when the supplied authorization/policy contract permits that kind and actor. Preserve actor, time and evidence. Invent no business roles, clearance policy, deadlines, overdue thresholds or administrator exceptions.",
+        "Provide explicit loading, empty, denied, conflict, uncertain-write/retry and success states. Preserve safe drafts and idempotency keys where appropriate; keep keyboard/focus, narrow layout, repeated mounting and session-loss cleanup usable.",
+        "This task permits parallel task-local module work against completed request/hold/client contracts; it does not bypass SV-022. End-to-end acceptance is gated on the frozen SV-022 lifecycle API contract, actual API integration and an explicit later shared-host ownership handoff. Do not claim a synthetic adapter is a mounted shared-app/backend pass or mark the journey complete while those gates remain open."
+      ],
+      "verification": [
+        "Task-local UI/client/DOM regressions for partial fulfillment, cancellation before/after dispatch, dirty/missing returns, stacked holds, permissions, conflicts, retry and cleanup using authorized tooling; disclose unrun stages.",
+        "Keyboard/focus and narrow-layout checks when an authorized browser surface is available. No new listener/fixture/role/token/runtime setup or retry of a prior denial without separate applicable clearance.",
+        "npm run check and permitted task-specific checks. Preserve the existing denied root fixture and unavailable dependency limits rather than rerouting or concealing them.",
+        "Freeze a tested local commit and clear the normal lease with a precise blocker if publication or integration remains held. Do not submit an unpublished head or fabricate a merged dependency."
+      ],
+      "sourceNotes": [
+        "User authorized agents for all remaining Supply Vanguard work on 2026-11-10: \"get agents to get all of this done\". The parent explicitly requested registration of this bounded UI scope, using completed contracts and an SV-022 integration gate.",
+        "Maintained PRD excerpts were browser-verified by the parent and relayed as requirements, not delivered behavior: \"Reserve, dispatch and acknowledge or fail each assigned item separately. Request summaries are derived from item states and quantities.\"",
+        "Parent-verified PRD: \"Cancel an unneeded line before dispatch and release its claim or reservation only after confirming it is not in transit. After dispatch, cancellation ends remaining demand but retains the assignment until return or reconciliation.\"",
+        "Parent-verified PRD: \"Record failed handoffs, missing or overdue items and reconciliation without silently freeing an item.\" \"See independent DIRTY FAULT MAINT. UNKNOWN holds; any active hold blocks assignment.\" \"Only the simulated authorized role for a hold can record its clearance, including actor, time and evidence. Clearing one hold does not clear another.\""
+      ],
+      "coordinationNotes": [
+        "Registration assigns no owner. The parent will select one separate UI builder, which must refresh the live board and confirm a normal unique claim before edits. Do not compete with SV-022 backend owner wil-vale-sv022-20261110-safe-a72c.",
+        "SV-022 exclusively owns its task-local services/api/requests, packages/domain/requests lifecycle work and root tests/request-lifecycle.test.mjs. That root wrapper is different from this task's apps/web/tests/request-lifecycle.test.mjs. UI code must not edit backend/domain/holds/auth/core/root dependency/loader/CI paths.",
+        "SV-008 retains apps/web/index.html, apps/web/serve.mjs, apps/web/README.md, apps/web/src/app.js, apps/web/src/equipment-api.js, apps/web/tests/api-fixture.mjs and apps/web/tests/check-in-integration.test.mjs, plus its two check-in directories. This task receives none of those shared paths. Later mounting/navigation/API dispatch changes need explicit coordinated transfer after the existing owner is idle and dependency state is reconciled.",
+        "SV-011 retains apps/web/maintenance, services/api/maintenance and apps/web/tests/maintenance-integration.test.mjs. SV-010 retains supplies/replenishment. SV-017 retains ops-only combined recovery coverage; SV-019 retains its auth/bootstrap/root/CI reservations and Linux access block.",
+        "Current approval is local implementation only. No feature publication, new PR, metadata/PR-creation 403 retry, merge, deployment, production data, persistent access/security configuration, business-policy invention or denied filesystem/native/CIM retry. A task-board registration is not feature publication authority.",
+        "Use the frozen SV-022 contract when available and coordinate adapter shapes through the sole coordinator. Do not copy unreviewed implementation or mutate another owner's checkout. No integration/E2E/pilot or operational sign-off is implied by module tests."
+      ],
+      "claim": null
     }
   ]
 }
