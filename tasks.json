@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 363,
-  "updatedAt": "2026-11-10T17:52:21.851Z",
+  "revision": 364,
+  "updatedAt": "2026-11-10T17:54:22.470Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2568,6 +2568,13 @@
       "command": "claim",
       "agent": "cheich-sv033-hold-evidence-repair-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T17:54:22.470Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3097,7 +3104,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3119,8 +3126,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "Independent source-only adapter/fixture/grant plan frozen LOCAL b4409fec6145512d6779bd21ae9de3c1c2fec547 in task18/sv017-next-prep;18 pure mock tests pass, clean source, plan unarmed and candidateVerifiedfalse. No runtime/credentials/grants/SQL/sockets executed. Exact e506 harness isolated Git checkout succeeded. Candidate b549 clone succeeded but checkout unable to read tree; action-specific original source cat-file read REJECTED by auto-review due earlier served task9 checkout restriction. Stopped that target without fetch/alternate route/retry. Candidate byte binding and future privileged host wiring remain unproven; parent must clarify exact source access before completion. Frozen EA,29-test wrapper/observer and13 historical JSON artifacts preserved. New runtime still needs fresh bounded approval; expired cycle unchanged. Clear matching lease; no publication/merge/deploy.",
-      "reviewNote": "Coordinator authorized original-owner source-only adapter and exact candidate-binding preparation; runtime remains held."
+      "blockedReason": null,
+      "reviewNote": "Coordinator authorized independent source-only host-controller wiring; candidate remains unverified and runtime held."
     },
     {
       "id": "SV-018",
