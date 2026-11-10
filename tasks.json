@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 339,
-  "updatedAt": "2026-11-10T16:55:54.976Z",
+  "revision": 340,
+  "updatedAt": "2026-11-10T16:56:42.603Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2388,6 +2388,13 @@
       "command": "release",
       "agent": "cheich-sv030-discovery-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:56:42.603Z",
+      "taskId": "SV-008",
+      "command": "unblock",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2630,7 +2637,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -2662,8 +2669,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": "Source-only additive current-main candidate frozen clean at058383df2f79ef1b6f98362e3bee35c5f1040079 on local/sv008-coherent-maina443-20261110. Exact parents e176aa3a69b22d404df67c14e14f0706a1800e68 and public maina4438dbf709c0457d575bc9d0de1d0e5f96eed04. Only four added tools/benchmarks files differ frome176; all are byte-identical to publica443 and reviewed sourcee4c6441a3546b4860e21f489c9fe6d186f3fa521. Every other path including fixture repair/backend/UI/replenishment/ops/maintenance/acceptance runner unchanged. Syntax-only parse and diff audits passed; unchanged pure tests were not rerun and benchmark was not executed. Original b4f01aa/e176/065/dd8 refs and public heads preserved. Normal unblock335/claim336/renew337; now clearing lease pending coordinator source review/publication decisions. No SQL/fixture/roles/tokens/listeners/browser/native or ended-cycle restart, benchmark fixes, feature publication, PR metadata, remote feature merge or deployment.",
-      "reviewNote": "Authorized source-only additive composition of exact public maina4438dbf709c0457d575bc9d0de1d0e5f96eed04 into separate local branch from frozen e176aa3a69b22d404df67c14e14f0706a1800e68; benchmark files inherited byte-for-byte only, no benchmark execution or implementation/runtime/publication changes.",
+      "blockedReason": null,
+      "reviewNote": "Authorized final source-only additive merge of exact published descendant7c4c68d72fc89864eab97631fcec5bbdbc2b0736 into retained local058383df candidate; preserve completed a443 merge and all frozen refs, benchmark blobs inherited only, no authoring/runtime/publication.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
         "Authorized LOCAL application composition: same original SV-008 owner after normal unblock/claim, on a separate local branch. Preserve frozen dd8f1111bb8ca9c28dbbf8a1f963f42d9ebe7e42 publication target and all public heads. Consume immutable SV-022 7348eb66abdd90dc68cd8745c6920e66465bfd53 and replenishment bcfd05ceb49c08c3155e99bec82aa93726ab8894 only as local dependencies. UI ec8a5436000f08e09dd8d246e81ba6e00afe4367 is held for material request-identity, focus and async-conflict findings: do not import or accept it; wait for the corrected frozen SV-027 commit and independent review. Existing owned shared paths and services/api/check-in host may compose existing request/holds/replenishment handlers through one authorization, add navigation/mount/session lifecycle and canonical refresh, and add apps/web/tests/request-lifecycle-integration.test.mjs and apps/web/tests/replenishment-integration.test.mjs. SV-022 keeps backend/domain/root-wrapper files; SV-027 keeps apps/web/requests and apps/web/tests/request-lifecycle.test.mjs; SV-010 keeps apps/web/supplies and services/api/replenishment; SV-011 keeps maintenance modules/test; ops remains with SV-017. Never edit those inherited dependency files. No new fixture/credential/role/grant provisioning, listener/native/browser denial retry, feature publication, PR creation or metadata retry, merge or deployment. Local dependency composition is not a workaround for publication/403 holds. Run only permitted local checks and disclose unrun mounted/browser/native gates. No hold-clearance observation field or invented policies/roles/thresholds; retain the stated acceptance limitation. Original ops owner must later reconcile lifecycle plus replenishment into final explicit 11-migration/32-table coverage; 9/27 and historical 8/26 receipts remain distinct.",
