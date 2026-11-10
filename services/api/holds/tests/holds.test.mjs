@@ -40,6 +40,7 @@ before(async()=>{
  await db.exec(sql('../../auth/migrations/0001_auth.up.sql'));
  await db.exec(sql('../../requests/migrations/0001_requests.up.sql'));
  await db.exec(sql('../migrations/0001_holds.up.sql'));
+ await db.exec(sql('../migrations/0002_hold_clearance_evidence.up.sql'));   // SV-031: the shapes below must still work with the evidence tables present
  await db.exec(sql('../../db/seed/seed.sql'));
  orgA=(await db.query("SELECT id FROM organization WHERE name LIKE 'Demo%'")).rows[0].id;
  await db.exec(`
@@ -54,6 +55,8 @@ before(async()=>{
   GRANT USAGE ON SCHEMA public TO sv_auth_test_runtime;
   GRANT SELECT, INSERT, UPDATE, DELETE ON organization, facility, ward, location, equipment_type, equipment, equipment_observation, equipment_event, request, request_item, item_assignment, request_event, equipment_hold, hold_clearance_rule TO sv_auth_test_runtime;
   GRANT SELECT ON auth_user, auth_membership TO sv_auth_test_runtime;
+  GRANT SELECT, INSERT ON hold_clearance_evidence, hold_clearance_receipt TO sv_auth_test_runtime;
+  GRANT EXECUTE ON FUNCTION clear_equipment_hold_with_evidence(uuid, text, text, text, timestamptz, text) TO sv_auth_test_runtime;
   GRANT EXECUTE ON FUNCTION auth_resolve_identity(text, text), claim_request_item(uuid, integer, uuid, integer, text), place_equipment_hold(uuid, text, text, text), clear_equipment_hold(uuid, text) TO sv_auth_test_runtime;`);
  orgB=(await db.query("SELECT id FROM organization WHERE name = 'Other org'")).rows[0].id;
  const people=[['viewer','viewer',orgA],['operator','operator',orgA],['supply_manager','supply_manager',orgA],['equipment_manager','equipment_manager',orgA],['admin','admin',orgA],['outsider','admin',orgB]];
@@ -159,8 +162,13 @@ test('holds are tenant-scoped',{skip},async()=>{
 });
 test('the migration rolls back cleanly and can be reapplied',{skip},async()=>{
  await owner('SELECT 1');
+ await db.exec(sql('../migrations/0002_hold_clearance_evidence.down.sql'));
+ assert.equal((await owner("SELECT to_regclass('public.hold_clearance_evidence') AS t")).rows[0].t,null);
+ assert.ok((await owner("SELECT to_regclass('public.equipment_hold') AS t")).rows[0].t,'rolling back 0002 leaves the holds table alone');
  await db.exec(sql('../migrations/0001_holds.down.sql'));
  assert.equal((await owner("SELECT to_regclass('public.equipment_hold') AS t")).rows[0].t,null);
  await db.exec(sql('../migrations/0001_holds.up.sql'));
+ await db.exec(sql('../migrations/0002_hold_clearance_evidence.up.sql'));
  assert.ok((await owner("SELECT to_regclass('public.equipment_hold') AS t")).rows[0].t);
+ assert.ok((await owner("SELECT to_regclass('public.hold_clearance_evidence') AS t")).rows[0].t);
 });
