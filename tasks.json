@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 264,
-  "updatedAt": "2026-11-10T00:26:05.795Z",
+  "revision": 265,
+  "updatedAt": "2026-11-10T00:26:12.746Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1858,6 +1858,13 @@
       "command": "unblock",
       "agent": "Wil-request-ui-20261110-b83f",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:26:12.746Z",
+      "taskId": "SV-027",
+      "command": "claim",
+      "agent": "Wil-request-ui-20261110-b83f",
+      "owner": "Wil"
     }
   ],
   "tasks": [
@@ -2789,7 +2796,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -2828,7 +2835,13 @@
         "Current approval is local implementation only. No feature publication, new PR, metadata/PR-creation 403 retry, merge, deployment, production data, persistent access/security configuration, business-policy invention or denied filesystem/native/CIM retry. A task-board registration is not feature publication authority.",
         "Use the frozen SV-022 contract when available and coordinate adapter shapes through the sole coordinator. Do not copy unreviewed implementation or mutate another owner's checkout. No integration/E2E/pilot or operational sign-off is implied by module tests."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "Wil-request-ui-20261110-b83f",
+        "owner": "Wil",
+        "leaseId": "348931f6-4bbd-441c-8516-0146b8767337",
+        "claimedAt": "2026-11-10T00:26:12.746Z",
+        "expiresAt": "2026-11-10T02:26:12.746Z"
+      },
       "blockedReason": null,
       "reviewNote": "Resume same-owner local repair of independently reviewed UI defects; publication and integration remain held."
     }
