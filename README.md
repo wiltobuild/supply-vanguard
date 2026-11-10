@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 309. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 310. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -20,7 +20,7 @@ Revision 309. Live state is on the task-board branch. Use npm run board -- claim
 | SV-013 Provider-neutral observation ingestion simulator | done | — | — | SV-001, SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/10) |
 | SV-014 Location confidence and RTLS adapter boundary | done | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/18) |
 | SV-015 Validate ward reference geometry | blocked | — | — | SV-002 | packages/scene/references |
-| SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e, tools/benchmarks |
+| SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e |
 | SV-017 Deployment and operational readiness | blocked | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/17) |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
 | SV-019 Repair auth bootstrap and clean test setup | done | — | — | SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/26) |
@@ -32,3 +32,4 @@ Revision 309. Live state is on the task-board branch. Use npm run board -- claim
 | SV-025 Build illustrative pediatric intensive care ward (PICU) | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/20) |
 | SV-026 Build illustrative pediatric cardiac step-down ward (PCU) | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/21) |
 | SV-027 Build task-local request, holds and returns UI | blocked | — | — | SV-007, SV-020, SV-021 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
+| SV-028 Prepare read-only performance benchmark tooling | ready | — | — | SV-001 | tools/benchmarks |

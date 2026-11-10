@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 309,
-  "updatedAt": "2026-11-10T16:06:34.210Z",
+  "revision": 310,
+  "updatedAt": "2026-11-10T16:09:02.010Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2174,6 +2174,14 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:09:02.010Z",
+      "taskId": "SV-028",
+      "command": "migration-split-benchmark-preparation",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "User-authorized ready source-only benchmark preparation for Cheich; transfer tools/benchmarks from unclaimed SV-016, preserve all final acceptance dependencies, existing owners, leases, states and history; no feature publication or runtime authority"
     }
   ],
   "tasks": [
@@ -2689,8 +2697,7 @@
         "SV-014"
       ],
       "scope": [
-        "tests/e2e",
-        "tools/benchmarks"
+        "tests/e2e"
       ],
       "acceptance": [
         "Find/move/check-in/replenish journeys; two-client conflicts and tenant isolation; browser and accessibility report; performance budgets measured."
@@ -3155,6 +3162,42 @@
       "claim": null,
       "blockedReason": "Reviewed local-only commit f29a38f17931fdc095e197d5723d565faf6ef273 fixes all three UI findings; independent recheck passed, 23 focused tests and npm run check pass. Publication not authorized. Shared-host mount requires explicit SV-008 ownership handoff and verified SV-022 backend integration. Browser keyboard/layout/screenshots and backend E2E unrun. Root npm test NOT RUN: existing aggregate imports restricted Git fixtures, runtime roles/listeners and native clusters. Hold evidence acceptance remains unresolved; actor/time provenance is present. No PR, merge, deploy or integrated completion claimed.",
       "reviewNote": "Resume same-owner local repair of independently reviewed UI defects; publication and integration remain held."
+    },
+    {
+      "id": "SV-028",
+      "title": "Prepare read-only performance benchmark tooling",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-001"
+      ],
+      "scope": [
+        "tools/benchmarks"
+      ],
+      "acceptance": [
+        "Deliver a reusable runnable read-only API benchmark runner, deterministic tests and usage documentation exclusively under tools/benchmarks. Base implementation on public main 80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79. Intended implementation owner: Cheich after his own normal confirmed claim.",
+        "Accept explicitly supplied allowlisted GET endpoints only; bound samples, concurrency, total workload and per-request timeouts. Reject mutating methods and unsupported destinations before transport. Separate warmup samples from measured results.",
+        "Use monotonic elapsed timing and document percentile/sample conventions. Report sample counts, p50/p95/p99, errors and timeouts without implying successful responses when failures occurred. Redact credentials, headers, query values and response bodies from summaries and errors.",
+        "Use injected/mock transport and clock tests for bounds, timeout/error paths, warmup separation, percentile edge cases and secret-safe output. Do not add root dependencies or alter shared app, backend, CI or existing owners files.",
+        "Document that no real measurements have been made by this source-only preparation. Later measurements require a specifically approved exact candidate and runtime. Preserve SV-016 final dependencies and browser, accessibility, performance and integration acceptance gates."
+      ],
+      "verification": [
+        "Run deterministic task-local tests without live network, servers, fixtures, databases, roles, tokens or credential persistence; include the exact invocation and local commit in delivery.",
+        "Check source syntax and applicable existing static checks. Do not invoke aggregate runtime/fixture suites or prior denied operations. No production performance claim or invented latency result.",
+        "Freeze a tested local patch/commit and normally block or release with the exact remaining publication/integration decision. No push, PR creation, merge, deployment or live workload is authorized by this registration."
+      ],
+      "coordinationNotes": [
+        "Coordinated split on 2026-11-10: tools/benchmarks moves from unclaimed SV-016 to this independent preparation task. SV-016 retains tests/e2e and all existing dependencies and final acceptance unchanged; it later consumes this tooling without implying those gates passed.",
+        "Cheich has been assigned standalone local preparation by the parent via Slack. Registration does not proxy-claim for him. Refresh the live board in his own checkout, then npm run board -- claim SV-028 --owner Cheich --agent cheich-sv028-benchmark-UNIQUE; wait for exit 0 before applying changes under the registered repository scope.",
+        "No overlapping implementation ownership: lifecycle backend, requests UI, replenishment, shared host, maintenance, ops and references stay with their retained owners. No new SV-022 implementation, native/runtime setup, fixture/listener/token/role provisioning, persistent access or retry/reroute of GitHub 403, filesystem or CIM denials.",
+        "User directed useful work for Cheich and ongoing coordinated plan/task division. This registration publishes task metadata only, not feature code or benchmark results. Source publication and later real measurement require their separate applicable authorization."
+      ],
+      "sourceNotes": [
+        "User: make sure to give cheich some work, he needs stuff to do.",
+        "User: make sure to give him work as he asks, if we dont have anything come up with stuff that would be good for the app and updae the plan to include it then divide it out.",
+        "Stable implementation base: 80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79. The parent owns Slack communication; coordinator must return confirmed task and claim instructions, not send a duplicate assignment."
+      ],
+      "claim": null
     }
   ]
 }
