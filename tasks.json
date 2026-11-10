@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 350,
-  "updatedAt": "2026-11-10T17:32:55.085Z",
+  "revision": 351,
+  "updatedAt": "2026-11-10T17:33:23.940Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2476,6 +2476,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Confirmed independent discovery model/DOM findings; bounded original-author repair after current claim, preserve merged history, ordered queue, all other scopes and actual integration/runtime/publication gates"
+    },
+    {
+      "at": "2026-11-10T17:33:23.940Z",
+      "taskId": "SV-031",
+      "command": "submit",
+      "agent": "cheich-sv031-hold-evidence-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3600,7 +3607,7 @@
     {
       "id": "SV-031",
       "title": "Complete hold-clearance evidence contract and regressions",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-001",
@@ -3637,13 +3644,10 @@
         "Coordinate the original ops owner only after migration/table inventory freezes; old 8/26 and 11/32 receipts do not certify the new schema. No benchmark/discovery implementation or source publication, GitHub403 retry, security/identity change, denied filesystem/CIM reroute or restart of the ended runtime cycle.",
         "Source owner of completed SV021 is Cheich's prior holds lane. Its merged state/history is preserved; this new bounded task captures the outstanding evidence contract. Final SV016 dependencies and integrated acceptance remain unchanged."
       ],
-      "claim": {
-        "agent": "cheich-sv031-hold-evidence-01",
-        "owner": "cheich",
-        "leaseId": "cf7ad492-79dc-41c1-b110-e1348410ae38",
-        "claimedAt": "2026-11-10T17:23:40.211Z",
-        "expiresAt": "2026-11-10T19:23:40.211Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/30",
+      "submittedBy": "cheich-sv031-hold-evidence-01",
+      "submittedAt": "2026-11-10T17:33:23.940Z"
     },
     {
       "id": "SV-032",
