@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 411,
-  "updatedAt": "2026-11-10T21:50:29.197Z",
+  "revision": 412,
+  "updatedAt": "2026-11-10T21:50:47.749Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2907,6 +2907,13 @@
       "command": "submit",
       "agent": "cheich-sv035-request-ui-ownership-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T21:50:47.749Z",
+      "taskId": "SV-035",
+      "command": "complete",
+      "agent": "cheich-sv035-request-ui-ownership-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4253,7 +4260,7 @@
     {
       "id": "SV-035",
       "title": "Repair request UI replacement ownership and read-only capability controls",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-027"
@@ -4283,7 +4290,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/36",
       "submittedBy": "cheich-sv035-request-ui-ownership-01",
-      "submittedAt": "2026-11-10T21:50:29.197Z"
+      "submittedAt": "2026-11-10T21:50:29.197Z",
+      "completedAt": "2026-11-10T21:50:47.749Z",
+      "completedBy": "cheich-sv035-request-ui-ownership-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/36",
+        "mergeCommit": "5e06b07a973d3f54874aee9a058aec63419743fd",
+        "mergedAt": "2026-11-10T21:50:33Z"
+      }
     }
   ]
 }
