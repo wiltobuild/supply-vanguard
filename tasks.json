@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 395,
-  "updatedAt": "2026-11-10T19:18:08.268Z",
+  "revision": 396,
+  "updatedAt": "2026-11-10T19:19:39.668Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2794,6 +2794,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T19:19:39.668Z",
+      "taskId": "SV-034",
+      "command": "claim",
+      "agent": "cheich-sv034-evidence-races-01",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -4088,7 +4095,7 @@
     {
       "id": "SV-034",
       "title": "Prepare native hold-evidence concurrency acceptance harness",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-033"
@@ -4119,7 +4126,13 @@
         "Current original SV017 owner is implementing Windows capabilities for frozen b549 with 11 migrations/32 tables, deliberately excluding evidence0002/0003. Do not edit that owner or expand its frozen runtime plan. Existing SV022 native harness is a separate frozen request-lifecycle dependency.",
         "Parent owns external Slack assignment, source-sharing and eventual publication decisions. Return the confirmed ID/base/scope/claim route through parent, with no duplicate Slack. Authoring this harness does not authorize executing or publishing it or declaring integrated/pilot acceptance."
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-sv034-evidence-races-01",
+        "owner": "cheich",
+        "leaseId": "9c42495c-2307-40b2-944c-151148a78638",
+        "claimedAt": "2026-11-10T19:19:39.668Z",
+        "expiresAt": "2026-11-10T21:19:39.668Z"
+      }
     }
   ]
 }
