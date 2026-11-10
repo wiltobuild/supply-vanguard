@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 346,
-  "updatedAt": "2026-11-10T16:59:26.733Z",
+  "revision": 347,
+  "updatedAt": "2026-11-10T17:06:24.034Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2437,6 +2437,14 @@
       "command": "complete",
       "agent": "cheich-sv030-discovery-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T17:06:24.034Z",
+      "taskId": "SV-031",
+      "command": "migration-add-clearance-evidence",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "User-directed transfer of existing unfinished hold-evidence acceptance to the prior holds owner; public task-local contracts, preserve completed history, active scopes and all actual integration/runtime/publication gates"
     }
   ],
   "tasks": [
@@ -3553,6 +3561,48 @@
         "mergeCommit": "eb7debafae9c5fa9738ad9f40a21132a2180cb6a",
         "mergedAt": "2026-11-10T16:59:20Z"
       }
+    },
+    {
+      "id": "SV-031",
+      "title": "Complete hold-clearance evidence contract and regressions",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-001",
+        "SV-006",
+        "SV-021"
+      ],
+      "scope": [
+        "packages/domain/holds",
+        "services/api/holds"
+      ],
+      "acceptance": [
+        "Complete the missing backend/domain portion of existing SV-027 clearance-evidence acceptance, using public main eb7debafae9c5fa9738ad9f40a21132a2180cb6a. Same Cheich owner after his own normal confirmed claim. Preserve completed SV-021 history and frozen SV-022 7348eb66/f29a38f UI; do not rebuild lifecycle, UI or shared host.",
+        "Define and document a bounded explicit clearance-evidence request/response contract before UI wiring. Treat supplied observations/references as recorded assertions, not verified policy compliance; invent no roles, evidence-sufficiency policy, operational thresholds or administrator exceptions. Document the unresolved owner decision if policy sufficiency remains unapproved.",
+        "Persist evidence traceably with the cleared hold and authenticated server actor/time, using an additive task-local migration rather than rewriting shipped migration history. Keep clearance, evidence/audit and any retry receipt atomic; failed validation/audit must not partially clear a hold. Preserve append-only evidence/history and existing tenant isolation.",
+        "Keep all existing matching-role membership/clearance checks, stacked-hold and assignment guards. Request fields cannot override actor, tenant, role or authoritative timestamps. Clearing one hold must not clear another or grant availability while another blocking hold remains.",
+        "Preserve existing clients or provide a documented versioned upgrade/cutover contract. New evidence-bearing commands must reject missing/malformed evidence according to the documented technical schema; never silently equate legacy actor/time or placement reason with new clearance evidence. Clearly distinguish legacy/no-additional-evidence records and do not claim universal mandatory-evidence acceptance while legacy cutover/policy decisions remain open.",
+        "Specify safe retry and actor-private conflict behavior for evidence-bearing commands; exact replay must not duplicate clearance/evidence and changed payload/actor reuse must fail. Bound and safely render/serialize untrusted supplied text; keep secrets/patient information out of examples.",
+        "Add deterministic task-local domain/route/service/mock-transaction regressions for required/invalid evidence, authorization, tenant/role/actor spoofing, stacked holds, rollback, replay and legacy/versioned compatibility. Author opt-in SQL/native acceptance cases where necessary, disclosing what remains unrun. Use only existing permitted test tooling; no new DB/role/token/listener/native setup or denied-operation retry under this source-preparation registration."
+      ],
+      "verification": [
+        "Freeze a tested LOCAL commit and explicit API/schema/migration/DTO handoff for later SV-027 UI wiring. Map existing tests first; do not repeat finished implementation/review for activity or assert mocks prove native SQL behavior.",
+        "Run applicable pure/mock tests and source/static checks without root dependency/CI/auth/core/bootstrap edits or shared-host/browser changes. Leave actual SQL/concurrency/recovery acceptance as explicit later gates unless separately approved.",
+        "Clear the matching normal lease with exact evidence and remaining gates. No source publication, PR creation, feature merge, deployment, live acceptance or persistent access is authorized by registration."
+      ],
+      "sourceNotes": [
+        "Existing maintained requirement: only the configured authorized role may record hold clearance, including actor, time and evidence. Frozen SV027 README documents that current clear API accepts no body and stores actor/time but no additional clearance observation/reference.",
+        "Parent independently inspected public holds routes/service/domain: clear endpoint calls clearHold without a request body, shapeHold has clearedBy/clearedAt but no evidence field, validators cover placement kind/reason and role rules only. This is existing unfinished workflow acceptance, not a new lifecycle implementation.",
+        "User: give some of it so chiech, I shouldnt have all the work. User: he keeps running out of stuff to do vale you need to keep him busy."
+      ],
+      "coordinationNotes": [
+        "First actionable existing-backlog handoff to Cheich: all implementation source for this task is public; normal claim npm run board -- claim SV-031 --owner Cheich --agent cheich-sv031-hold-evidence-UNIQUE. Parent owns Slack and confirms the external handoff; no proxy claim or duplicate message.",
+        "SV027 UI remains frozen at f29a38f17931fdc095e197d5723d565faf6ef273 with its task-local scope only. Queue UI evidence collection/rendering/validation after this contract is frozen and the exact UI artifact is delivered; do not invent an unsupported UI field while backend persistence is absent.",
+        "SV008 retains all shared host/mounting/client/fixture paths and frozen coherent candidate b5493afb7b99ddc3cd0ebe42ee918b4424ecbf85. SV022 retains request lifecycle/domain/native harness. Do not edit these owners' source. Report the minimum later route/DTO/mounting handoff explicitly.",
+        "Coordinate the original ops owner only after migration/table inventory freezes; old 8/26 and 11/32 receipts do not certify the new schema. No benchmark/discovery implementation or source publication, GitHub403 retry, security/identity change, denied filesystem/CIM reroute or restart of the ended runtime cycle.",
+        "Source owner of completed SV021 is Cheich's prior holds lane. Its merged state/history is preserved; this new bounded task captures the outstanding evidence contract. Final SV016 dependencies and integrated acceptance remain unchanged."
+      ],
+      "claim": null
     }
   ]
 }
