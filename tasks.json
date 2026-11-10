@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 325,
-  "updatedAt": "2026-11-10T16:46:31.055Z",
+  "revision": 326,
+  "updatedAt": "2026-11-10T16:46:49.142Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2289,6 +2289,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "User-authorized Cheich follow-up after verified PR27 merge; concrete independent ignored-abort concurrency and diagnostic-echo reproductions; preserve SV028 merged history, SV016 gates, all current claims and source/runtime/publication holds"
+    },
+    {
+      "at": "2026-11-10T16:46:49.142Z",
+      "taskId": "SV-008",
+      "command": "heartbeat",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2564,7 +2571,7 @@
         "owner": "wil",
         "leaseId": "bf919f12-f1c4-4b0d-8312-3494e8cf7346",
         "claimedAt": "2026-11-10T16:39:35.720Z",
-        "expiresAt": "2026-11-10T18:43:58.998Z"
+        "expiresAt": "2026-11-10T18:46:49.142Z"
       },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
