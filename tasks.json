@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 284,
-  "updatedAt": "2026-11-10T01:15:49.197Z",
+  "revision": 285,
+  "updatedAt": "2026-11-10T01:16:12.158Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1999,6 +1999,13 @@
       "command": "claim",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-10T01:16:12.158Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2530,7 +2537,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2548,17 +2555,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "460963d2-a403-4967-9fe9-93bdc156a950",
-        "claimedAt": "2026-11-10T00:41:39.743Z",
-        "expiresAt": "2026-11-10T03:15:19.896Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "Local-only 11/32 milestone frozen ea63db9a8141b56b8ce69bb34fef797bb622ddee on local/sv-017-full-schema-recovery-20261109 over base985eb77d;58 ops tests, inventory, check and diff checks pass. Await independent review and immutable final app/ops composition, then separate clearance for ONE full synthetic11/32 recovery with matching official tools and verified cleanup. Expanded SQL/probes unrun; historical8/26 native pass remains1557b4f5 only. Publication/submission/merge/deployment held; clear lease.",
       "reviewNote": "Independent review of frozen local084dfb2bcdc79bcf7c73b4ed7fd797ee78b5dbc4 passed44 scoped tests, explicit9/27 inventory and non-ops dependency preservation. Original ops owner may normally claim a separate LOCAL extension against frozen lifecycle7348eb66 and replenishmentbcfd05ce for explicit11 migrations/32 tables. Preserve published1557b4f5, local9/27 milestone and historical8/26 native receipt. Author ops only, no mutable shared candidate import or denied served-checkout read retry. No native run, provisioning, publication, PR retry, merge or deployment; final runtime scope waits for complete frozen app candidate and separate clearance."
     },
     {
