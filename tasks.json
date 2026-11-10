@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 357,
-  "updatedAt": "2026-11-10T17:45:31.586Z",
+  "revision": 358,
+  "updatedAt": "2026-11-10T17:45:33.958Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2525,6 +2525,13 @@
       "command": "claim",
       "agent": "cheich-sv032-discovery-repair-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T17:45:33.958Z",
+      "taskId": "SV-032",
+      "command": "submit",
+      "agent": "cheich-sv032-discovery-repair-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3707,7 +3714,7 @@
     {
       "id": "SV-032",
       "title": "Repair discovery refresh settlement, count truthfulness and focus",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-030"
@@ -3740,13 +3747,10 @@
         "Discovery remains unmounted. Repair/integration acceptance must precede shared-host/scene adoption through existing SV008 ownership and approved browser checks. Preserve SV016 final dependencies/gates and the deliberate b549 main7c candidate boundary.",
         "Private SV010 ZIP sharing is separately user-approved and byte-uploaded; its existing Slack worker is sole finalizer. This task grants no wider sharing, GitHub publication, runtime, identity/security change or retry/reroute of unrelated stopped actions."
       ],
-      "claim": {
-        "agent": "cheich-sv032-discovery-repair-01",
-        "owner": "cheich",
-        "leaseId": "3ac37a6c-b91a-41a9-818e-77e86277f61b",
-        "claimedAt": "2026-11-10T17:45:31.586Z",
-        "expiresAt": "2026-11-10T19:45:31.586Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/31",
+      "submittedBy": "cheich-sv032-discovery-repair-01",
+      "submittedAt": "2026-11-10T17:45:33.958Z"
     }
   ]
 }

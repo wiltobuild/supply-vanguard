@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 357. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 358. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -36,4 +36,4 @@ Revision 357. Live state is on the task-board branch. Use npm run board -- claim
 | SV-029 Harden benchmark workload bounds and diagnostics | done | — | — | SV-028 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/28) |
 | SV-030 Prepare equipment discovery model and accessible component | done | — | — | SV-001, SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/29) |
 | SV-031 Complete hold-clearance evidence contract and regressions | done | — | — | SV-001, SV-006, SV-021 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/30) |
-| SV-032 Repair discovery refresh settlement, count truthfulness and focus | claimed | cheich / cheich-sv032-discovery-repair-01 | 2026-11-10T19:45:31.586Z | SV-030 | apps/web/discovery |
+| SV-032 Repair discovery refresh settlement, count truthfulness and focus | review | — | — | SV-030 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/31) |
