@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 295,
-  "updatedAt": "2026-11-10T01:46:05.428Z",
+  "revision": 296,
+  "updatedAt": "2026-11-10T02:14:41.295Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2076,6 +2076,13 @@
       "command": "block",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T02:14:41.295Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-pr-coordinator",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2601,7 +2608,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2623,8 +2630,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "Reviewed local ops source ea63db9a8141b56b8ce69bb34fef797bb622ddee remains clean. Wrapper DACL/exact-handle Job Object preparation accepted source-only;16 contract/supervision tests passed, no native/resource acceptance claimed. Blocked on parent binding corrected harness e50679daf862c76a0582fbb8afb89137387ff382 execution/access ownership after denied Git directory reads, plus original common global start/deadline. Disabled adapter preserved. Do not retry/escalate denied harness reads, transfer source via another host/path/owner, start resources, publish, merge or deploy. Preserve wrapper hashes and historical receipts; clear matching lease until coordinator unblocks original owner.",
-      "reviewNote": "User approved one bounded local synthetic acceptance cycle. Independent frozen ea63db9a source review passed58 tests and non-ops preservation, explicit11 migrations32 tables. Same original owner may normally claim to prepare the reviewed supervised native runner; actual official18.6 setup/recovery waits for global API-start deadline, immutable source binding and reviewed SV022 harness timing. Preserve all strict assertions, one run, cleanup, no publication or merge."
+      "blockedReason": null,
+      "reviewNote": "Parent directed approved recovery-only phase evaluation independent of denied harness access. Same original ops owner may claim to add explicit recovery-only wrapper mode: strict reviewed11/32 backup-restore-integrity-protection plus unconditional native cleanup, partial receipt with four races pending. No harness read, copy, alternate route or race execution. Use existing functional executor shared clock; no new resource clock. No feature source/publication/merge/deploy."
     },
     {
       "id": "SV-018",
