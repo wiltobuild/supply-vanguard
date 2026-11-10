@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 345,
-  "updatedAt": "2026-11-10T16:59:20.588Z",
+  "revision": 346,
+  "updatedAt": "2026-11-10T16:59:26.733Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2430,6 +2430,13 @@
       "command": "block",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:59:26.733Z",
+      "taskId": "SV-030",
+      "command": "complete",
+      "agent": "cheich-sv030-discovery-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3503,7 +3510,7 @@
     {
       "id": "SV-030",
       "title": "Prepare equipment discovery model and accessible component",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3538,7 +3545,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/29",
       "submittedBy": "cheich-sv030-discovery-01",
-      "submittedAt": "2026-11-10T16:59:16.902Z"
+      "submittedAt": "2026-11-10T16:59:16.902Z",
+      "completedAt": "2026-11-10T16:59:26.733Z",
+      "completedBy": "cheich-sv030-discovery-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/29",
+        "mergeCommit": "eb7debafae9c5fa9738ad9f40a21132a2180cb6a",
+        "mergedAt": "2026-11-10T16:59:20Z"
+      }
     }
   ]
 }
