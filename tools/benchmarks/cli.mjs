@@ -11,7 +11,7 @@ export function parseArgs(argv) {
     const a = argv[i];
     if (a === '--config') out.config = argv[++i];
     else if (a === '--format') out.format = argv[++i];
-    else throw new RangeError(`Unknown argument: ${a}`);
+    else throw new RangeError(`Unknown argument at position ${i + 1}`);
   }
   if (!out.config) throw new RangeError('--config is required');
   if (!['json', 'text'].includes(out.format)) throw new RangeError('--format must be json or text');
@@ -24,11 +24,11 @@ export function resolveConfig(file, env) {
   if (headerEnv !== undefined) {
     if (headerEnv === null || typeof headerEnv !== 'object' || Array.isArray(headerEnv)) throw new RangeError('headerEnv must be an object');
     config.headers = {};
-    for (const [name, variable] of Object.entries(headerEnv)) {
+    Object.entries(headerEnv).forEach(([name, variable], index) => {
       if (typeof variable !== 'string' || !/^[A-Z][A-Z0-9_]{0,63}$/.test(variable)) throw new RangeError('headerEnv values must be environment variable names');
-      if (!env[variable]) throw new RangeError(`Environment variable ${variable} is not set`);   // name only, never the value
+      if (!env[variable]) throw new RangeError(`headerEnv entry ${index + 1}: the environment variable is not set`);   // neither the name nor the value is echoed
       config.headers[name] = env[variable];
-    }
+    });
   }
   return config;
 }

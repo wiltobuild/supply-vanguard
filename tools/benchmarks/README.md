@@ -27,6 +27,8 @@ For each endpoint you list, it sends `warmup` requests (discarded), then `sample
 - **Percentiles:** nearest-rank on the ascending successful samples: the value at rank `ceil(p/100 * n)`. No interpolation. With 1 sample, every percentile is that sample.
 - **Latency basis:** successful (2xx) samples only. Failures and timeouts are counted separately, and the text summary prints a warning whenever any occurred, so a run with failures is never read as all requests succeeding.
 - **Warmup:** all warmup requests, across all endpoints, finish before the first measured request starts. Warmup results are discarded.
+- **Concurrency and stalled transports:** the cap counts transports that are actually still running, including ones that ignore the abort signal after a timeout or cancel. A timeout frees no slot while the transport is still outstanding. If outstanding requests fill the cap, the run stops with status `STALLED` (unfinished endpoints are `PARTIAL` or `NOT RUN`, `failuresPresent` is true, the CLI exits 1) instead of starting more requests or hanging. A late answer from an abandoned request is never counted as a success.
+- **Error messages:** validation and command line errors are fixed text. They never repeat names, arguments, environment variable names or transport exception text you supplied, so a secret typed in the wrong place cannot reach stderr or logs.
 - **Cancellation:** abort the run (Ctrl+C in the CLI). No new request starts, in-flight ones are aborted, and the result status is `CANCELLED` with unfinished endpoints marked `PARTIAL` or `NOT RUN`.
 
 ## Config
@@ -54,7 +56,7 @@ For each endpoint you list, it sends `warmup` requests (discarded), then `sample
 node tools/benchmarks/cli.mjs --config my-config.json --format text   # or json
 ```
 
-Exit code 0 only when the run completed with no errors or timeouts; 1 for failures or cancellation; 2 for an invalid config.
+Exit code 0 only when the run completed with no errors or timeouts; 1 for failures, a stall or cancellation; 2 for an invalid config.
 
 From code, inject the transport and clock (this is how the tests avoid any network):
 

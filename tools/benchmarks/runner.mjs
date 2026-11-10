@@ -22,7 +22,8 @@ function int(name, value, min, max, fallback) {
 // Validates everything BEFORE any transport call. Returns a normalized, frozen config.
 export function validateConfig(raw) {
   if (!isPlain(raw)) fail('Config must be an object');
-  for (const key of Object.keys(raw)) if (!TOP_KEYS.has(key)) fail(`Unknown setting: ${key}`);
+  // Names the caller typed are never echoed back in errors: a mistyped or misplaced secret would otherwise reach stderr and logs.
+  if (Object.keys(raw).some(key => !TOP_KEYS.has(key))) fail(`Unknown setting in config (allowed: ${[...TOP_KEYS].join(', ')})`);
 
   let base;
   try { base = new URL(raw.baseUrl); } catch { fail('baseUrl must be an absolute http(s) URL'); }
@@ -37,7 +38,7 @@ export function validateConfig(raw) {
   const seen = new Set();
   const endpoints = raw.endpoints.map((entry, i) => {
     if (!isPlain(entry)) fail(`Endpoint ${i + 1} must be an object`);
-    for (const key of Object.keys(entry)) if (!['name', 'path', 'method'].includes(key)) fail(`Endpoint ${i + 1}: unknown setting ${key}`);
+    if (Object.keys(entry).some(key => !['name', 'path', 'method'].includes(key))) fail(`Endpoint ${i + 1}: unknown setting (allowed: name, path, method)`);
     if (entry.method !== undefined && entry.method !== 'GET') fail(`Endpoint ${i + 1}: only GET is allowed`);
     if (typeof entry.name !== 'string' || !ENDPOINT_NAME.test(entry.name)) fail(`Endpoint ${i + 1}: name must be 1-64 letters, digits, dot, dash or underscore`);
     if (seen.has(entry.name)) fail(`Endpoint ${i + 1}: duplicate name`);
@@ -65,7 +66,7 @@ export function validateConfig(raw) {
   if (raw.labels !== undefined) {
     if (!isPlain(raw.labels)) fail('labels must be an object');
     for (const [k, v] of Object.entries(raw.labels)) {
-      if (!['revision', 'environment'].includes(k)) fail(`Unknown label: ${k}`);
+      if (!['revision', 'environment'].includes(k)) fail('Unknown label (allowed: revision, environment)');
       if (typeof v !== 'string' || !LABEL.test(v)) fail(`label ${k} must be 1-100 plain characters (letters, digits, . _ : / space -); never put secrets in labels`);
       labels[k] = v;
     }
@@ -110,6 +111,9 @@ export async function runBenchmark(rawConfig, { transport, clock = defaultClock(
   const started = clock.now();
   const stats = cfg.endpoints.map(() => ({ warmupDone: 0, done: 0, ok: 0, timeouts: 0, errors: 0, classes: {}, latencies: [] }));
   const cancelled = () => Boolean(signal && signal.aborted);
+  // Transports that are actually still running, including ones abandoned after a timeout or cancel that ignore the abort signal.
+  // A new request never starts while this is at the concurrency cap, so the cap holds for real outstanding work.
+  let outstanding = 0, stalled = false;
 
   function attempt(endpoint) {
     return new Promise(resolve => {
@@ -132,14 +136,16 @@ export async function runBenchmark(rawConfig, { transport, clock = defaultClock(
       try { pending = Promise.resolve(transport({ url: endpoint.url, method: 'GET', headers: cfg.headers, signal: controller.signal, timeoutMs: cfg.timeoutMs })); }
       catch { return finish({ kind: 'error', cls: 'transport_error' }); }
       // The transport's own error text is deliberately dropped: it can contain URLs or credentials.
-      pending.then(res => finish(classify(res)), () => finish({ kind: 'error', cls: 'transport_error' }));
+      outstanding++;
+      pending.then(res => { outstanding--; finish(classify(res)); }, () => { outstanding--; finish({ kind: 'error', cls: 'transport_error' }); });
     });
   }
 
   async function phase(tasks, measured) {
     let next = 0;
     const worker = async () => {
-      while (!cancelled() && next < tasks.length) {
+      while (!cancelled() && !stalled && next < tasks.length) {
+        if (outstanding >= cfg.concurrency) { stalled = true; return; }   // earlier requests never finished: stop instead of exceeding the cap
         const index = tasks[next++], s = stats[index];
         const t0 = clock.now();
         const outcome = await attempt(cfg.endpoints[index]);
@@ -177,12 +183,12 @@ export async function runBenchmark(rawConfig, { transport, clock = defaultClock(
   const any = endpoints.some(e => e.measured.completed > 0);
   return {
     schemaVersion: 1,
-    status: cancelled() ? 'CANCELLED' : any ? 'COMPLETE' : NOT_RUN,
+    status: cancelled() ? 'CANCELLED' : stalled ? 'STALLED' : any ? 'COMPLETE' : NOT_RUN,
     labels: { ...cfg.labels },
     target: cfg.origin,
     settings: { warmup: cfg.warmup, samples: cfg.samples, concurrency: cfg.concurrency, timeoutMs: cfg.timeoutMs, percentileMethod: 'nearest-rank' },
     totalElapsedMs: clock.now() - started,
-    failuresPresent: endpoints.some(e => e.measured.errors > 0 || e.measured.timeouts > 0),
+    failuresPresent: stalled || endpoints.some(e => e.measured.errors > 0 || e.measured.timeouts > 0),
     endpoints,
     note: 'Latencies describe only this run against the stated target, revision and environment. They are not a pass or a claim about any other condition.',
   };
