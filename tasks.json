@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 260,
-  "updatedAt": "2026-11-10T00:19:11.690Z",
+  "revision": 261,
+  "updatedAt": "2026-11-10T00:20:50.515Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1830,6 +1830,13 @@
       "command": "heartbeat",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:20:50.515Z",
+      "taskId": "SV-022",
+      "command": "block",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2527,7 +2534,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2551,13 +2558,8 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": {
-        "agent": "wil-vale-sv022-20261110-safe-a72c",
-        "owner": "Wil",
-        "leaseId": "7c65709c-025c-4c12-829c-07168a1eec4f",
-        "claimedAt": "2026-11-10T00:09:12.609Z",
-        "expiresAt": "2026-11-10T02:19:11.690Z"
-      }
+      "claim": null,
+      "blockedReason": "Local tested implementation retained on DESKTOP-7MCLSFR at C:\\Users\\Wil\\sv022-safe-returns-20261110, branch task/sv-022-wil-vale-sv022-20261110-safe-a72c, commit 7348eb66abdd90dc68cd8745c6920e66465bfd53. Unpublished by instruction; sole integration coordinator must authorize publication/integration. npm test 111 passed, 16 skipped; check passed. Native lifecycle concurrency, runtime migration/grants and integrated browser acceptance remain unverified. No PR, merge or deploy performed. Lease cleared after local deliverable; do not mark done."
     },
     {
       "id": "SV-023",
