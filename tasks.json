@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 377,
-  "updatedAt": "2026-11-10T18:12:26.552Z",
+  "revision": 378,
+  "updatedAt": "2026-11-10T18:20:42.584Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2666,6 +2666,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T18:20:42.584Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3205,7 +3212,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3227,8 +3234,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "Source-only host controller frozen LOCAL8673bc439d77fcb33ace57f2473869542f326094 on local/sv017-host-controller,34 fake-only tests pass; no live sockets/process/SQL/ACL/secret/native setup executed. Concrete recovery/SQL/harness/observer/private-evidence cleanup callbacks implemented, OS capabilities explicitly authorization-gated; no default live backend installed. Corrected candidate source staging at exactb549 clean; actual11/32 byte evidence and A14Fseed pass. EA/candidate ops Git blobs identical,23 CRLF/LF working-byte differences explicitly dual-pinned with no normalization. Harness e506 bound. Historical stale source cat-file read executed missing-object, not access-denied; source-location blocker resolved via specifically approved corrected staging. Both profiles unarmed/candidateVerifiedfalse pending independent source review; future runtime needs fresh bounded authorization and reviewed exact OS/job capability binding. b440,EA,29-test wrappers and13 historical artifacts preserved. Clear matching lease; no publication/merge/deploy.",
-      "reviewNote": "Coordinator authorized independent source-only host-controller wiring; candidate remains unverified and runtime held."
+      "blockedReason": null,
+      "reviewNote": "Coordinator accepted8673; authorized source-only concrete Windows platform binding; no runtime"
     },
     {
       "id": "SV-018",
