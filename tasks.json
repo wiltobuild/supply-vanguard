@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 313,
-  "updatedAt": "2026-11-10T16:11:00.828Z",
+  "revision": 314,
+  "updatedAt": "2026-11-10T16:13:10.076Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2203,6 +2203,13 @@
       "command": "claim",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-10T16:13:10.076Z",
+      "taskId": "SV-028",
+      "command": "block",
+      "agent": "cheich-sv028-benchmark-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3193,7 +3200,7 @@
     {
       "id": "SV-028",
       "title": "Prepare read-only performance benchmark tooling",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001"
@@ -3224,13 +3231,8 @@
         "User: make sure to give him work as he asks, if we dont have anything come up with stuff that would be good for the app and updae the plan to include it then divide it out.",
         "Stable implementation base: 80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79. The parent owns Slack communication; coordinator must return confirmed task and claim instructions, not send a duplicate assignment."
       ],
-      "claim": {
-        "agent": "cheich-sv028-benchmark-01",
-        "owner": "cheich",
-        "leaseId": "bd62d648-72fa-4a9e-94d9-f05ea21d133c",
-        "claimedAt": "2026-11-10T16:10:00.844Z",
-        "expiresAt": "2026-11-10T18:10:00.844Z"
-      }
+      "claim": null,
+      "blockedReason": "Source-only work frozen at local commit e4c6441 (tools/benchmarks only; 15 deterministic tests pass; npm run check passes; no live run, no measurements). Waiting on the publication decision: push, PR and merge are not authorized by the task registration."
     }
   ]
 }
