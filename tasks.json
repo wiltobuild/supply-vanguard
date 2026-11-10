@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 342,
-  "updatedAt": "2026-11-10T16:58:25.219Z",
+  "revision": 343,
+  "updatedAt": "2026-11-10T16:59:13.813Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2409,6 +2409,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:59:13.813Z",
+      "taskId": "SV-030",
+      "command": "claim",
+      "agent": "cheich-sv030-discovery-01",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -3488,7 +3495,7 @@
     {
       "id": "SV-030",
       "title": "Prepare equipment discovery model and accessible component",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3520,7 +3527,13 @@
         "Normal claim: npm run board -- claim SV-030 --owner Cheich --agent cheich-sv030-discovery-UNIQUE. Confirm exit0 and maintain heartbeat before edits. Source-only work stays task-local; SV008 remains sole shared-host owner, with active fixture repair untouched.",
         "All lifecycle/backend, requests UI, replenishment, maintenance, operations and reference owners retain their paths and frozen work. No publication, live runtime, denied filesystem/CIM/403 operation retry, identity/security change or restart of the ended acceptance cycle. The implementation-plan update stays local pending publication authorization."
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-sv030-discovery-01",
+        "owner": "cheich",
+        "leaseId": "fdf13d79-e296-46a7-8fd8-b82982a8ef87",
+        "claimedAt": "2026-11-10T16:59:13.813Z",
+        "expiresAt": "2026-11-10T18:59:13.813Z"
+      }
     }
   ]
 }
