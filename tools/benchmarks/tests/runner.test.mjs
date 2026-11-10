@@ -43,11 +43,11 @@ const scripted = (clock, script) => { const calls = []; const fn = req => { cons
 
 test('validation rejects unsafe or unbounded settings before any transport call', async () => {
   const bad = [
-    [null, /object/], [{...base(), extra: 1}, /Unknown setting/],
+    [null, /object/], [{...base(), extra: 1}, /Unknown setting in config/],
     [base({baseUrl: 'ftp://x.test'}), /http or https/], [base({baseUrl: 'https://user:pw@x.test'}), /credentials/],
     [base({baseUrl: 'https://x.test/api'}), /origin only/], [base({baseUrl: 'nope'}), /absolute/],
     [base({endpoints: []}), /explicit entries/], [base({endpoints: [{name: 'a', path: '/x', method: 'POST'}]}), /only GET/],
-    [base({endpoints: [{name: 'a', path: '/x', method: 'get'}]}), /only GET/], [base({endpoints: [{name: 'a', path: '/x', body: 'x'}]}), /unknown setting/],
+    [base({endpoints: [{name: 'a', path: '/x', method: 'get'}]}), /only GET/], [base({endpoints: [{name: 'a', path: '/x', body: 'x'}]}), /unknown setting \(allowed/],
     [base({endpoints: [{name: 'a', path: '//evil.test/x'}]}), /single/], [base({endpoints: [{name: 'a', path: 'https://evil.test/x'}]}), /single/],
     [base({endpoints: [{name: 'a', path: '/a/../b'}]}), /\.\./], [base({endpoints: [{name: 'a', path: '/a\\b'}]}), /backslash/],
     [base({endpoints: [{name: 'a', path: '/a#frag'}]}), /fragment/], [base({endpoints: [{name: 'a', path: '/a b'}]}), /spaces/],
@@ -56,7 +56,7 @@ test('validation rejects unsafe or unbounded settings before any transport call'
     [base({warmup: -1}), /warmup/], [base({concurrency: 0}), /concurrency/], [base({concurrency: LIMITS.maxConcurrency + 1}), /concurrency/],
     [base({timeoutMs: 0}), /timeoutMs/], [base({timeoutMs: LIMITS.maxTimeoutMs + 1}), /timeoutMs/],
     [base({samples: 600, warmup: 100, maxRequests: 500}), /exceeds maxRequests/], [base({maxRequests: LIMITS.maxRequestsCeiling + 1}), /maxRequests/],
-    [base({labels: {revision: 'token=abc123'}}), /label revision/], [base({labels: {other: 'x'}}), /Unknown label/],
+    [base({labels: {revision: 'token=abc123'}}), /label revision/], [base({labels: {other: 'x'}}), /Unknown label \(allowed/],
     [base({headers: {'bad name': 'x'}}), /header name/], [base({headers: {authorization: 'a\r\nb: c'}}), /header value/],
   ];
   let calls = 0;
@@ -221,11 +221,11 @@ test('command line helpers validate arguments and keep secrets out of messages',
   assert.deepEqual(parseArgs(['--config', 'c.json']), {format: 'text', config: 'c.json'});
   assert.equal(parseArgs(['--config', 'c.json', '--format', 'json']).format, 'json');
   assert.throws(() => parseArgs([]), /--config is required/); assert.throws(() => parseArgs(['--config', 'c', '--format', 'xml']), /format/);
-  assert.throws(() => parseArgs(['--config', 'c', '--method', 'POST']), /Unknown argument/);
+  assert.throws(() => parseArgs(['--config', 'c', '--method', 'POST']), /Unknown argument at position 3/);
   const file = {baseUrl: 'https://x.test', endpoints: [], headerEnv: {authorization: 'SV_BENCH_AUTH'}};
   const resolved = resolveConfig(file, {SV_BENCH_AUTH: 'VALUE-1'});
   assert.deepEqual(resolved.headers, {authorization: 'VALUE-1'}); assert.ok(!('headerEnv' in resolved));
-  assert.throws(() => resolveConfig(file, {}), error => /SV_BENCH_AUTH is not set/.test(error.message));
+  assert.throws(() => resolveConfig(file, {}), error => /headerEnv entry 1: the environment variable is not set/.test(error.message) && !error.message.includes('SV_BENCH_AUTH'));
   assert.throws(() => resolveConfig({headerEnv: {a: 'lowercase'}}, {lowercase: 'SECRET-V'}), error => /environment variable names/.test(error.message) && !error.message.includes('SECRET-V'));
 });
 
@@ -236,4 +236,50 @@ test('sources use only built-in Node modules and stay inside this directory', ()
     for (const m of source.matchAll(/^import .* from '([^']+)'/gm)) assert.match(m[1], /^(node:|\.\/)/, `${file} imports ${m[1]}`);
     assert.ok(!/XMLHttpRequest|require\(|eval\(/.test(source), file);
   }
+});
+
+// Regression: a transport that ignores the abort signal (SV-028 follow-up).
+test('a transport that ignores abort cannot push outstanding requests past the concurrency cap', async () => {
+  const clock = fakeClock(), late = [];
+  let started = 0, outstanding = 0, peak = 0;
+  const transport = () => { started++; outstanding++; peak = Math.max(peak, outstanding); return new Promise(resolve => late.push(() => { outstanding--; resolve({status: 200}); })); };
+  const result = await drive(runBenchmark(base({samples: 6, concurrency: 2, timeoutMs: 50}), {transport, clock}), clock, 50);
+  assert.ok(peak <= 2, `peak outstanding ${peak} must not exceed the cap of 2`);
+  assert.equal(started, 2);
+  assert.equal(result.status, 'STALLED'); assert.equal(result.failuresPresent, true);
+  assert.equal(result.endpoints[0].measured.completed, 2); assert.equal(result.endpoints[0].measured.timeouts, 2);
+  assert.match(formatText(result), /Benchmark STALLED/);
+  // Late completion of the abandoned requests changes nothing and is never counted as a success.
+  const before = JSON.stringify(result);
+  late.forEach(f => f()); await tick();
+  assert.equal(JSON.stringify(result), before); assert.equal(result.endpoints[0].measured.succeeded, 0);
+  assert.equal(clock.pending(), 0);
+});
+
+test('abandoned transports from warmup and from other endpoints still count against the cap', async () => {
+  const clock = fakeClock(), late = [];
+  let started = 0, outstanding = 0, peak = 0;
+  const transport = () => { started++; outstanding++; peak = Math.max(peak, outstanding); return new Promise(resolve => late.push(() => { outstanding--; resolve({status: 200}); })); };
+  const config = base({endpoints: [{name: 'a', path: '/a'}, {name: 'b', path: '/b'}, {name: 'c', path: '/c'}], warmup: 2, samples: 4, concurrency: 3, timeoutMs: 40});
+  const result = await drive(runBenchmark(config, {transport, clock}), clock, 40);
+  assert.ok(peak <= 3, `real outstanding peak ${peak} must stay within the cap of 3`);
+  assert.equal(started, 3);
+  assert.equal(result.status, 'STALLED');
+  assert.ok(result.endpoints.every(e => e.measured.completed === 0 && e.status === NOT_RUN), 'a stall during warmup means no measured request ever starts');
+  late.forEach(f => f()); await tick();
+  assert.equal(outstanding, 0, 'all mock completions were released');
+  assert.equal(clock.pending(), 0, 'no timer is left running');
+});
+
+// Regression: unknown names and arguments are never echoed (SV-028 follow-up).
+test('validation and command line errors never echo caller-supplied names', () => {
+  const marker = 'SECRET-MARKER-ZX81';
+  const probes = [
+    () => validateConfig({...base(), [marker]: 1}),
+    () => validateConfig(base({endpoints: [{name: 'a', path: '/a', [marker]: 1}]})),
+    () => validateConfig(base({labels: {[marker]: 'x'}})),
+    () => parseArgs(['--config', 'c', `--${marker}`]),
+    () => resolveConfig({headerEnv: {authorization: marker.replace(/-/g, '_')}}, {}),
+  ];
+  for (const probe of probes) assert.throws(probe, error => error instanceof RangeError && error.message.length > 0 && !error.message.includes(marker) && !error.message.includes(marker.replace(/-/g, '_')));
 });
