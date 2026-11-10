@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 329,
-  "updatedAt": "2026-11-10T16:48:29.945Z",
+  "revision": 330,
+  "updatedAt": "2026-11-10T16:48:42.272Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2318,6 +2318,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "User requested two useful Cheich tasks; bounded discovery preparation from existing plan, injected projection/callbacks, completed-contract dependencies and explicit later shared-host/scene/browser gates; preserve all existing claims/history/publication/runtime holds"
+    },
+    {
+      "at": "2026-11-10T16:48:42.272Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2560,7 +2567,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -2588,17 +2595,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "bf919f12-f1c4-4b0d-8312-3494e8cf7346",
-        "claimedAt": "2026-11-10T16:39:35.720Z",
-        "expiresAt": "2026-11-10T18:46:49.142Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Source-only fixture compatibility repair frozen clean at b4f01aa847cd11b8e736e10b180f66c70b28dfda, parent53c49b9420db488f40635f2503f048520a98c548; only api-fixture.mjs and pure api-fixture-seeding.test.mjs authored. Separate local coherent main80 candidate e176aa3a69b22d404df67c14e14f0706a1800e68 has parents065b1026b6d2df0510e2f421bdd2ac1a9ddbf68f and b4f01aa, with80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79 ancestry. Six pure fake-query regressions pass on both; coherent selected37 pure/static tests and syntax/assets/diff checks pass. Main seed SHA256 A14F190E9152D4748F57D7FCFF71F1D3CCD2C6308D67F35A5F91966157C1F714 preserved; seven other coherent changes are byte-identical inherited main files. Frozen backend/UI/replenishment/ops/maintenance/acceptance runner preserved. Supported specific read and isolated Git clone approvals succeeded before normal unblock319/claim320; renewals324/326. No SQL/DB/roles/tokens/listeners/browser/native or ended-cycle restart, source publication, PR metadata, feature merge or deployment. Waiting for coordinator independent source review and publication/integration decisions; actual SQL/runtime compatibility is unrun for this repair. Protected065/dd8 and all public heads untouched.",
       "reviewNote": "Approved exact compatibility read and isolated normal Git clone succeeded at53c49b9420db488f40635f2503f048520a98c548. Registered two-file fixture-only repair will explicitly prepare distinct synthetic tenants with pure fake-query coverage; no seed/auth/bootstrap or runtime changes.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
