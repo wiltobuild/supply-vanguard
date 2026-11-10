@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 361,
-  "updatedAt": "2026-11-10T17:49:02.963Z",
+  "revision": 362,
+  "updatedAt": "2026-11-10T17:50:47.621Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2553,6 +2553,14 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T17:50:47.621Z",
+      "taskId": "SV-033",
+      "command": "migration-add-clearance-repair",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Independent exact-source findings in completed SV031: current-role replay check, accepted timestamp precision and replay-summary contract; preserve original Cheich ownership and all other task histories/scopes/gates"
     }
   ],
   "tasks": [
@@ -3773,6 +3781,44 @@
         "mergeCommit": "09594323581da0cf236478ae9924e9779310518a",
         "mergedAt": "2026-11-10T17:45:37Z"
       }
+    },
+    {
+      "id": "SV-033",
+      "title": "Repair hold-evidence replay authorization and timestamp precision",
+      "status": "ready",
+      "priority": "high",
+      "dependsOn": [
+        "SV-031"
+      ],
+      "scope": [
+        "packages/domain/holds",
+        "services/api/holds"
+      ],
+      "acceptance": [
+        "Repair independently reviewed PR30 exact source 5f2f30c2a2b13977041feeb09dd2248cded2eb41 on published base a696ef4719d010fe9cb89ee17269bae19298730f. Preserve completed SV031 history and its versioned contract; original Cheich holds owner after a normal confirmed claim. No duplicate UI/lifecycle implementation.",
+        "Enforce the documented CURRENT configured clearance role before returning an evidence-command receipt replay. Receipt actor privacy alone is insufficient. Preserve active membership/tenant authorization, actor-private conflict behavior, no additional clearance/evidence writes on replay and existing transactional protection. Add role downgrade and configured rule-change regressions; revoked membership must still fail at authorization. The original finding was source-confirmed and made no new clearance write, not an SQL-executed exploit.",
+        "Preserve accepted observedAt precision consistently across future-boundary validation, canonical request hashing and persistence, or explicitly restrict technical input precision to milliseconds. Do not silently merge .123001Z and .123999Z into the same accepted request; .000999Z must not pass a supplied .000Z present-time boundary. Update the test that currently expects truncation and document the chosen compatibility behavior without inventing evidence-sufficiency policy.",
+        "Specify and test that replay returns the same cleared hold/evidence while its stack/summary may be CURRENT authoritative state if another hold changed. Preserve that useful behavior if intended, document it explicitly and prevent consumers from treating the entire response as immutable receipt history.",
+        "Use additive task-local migration/function replacement for already shipped SQL fixes instead of silently rewriting deployed 0002 history. Keep authenticated actor/time, append-only evidence/receipt records, exact minimal grants, forced-RLS/tenant boundaries, legacy cutover disclosures and stacked-hold/assignment guards. No roles, administrator exceptions, evidence policy or hold-clearance authority may be invented.",
+        "Change only packages/domain/holds and services/api/holds with focused source/docs/regressions. Preserve frozen SV027 f29a38f, SV022 7348eb66 and b549 application/11-migration32-table boundary; later evidence schema remains excluded until deliberately reconciled with original host/ops owners."
+      ],
+      "verification": [
+        "Map and run necessary existing task-local pure/mock checks for the two P2 findings and P3 replay-summary contract. Record exact SQL/HTTP passes versus conditional skips; root npm test omits evidence-file coverage and cannot stand in for it. No gratuitous repeat of completed baseline/mutation checks.",
+        "Author focused SQL regression coverage where needed using existing permitted tooling. No new credential, role/grant, listener/native/server/retained database setup or stopped-operation retry under this source task. Native same/different-key races, pooled sessions, populated migrations and expanded recovery remain explicit later gates unless separately authorized.",
+        "Freeze a tested LOCAL commit/patch with exact additive migration/DTO/grant handoff and normally clear its lease. No new source publication, GitHub PR creation/merge, deployment, private packet sharing or restart of the expired supervised cycle is authorized by registration."
+      ],
+      "sourceNotes": [
+        "Independent original web Sol reviewer thread01a1acaf-b22d-721a-b4bf-d8607d490002 turn01a1c689-f0a0-77a8-ab89-3cae487f8da7: 0002 lines60-71 returns receipt before current configured-role check; domain index lines40-62 accepts6 fractional digits then loses precision through JS Date. Pure timestamp probes reproduced collisions/future-boundary issue.",
+        "Actual-service mock found replay's unchanged cleared hold alongside a fresh stack changing blocked to unblocked. This is a documentation/consumer-contract clarification, not evidence that clearance history was rewritten.",
+        "Published SV031 contains3 pure and11 conditional PGlite/HTTP new tests plus8 originals. Root loader omits new evidence import; existing native hold-race tests omit0002/newfunction. Do not label root green or authored conditional cases as executed SQL/native acceptance."
+      ],
+      "coordinationNotes": [
+        "Parent owns Slack and original Cheich queue, including SV010 recipient-access acknowledgment and SV027 private-source sharing. Return registered ID/scope/claim route to parent; no proxy claim, competing implementation or duplicate Slack.",
+        "Normal claim: npm run board -- claim SV-033 --owner Cheich --agent cheich-sv033-hold-evidence-repair-UNIQUE. Keep other source ownership and completed histories intact.",
+        "SV027 wiring waits for corrected exact-source contract and lawful frozen UI artifact access. Public source is sufficient for this backend/domain repair now. No public publication permission follows from historical third-party merges or this registration.",
+        "User-directed existing backlog transfer: give some of it so chiech, I shouldnt have all the work; he keeps running out of stuff to do vale you need to keep him busy. Ordinary local finish/unblock work is authorized; genuine runtime/access/publication decisions remain action-specific."
+      ],
+      "claim": null
     }
   ]
 }
