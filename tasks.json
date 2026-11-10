@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 315,
-  "updatedAt": "2026-11-10T16:14:48.053Z",
+  "revision": 316,
+  "updatedAt": "2026-11-10T16:21:17.151Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2218,6 +2218,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Source-only idempotent-seed fixture compatibility regression; original shared-file owner, preserve every live claim/state/history and existing source/runtime/publication holds"
+    },
+    {
+      "at": "2026-11-10T16:21:17.151Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2750,7 +2757,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2768,17 +2775,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "c85c1f54-d257-4d7d-950b-2b19a268ac62",
-        "claimedAt": "2026-11-10T16:11:00.828Z",
-        "expiresAt": "2026-11-10T18:11:00.828Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "Source-only three-file port diagnostic repair frozen and independently reviewed:29 pure fake-client/task/clock tests pass, no Socket/TcpClient construction or network. Wrapper9210183F4556242E501A41C2E028359DD71027A1F1777026E6E1B9662CD3D7C3; module79824449FEDDFB0BD0AA61D7565A4C8246DED03D9745FB08BB41033193DE78A9; tests0AF7B3AC2EFD0B7153CFD9C59A9B640EFD5BE93520195B3C252F5B3ED6B539BA; exact diff102146339155488436B3596F1359D2A69DE9E10D3A7CC01205F38013528E689F retained in task18. Structured connected/refused/timeout/uncertain observations; only explicit refusal permits continuation, cancellation/disposal/clock ambiguity fails closed. Baseline wrapper and all13 previous JSON hashes unchanged; clean ops ea63db9a preserved. Source deliverable complete; runtime/native recovery acceptance and publication remain held for separate coordinator/user scope. Ended cycle not restarted; no launcher/probe/DB/roles/tokens/native tools/harness access/CI/benchmark edits. Clear matching lease; no submit,merge or deployment.",
       "reviewNote": "Authorized source-only ops supervisor diagnosis repair after original-owner proposal: retain frozen ea63db9a and historical receipts; edit only local sv017-supervised-run.ps1 and new sv017-supervised-port.psm1 / sv017-supervised-port.test.ps1 under original owner. Injected fake clients/tasks/clocks only, no sockets/network/resources. Preserve structured connected/refused/timeout/uncertain observations, permit setup only on explicit refusal, bounded redacted diagnostics and disposal uncertainty. Normal original-owner claim before edits. No runtime retry, denied harness-directory/CIM/filesystem/403 retry, publication, merge or deployment."
     },
     {
