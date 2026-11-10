@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 281,
-  "updatedAt": "2026-11-10T01:13:03.650Z",
+  "revision": 282,
+  "updatedAt": "2026-11-10T01:14:17.543Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1978,6 +1978,13 @@
       "command": "claim",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": "Wil"
+    },
+    {
+      "at": "2026-11-10T01:14:17.543Z",
+      "taskId": "SV-008",
+      "command": "unblock",
+      "agent": "wil-pr-coordinator",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2220,7 +2227,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -2251,8 +2258,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": "LOCAL shared-app milestone frozen clean at b62667f8327b94c3b0511e61185dfe9c98e86471 on local/sv008-app-candidate-20261110 in task-9/sv008-app-candidate-20261110. Parent base1292bd20768e92711b20f62f44c2b6a03614b790 preserves dd8f1111, backend7348eb66, reviewed UI f29a38f1 and replenishmentbcfd05ce byte-for-byte. Thirteen authored files remain in owned scope. Same-authorization capability metadata, session guards and read-only clearance-rule exposure implemented. Final permitted suite116 pass/2 explicit authenticated SQL gate skips; selected repository37 pass; syntax/assets/diff checks pass. No SQL fixture, credential/role/grant/token/database/listener setup or browser/native retry ran. Waiting for reviewed immutable ops11/32 source and separately approved authenticated runtime/SQL/browser/native stages plus coordinator publication sequencing. Protected served dd8f1111 and public draftPR14 bb277809 unchanged. No feature push, new review submission, merge or deployment.",
-      "reviewNote": "Corrected UI f29a38f17931fdc095e197d5723d565faf6ef273 is frozen and independently reviewed; backend7348eb66 and replenishmentbcfd05ce are immutable local dependencies. Original SV008 owner may claim normally ONLY in a fresh separate candidate checkout task-9/sv008-app-candidate-20261110, preserving the served task-9/sv008 at dd8f1111 and port4180. Author only existing shared/host scope plus two registered integration tests; preserve dependency directories/publication targets. Local composition and permitted non-listening tests only; no copied lease, bad ec8 UI, new provisioning/listener/native retry, publication, PR403 retry, merge or deployment.",
+      "blockedReason": null,
+      "reviewNote": "User approved one supervised synthetic local acceptance cycle up to two hours: reviewed b62667f8 functional API on 4181 and dev-owner candidate frontend 4182, in-memory eleven-migration thirty-two-table fictional fixture, existing limited memberships and fifteen-minute memory-only tokens, verified cleanup. Preserve served 4180 and PID27772, source publication holds and unrelated denials. Same original owner may claim normally for task-local fixture and approved runtime; no merge or deploy.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
         "Authorized LOCAL application composition: same original SV-008 owner after normal unblock/claim, on a separate local branch. Preserve frozen dd8f1111bb8ca9c28dbbf8a1f963f42d9ebe7e42 publication target and all public heads. Consume immutable SV-022 7348eb66abdd90dc68cd8745c6920e66465bfd53 and replenishment bcfd05ceb49c08c3155e99bec82aa93726ab8894 only as local dependencies. UI ec8a5436000f08e09dd8d246e81ba6e00afe4367 is held for material request-identity, focus and async-conflict findings: do not import or accept it; wait for the corrected frozen SV-027 commit and independent review. Existing owned shared paths and services/api/check-in host may compose existing request/holds/replenishment handlers through one authorization, add navigation/mount/session lifecycle and canonical refresh, and add apps/web/tests/request-lifecycle-integration.test.mjs and apps/web/tests/replenishment-integration.test.mjs. SV-022 keeps backend/domain/root-wrapper files; SV-027 keeps apps/web/requests and apps/web/tests/request-lifecycle.test.mjs; SV-010 keeps apps/web/supplies and services/api/replenishment; SV-011 keeps maintenance modules/test; ops remains with SV-017. Never edit those inherited dependency files. No new fixture/credential/role/grant provisioning, listener/native/browser denial retry, feature publication, PR creation or metadata retry, merge or deployment. Local dependency composition is not a workaround for publication/403 holds. Run only permitted local checks and disclose unrun mounted/browser/native gates. No hold-clearance observation field or invented policies/roles/thresholds; retain the stated acceptance limitation. Original ops owner must later reconcile lifecycle plus replenishment into final explicit 11-migration/32-table coverage; 9/27 and historical 8/26 receipts remain distinct."
