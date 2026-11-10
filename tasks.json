@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 351,
-  "updatedAt": "2026-11-10T17:33:23.940Z",
+  "revision": 352,
+  "updatedAt": "2026-11-10T17:33:42.565Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2483,6 +2483,13 @@
       "command": "submit",
       "agent": "cheich-sv031-hold-evidence-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T17:33:42.565Z",
+      "taskId": "SV-031",
+      "command": "complete",
+      "agent": "cheich-sv031-hold-evidence-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3607,7 +3614,7 @@
     {
       "id": "SV-031",
       "title": "Complete hold-clearance evidence contract and regressions",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-001",
@@ -3647,7 +3654,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/30",
       "submittedBy": "cheich-sv031-hold-evidence-01",
-      "submittedAt": "2026-11-10T17:33:23.940Z"
+      "submittedAt": "2026-11-10T17:33:23.940Z",
+      "completedAt": "2026-11-10T17:33:42.565Z",
+      "completedBy": "cheich-sv031-hold-evidence-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/30",
+        "mergeCommit": "a696ef4719d010fe9cb89ee17269bae19298730f",
+        "mergedAt": "2026-11-10T17:33:36Z"
+      }
     },
     {
       "id": "SV-032",
