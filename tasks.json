@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 349,
-  "updatedAt": "2026-11-10T17:23:40.211Z",
+  "revision": 350,
+  "updatedAt": "2026-11-10T17:32:55.085Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2468,6 +2468,14 @@
       "command": "claim",
       "agent": "cheich-sv031-hold-evidence-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T17:32:55.085Z",
+      "taskId": "SV-032",
+      "command": "migration-add-discovery-repair",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Confirmed independent discovery model/DOM findings; bounded original-author repair after current claim, preserve merged history, ordered queue, all other scopes and actual integration/runtime/publication gates"
     }
   ],
   "tasks": [
@@ -3636,6 +3644,44 @@
         "claimedAt": "2026-11-10T17:23:40.211Z",
         "expiresAt": "2026-11-10T19:23:40.211Z"
       }
+    },
+    {
+      "id": "SV-032",
+      "title": "Repair discovery refresh settlement, count truthfulness and focus",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-030"
+      ],
+      "scope": [
+        "apps/web/discovery"
+      ],
+      "acceptance": [
+        "Repair only the independently reproduced gaps in merged SV-030 source 6a9424d4e6acf7eb4b4dda2bceac61d6cf9411f9, using public base eb7debafae9c5fa9738ad9f40a21132a2180cb6a. Preserve completed SV-030 history and the existing module; same Cheich owner after a normal confirmed claim, without interrupting his current SV-031 claim or other ordered handoffs.",
+        "Accept finishRefresh/failRefresh only for the active pending token, consuming that token before invoking callbacks/listeners. Denial followed by late success must not resurrect records, selection or highlights; success followed by late error or repeated completion must be rejected. A genuinely new authorized refresh must still work.",
+        "Establish the new generation and pending-token state before beginRefresh notifications so a reentrant subscriber cannot settle the previous refresh or falsely clear refreshing. Preserve stale/destroyed callback rejection and document the one-settlement protocol.",
+        "Keep the 5000-item workload bound without silently reporting a truncated projection as complete. Explicitly reject oversized input or expose a truthful incomplete state with qualified totals/search coverage. A 5001st unknown/stale item must not vanish behind a ready 5000-of-5000 summary or a false complete no-match result. Do not invent business freshness/readiness policies.",
+        "Preserve keyboard focus when the focused type group disappears and when a surviving focused result is reordered. Restore the surviving control or a meaningful component fallback without stealing focus from unrelated search/filter controls. Preserve instance selection versus group-highlight semantics and access-loss cleanup.",
+        "Add failing-before/passing-after pure and DOM regressions for those exact findings; update the old test that currently permits repeated token settlement. Cover counts/search at and above the bound, late callbacks, reentrant notification, group removal and result reordering. Preserve safe textContent rendering, stable IDs and injected authorized projection/callback boundaries.",
+        "Change only apps/web/discovery code/tests/docs. Read the selected design guidance for UI work. No shared host, scene, backend, request lifecycle, holds, root dependency/CI, live API, fixture/server/database/role/token/native/browser setup, source publication or deployment under this preparation."
+      ],
+      "verification": [
+        "Reuse exact-source existing evidence and run only task-specific pure/mock/DOM checks needed for the repair. The current test inventory is 12 model tests, seven jsdom-conditional DOM cases and one always-run static case. Record actual pass/skip counts and the existing jsdom source; do not call skipped cases passed or install new dependencies.",
+        "Demonstrate the documented regressions on original source before the fix and repeat on the frozen corrected commit. Actual browser keyboard/layout/screen-reader, authorized API projection and scene integration remain unrun unless separately approved.",
+        "Freeze a tested LOCAL commit/patch and normally clear its lease with precise integration/publication gates. No duplicate implementation, proxy claim, claim while another task is active, PR/merge, live measurements or implied SV-016 completion."
+      ],
+      "sourceNotes": [
+        "Independent original web Sol review completed in thread01a1acaf-b22d-721a-b4bf-d8607d490002, turn01a1c67b-40ae-7394-8cb5-bf9d24594fec. Reproduced P2 same-token denial->late-success resurrection, P2 silent5001-item truncation, and conditional P3 notification-before-generation reentrancy. This is client projection cleanup, not a demonstrated backend authorization bypass.",
+        "Coordinator independently reproduced P2 group-removal and result-reorder focus loss to BODY using JSDOM, while all8 existing component checks passed with0 skips. All6 public Git blobs matched exact source6a9424d; no feature edits occurred during review.",
+        "The reported11 mutation catches have no committed reproducible inventory in the original6 files. Do not present that author report as independently rerun evidence. No HTML-injection path was found in the textContent renderer."
+      ],
+      "coordinationNotes": [
+        "Parent requested this bounded repair for Cheich and owns the external assignment/Slack message. Keep current SV031 holds work and queued SV010 review/SV027 handoff order intact; this is a ready follow-up when his current normal claim closes, not a preemption.",
+        "Normal claim: npm run board -- claim SV-032 --owner Cheich --agent cheich-sv032-discovery-repair-UNIQUE. No proxy claim. Exclusive scope apps/web/discovery; other original owners and frozen app candidateb549 remain untouched.",
+        "Discovery remains unmounted. Repair/integration acceptance must precede shared-host/scene adoption through existing SV008 ownership and approved browser checks. Preserve SV016 final dependencies/gates and the deliberate b549 main7c candidate boundary.",
+        "Private SV010 ZIP sharing is separately user-approved and byte-uploaded; its existing Slack worker is sole finalizer. This task grants no wider sharing, GitHub publication, runtime, identity/security change or retry/reroute of unrelated stopped actions."
+      ],
+      "claim": null
     }
   ]
 }
