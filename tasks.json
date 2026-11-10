@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 348,
-  "updatedAt": "2026-11-10T17:09:07.570Z",
+  "revision": 349,
+  "updatedAt": "2026-11-10T17:23:40.211Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2461,6 +2461,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Explicit user transfer of retained unfinished work; original source frozen, source delivery and contract preconditions explicit; no proxy claim/status/dependency/permission change"
+    },
+    {
+      "at": "2026-11-10T17:23:40.211Z",
+      "taskId": "SV-031",
+      "command": "claim",
+      "agent": "cheich-sv031-hold-evidence-01",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -3585,7 +3592,7 @@
     {
       "id": "SV-031",
       "title": "Complete hold-clearance evidence contract and regressions",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-001",
@@ -3622,7 +3629,13 @@
         "Coordinate the original ops owner only after migration/table inventory freezes; old 8/26 and 11/32 receipts do not certify the new schema. No benchmark/discovery implementation or source publication, GitHub403 retry, security/identity change, denied filesystem/CIM reroute or restart of the ended runtime cycle.",
         "Source owner of completed SV021 is Cheich's prior holds lane. Its merged state/history is preserved; this new bounded task captures the outstanding evidence contract. Final SV016 dependencies and integrated acceptance remain unchanged."
       ],
-      "claim": null
+      "claim": {
+        "agent": "cheich-sv031-hold-evidence-01",
+        "owner": "cheich",
+        "leaseId": "cf7ad492-79dc-41c1-b110-e1348410ae38",
+        "claimedAt": "2026-11-10T17:23:40.211Z",
+        "expiresAt": "2026-11-10T19:23:40.211Z"
+      }
     }
   ]
 }
