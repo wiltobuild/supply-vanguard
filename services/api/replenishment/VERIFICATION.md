@@ -1,5 +1,16 @@
 # SV-010 verification evidence
 
+## Local access-response repair (unpublished)
+
+The retained public `cf43d810` client parsed JSON before interpreting HTTP rejection. HTML, empty or broken JSON on 401/403 therefore lost the status; rejected writes were marked uncertain and the UI could retain unauthorized cached records, drafts and pending commands. The local repair retains authoritative HTTP status even when rejection bodies cannot be decoded. It preserves valid JSON error codes and keeps true transport/5xx-write and successful-write unreadable-response uncertainty.
+
+Focused command: `node --test services/api/replenishment/tests/access-response.test.mjs`.
+
+- Before repair: **1 passed, 11 failed**; the network/5xx/successful-write uncertainty control passed.
+- After repair: **12 passed, 0 failed, 0 skipped**. Client tests cover read/write 401/403 with HTML, empty and broken JSON, valid error codes, invalid JSON shapes, transport failure, 5xx and malformed 201. Controlled DOM tests cover read/write/pending-retry denials, clearing cached records/pending requests/drafts, and fresh keys/blank drafts after access returns.
+- This file imports no SQL fixture, starts no listener, and performs no real network, browser or provisioning operation. The full database/DOM fixture suite and root tests were not rerun; historical evidence below remains separate.
+- `npm run check` passed after the local repair. The published commit is unchanged; repair publication and GitHub PR creation remain separate handoff gates.
+
 Base inspected: main `94d2f97` (merged web/API PR #13). Claim confirmed **exit 0**, live board revision **172**, owner `wil`, agent `wil-sol-sv010-20261106-replenishment`, at `2026-11-06T01:16:45.675Z`. Dependencies SV-007 and SV-009 were done. Scope is exactly `apps/web/supplies` and `services/api/replenishment`.
 
 ## Passed

@@ -9,8 +9,16 @@ export function createReplenishmentClient({organizationId, fetchImpl = globalThi
     } catch { throw Object.assign(Error('Connection interrupted. Retry the unchanged request to check its result.'),{uncertain:Boolean(input)}); }
     let result;
     try { result = await response.json(); }
-    catch { throw Object.assign(Error('Response unreadable. Retry the unchanged request.'),{uncertain:Boolean(input)}); }
-    if (!response.ok) throw Object.assign(Error(result.error || 'Request failed'),{status:response.status,uncertain:Boolean(input) && response.status >= 500});
+    catch {
+      // A rejected HTTP response remains authoritative even when a proxy supplies HTML or no body.
+      // Only an unreadable successful write leaves its commit outcome unknown.
+      if (response.ok) throw Object.assign(Error('Response unreadable. Retry the unchanged request.'),{status:response.status,uncertain:Boolean(input)});
+    }
+    if (!response.ok) {
+      const fallback = response.status === 401 ? 'unauthenticated' : response.status === 403 ? 'forbidden' : 'Request failed';
+      const code = result && !Array.isArray(result) && typeof result.error === 'string' && result.error ? result.error : fallback;
+      throw Object.assign(Error(code),{status:response.status,uncertain:Boolean(input) && response.status >= 500});
+    }
     return result;
   }
   return Object.freeze({
