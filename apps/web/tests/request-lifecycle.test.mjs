@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createRequestApi,createRequestSession,quantities,canClear,RequestError} from '../requests/client.js';
+import {createRequestApi,createRequestSession,quantities,canClear,RequestError,EvidenceError,prepareClearance,describeClearError} from '../requests/client.js';
 import {mountRequests} from '../requests/view.js';
 const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return{promise,resolve,reject};};
 const line=(patch={})=>({lineNo:1,equipmentType:'pump',state:'assigned',version:0,demandCancelled:false,dispatchedAt:null,receivedAt:null,returnedAt:null,assignments:[{id:'a',equipmentId:'EQ-1',active:true,assignedBy:'synthetic',assignedAt:'2026-11-10T00:00:00Z'}],holds:[],history:[],...patch});
@@ -95,4 +95,181 @@ test('late conflict refresh cannot overwrite newer navigation or reset',async()=
 });
 test('failed or denied conflict refresh preserves error/denied rather than claiming latest data loaded',async()=>{
  for(const status of [0,401,403]){let conflict=false;const s=createRequestSession({api:apiFor({read:async()=>{if(conflict)throw new RequestError('refresh failed',{status});return record([line()]);},lifecycle:async()=>{conflict=true;throw new RequestError('conflict',{status:409});}})});await s.load('r');await s.transition('r',line(),'dispatch');assert.equal(s.state.phase,status?'denied':'error');assert.equal(s.state.request,null);assert.equal(s.state.error.message,'refresh failed');s.dispose();}
+});
+
+// ---------------- SV-027: clearance evidence wiring against the PR #32 contract (schemaVersion 1) ----------------
+// Synthetic only. The evidence is a recorded assertion; none of these tests (or the UI) says it is sufficient to clear a hold.
+const OBSERVED=new Date(Date.now()-60000).toISOString();
+const ev=(over={})=>({reference:'Cleaning log #12',observedAt:OBSERVED,...over});
+const clearance=(over={})=>({basis:'evidence-v1',evidence:{id:'e1',schemaVersion:1,reference:'Cleaning log #12',observedAt:OBSERVED,note:null,recordedBy:'user:synthetic',recordedAt:'2026-11-10T10:00:00.000Z'},...over});
+const reply=(over={})=>({hold:{id:'dirty',kind:'dirty',active:false,clearedBy:'user:synthetic',clearedAt:'2026-11-10T10:00:00.000Z',clearance:clearance()},replayed:false,summaryBasis:'current',summary:{blocked:true,activeKinds:['fault'],active:1,total:2},holds:[],...over});
+const twoHolds=()=>[{id:'dirty',kind:'dirty',active:true,placedAt:'t',placedBy:'p'},{id:'fault',kind:'fault',active:true,placedAt:'t',placedBy:'p'}];
+const counter=()=>{let n=0;return()=>`k-${++n}`;};
+const keysOf=o=>Object.keys(o).sort().join(',');
+
+test('the evidence command goes to /holds/:id/clearances with an Idempotency-Key header; the legacy clear is unchanged',async()=>{
+ const calls=[];const api=createRequestApi({organizationId:'o',transport:async(...a)=>{calls.push(a);return {};}});
+ const body=prepareClearance(ev());
+ await api.clearWithEvidence('h 1',body,'key-1');await api.clear('h');
+ assert.equal(calls[0][0],'/organizations/o/holds/h%201/clearances');assert.equal(calls[0][1].method,'POST');assert.deepEqual(calls[0][1].body,body);
+ assert.deepEqual(calls[0][1].headers,{'Idempotency-Key':'key-1'});
+ assert.equal(calls[1][0],'/organizations/o/holds/h/clear');assert.equal(calls[1][1].body,undefined);assert.equal(Object.hasOwn(calls[1][1],'headers'),false,'no header on the legacy command');
+ // A transport failure of the new write is uncertain, exactly like the other writes.
+ const failing=createRequestApi({organizationId:'o',transport:async()=>{throw new Error('socket closed');}});
+ await assert.rejects(failing.clearWithEvidence('h',body,'k'),e=>e.uncertain===true);
+});
+
+test('evidence input is validated with the server rules; only a reference, a UTC time and a note can be sent; messages never echo the input',()=>{
+ const NOW=Date.parse('2026-11-10T12:00:00Z');
+ const body=prepareClearance({reference:'  Cleaning log #12 ',observedAt:' 2026-11-10T09:30:00Z ',note:'  wiped  '},NOW);
+ assert.deepEqual(body,{schemaVersion:1,evidence:{reference:'Cleaning log #12',observedAt:'2026-11-10T09:30:00.000Z',note:'wiped'}});
+ assert.equal(keysOf(body),'evidence,schemaVersion');assert.equal(keysOf(body.evidence),'note,observedAt,reference','no actor, tenant, role or authoritative time field exists');
+ assert.equal(Object.hasOwn(prepareClearance({reference:'A',observedAt:'2026-11-10T09:30:00Z'},NOW).evidence,'note'),true===false,'an empty note is omitted');
+ assert.equal(prepareClearance({reference:'A',observedAt:'2026-11-10T12:00:00.000Z'},NOW).evidence.observedAt,'2026-11-10T12:00:00.000Z','now is allowed');
+ const bad=[[{reference:'',observedAt:'2026-11-10T09:30:00Z'},'reference'],[{reference:'<b>x</b>',observedAt:'2026-11-10T09:30:00Z'},'reference'],[{reference:'x'.repeat(129),observedAt:'2026-11-10T09:30:00Z'},'reference'],
+  [{reference:'A',observedAt:''},'observedAt'],[{reference:'A',observedAt:'yesterday'},'observedAt'],[{reference:'A',observedAt:'2026-11-10T09:30:00+02:00'},'observedAt'],[{reference:'A',observedAt:'2026-02-31T09:30:00Z'},'observedAt'],
+  [{reference:'A',observedAt:'2026-11-10T09:30:00.123456Z'},'observedAt'],[{reference:'A',observedAt:'2026-11-10T12:00:00.001Z'},'observedAt'],
+  [{reference:'A',observedAt:'2026-11-10T09:30:00Z',note:'two\nlines'},'note'],[{reference:'A',observedAt:'2026-11-10T09:30:00Z',note:'x'.repeat(501)},'note']];
+ for(const [input,field] of bad)assert.throws(()=>prepareClearance(input,NOW),e=>e instanceof EvidenceError&&e.field===field,JSON.stringify(input).slice(0,70));
+ assert.throws(()=>prepareClearance({reference:'A',observedAt:'2026-11-10T09:30:00.123456Z'},NOW),/millisecond/i);
+ const marker='SECRET-MARKER-9Q';
+ for(const input of [{reference:`<${marker}>`,observedAt:'2026-11-10T09:30:00Z'},{reference:'A',observedAt:marker},{reference:'A',observedAt:'2026-11-10T09:30:00Z',note:`${marker}\n${marker}`}])assert.throws(()=>prepareClearance(input,NOW),e=>!e.message.includes(marker));
+ assert.throws(()=>prepareClearance(undefined,NOW),EvidenceError);
+});
+
+test('first success: sends the exact body and a fresh key, records the returned evidence, and refreshes from the server',async()=>{
+ const calls=[];let reads=0;
+ const api=apiFor({read:async()=>{reads++;return record([line({holds:twoHolds().map(h=>h.id==='dirty'&&calls.length?{...h,active:false,clearedBy:'user:synthetic',clearedAt:'2026-11-10T10:00:00.000Z',clearance:clearance()}:h)})]);},
+  rules:async()=>({rules:[{kind:'dirty',role:'cleaner'},{kind:'fault',role:'biomed'}]}),clearWithEvidence:async(...a)=>{calls.push(a);return reply();}});
+ const s=createRequestSession({api,key:counter()});await s.load('r');
+ await s.clearWithEvidence('dirty',ev({note:'wiped'}));
+ const [holdId,body,key]=calls[0];
+ assert.equal(holdId,'dirty');assert.equal(key,'k-1');assert.equal(body.schemaVersion,1);assert.equal(keysOf(body.evidence),'note,observedAt,reference');
+ assert.doesNotMatch(JSON.stringify(calls[0]),/actor|tenant|organization|role|clearedBy|clearedAt|recordedBy/i,'nothing identity- or time-like is sent by the client');
+ assert.equal(s.state.phase,'success');assert.equal(reads,2,'the screen refreshed from the server after the write');
+ const last=s.state.lastClearance;
+ assert.deepEqual([last.holdId,last.replayed,last.stackBasis,last.activeKinds],['dirty',false,'current',['fault']]);
+ assert.equal(last.clearance.evidence.reference,'Cleaning log #12');assert.equal(last.clearance.basis,'evidence-v1');
+ const holds=s.state.request.items[0].holds;assert.equal(holds[0].active,false);assert.equal(holds[1].active,true,'clearing one hold never clears another');
+ s.dispose();
+});
+
+test('a replay is shown as the original receipt with the CURRENT stack, never as immutable history',async()=>{
+ const replies=[reply(),reply({replayed:true,summary:{blocked:false,activeKinds:[],active:0,total:2}})];
+ const api=apiFor({clearWithEvidence:async()=>replies.shift()});const s=createRequestSession({api,key:()=>'same-key'});await s.load('r');
+ await s.clearWithEvidence('dirty',ev());const first=s.state.lastClearance;
+ await s.clearWithEvidence('dirty',ev());const again=s.state.lastClearance;
+ assert.equal(first.replayed,false);assert.equal(again.replayed,true);
+ assert.deepEqual(again.clearance,first.clearance,'the receipt part is exactly the original');
+ assert.deepEqual(first.activeKinds,['fault']);assert.deepEqual(again.activeKinds,[],'the stack part reflects the newer state');
+ assert.equal(again.stackBasis,'current');
+ const unlabelled=createRequestSession({api:apiFor({clearWithEvidence:async()=>{const r=reply();delete r.summaryBasis;return r;}}),key:counter()});await unlabelled.load('r');await unlabelled.clearWithEvidence('dirty',ev());
+ assert.equal(unlabelled.state.lastClearance.stackBasis,'unlabelled','a response that does not say its stack is current is not presented as current');
+ s.dispose();unlabelled.dispose();
+});
+
+test('role loss is a refusal, not a lost session; missing rule, validation and conflicts each get their own message',async()=>{
+ const fail=(status,message,extra={})=>apiFor({read:async()=>record([line({holds:twoHolds()})]),clearWithEvidence:async()=>{throw new RequestError(message,{status,...extra});}});
+ let s=createRequestSession({api:fail(403,'wrong_role'),key:counter()});await s.load('r');await s.clearWithEvidence('dirty',ev());
+ assert.equal(s.state.phase,'error');assert.equal(s.state.clearIssue.kind,'role');assert.notEqual(s.state.request,null,'the screen is not wiped');
+ assert.deepEqual([s.state.uncertain,s.state.retryable],[false,false]);s.dispose();
+ // A real loss of access still clears everything.
+ const api=fail(403,'wrong_role');s=createRequestSession({api,key:counter()});await s.load('r');api.read=async()=>{throw new RequestError('forbidden',{status:403});};await s.load('r');
+ assert.equal(s.state.phase,'denied');assert.equal(s.state.request,null);s.dispose();
+ // Other statuses on the new command.
+ for(const [status,code,kind] of [[422,'no_clearance_rule','missing-rule'],[400,'invalid_request','validation'],[422,'evidence_invalid','validation']]){
+  s=createRequestSession({api:fail(status,code),key:counter()});await s.load('r');await s.clearWithEvidence('dirty',ev());
+  assert.equal(s.state.clearIssue.kind,kind,code);assert.equal(s.state.phase,'error');s.dispose();
+ }
+ for(const [code,kind] of [['hold_already_cleared','conflict'],['idempotency_conflict','key-conflict']]){
+  let reads=0;const a=fail(409,code);const read=a.read;a.read=async(...x)=>{reads++;return read(...x);};
+  s=createRequestSession({api:a,key:counter()});await s.load('r');await s.clearWithEvidence('dirty',ev());
+  assert.equal(s.state.phase,'conflict',code);assert.equal(s.state.clearIssue.kind,kind);assert.equal(reads,2,'a conflict refreshes the latest records');s.dispose();
+ }
+ s=createRequestSession({api:fail(401,'unauthenticated'),key:counter()});await s.load('r');await s.clearWithEvidence('dirty',ev());assert.equal(s.state.phase,'denied');s.dispose();
+ // The legacy command keeps its frozen behaviour: a 403 is treated as access loss.
+ const legacy=apiFor({clear:async()=>{throw new RequestError('wrong_role',{status:403});}});s=createRequestSession({api:legacy});await s.load('r');await s.clear('dirty');assert.equal(s.state.phase,'denied');s.dispose();
+ assert.deepEqual(Object.values({a:describeClearError({status:422,message:'no_clearance_rule'}).kind}),['missing-rule']);
+ assert.equal(describeClearError({status:418,message:'secret'}).message.includes('secret'),false,'unknown errors do not echo their text');
+});
+
+test('invalid precision or any invalid evidence sends nothing and leaves the session untouched',async()=>{
+ let sent=0;const api=apiFor({read:async()=>record([line({holds:twoHolds()})]),clearWithEvidence:async()=>{sent++;return reply();}});
+ const s=createRequestSession({api,key:counter()});await s.load('r');const before=s.state;
+ for(const input of [ev({observedAt:'2026-11-10T09:30:00.123456Z'}),ev({reference:''}),ev({observedAt:new Date(Date.now()+3600e3).toISOString()}),ev({note:'a\nb'})])
+  assert.throws(()=>s.clearWithEvidence('dirty',input),EvidenceError);
+ assert.equal(sent,0);assert.equal(s.state,before,'no state change, no busy flag, no key consumed');
+ await s.clearWithEvidence('dirty',ev());assert.equal(sent,1);s.dispose();
+});
+
+test('an uncertain write retries the exact original body and key; a later action gets a new key; a fresh action waits for reconciliation',async()=>{
+ const calls=[];let first=true;
+ const api=apiFor({read:async()=>record([line({holds:twoHolds()})]),clearWithEvidence:async(...a)=>{calls.push(a);if(first){first=false;throw new RequestError('Connection lost',{uncertain:true});}return reply({replayed:true});}});
+ const s=createRequestSession({api,key:counter()});await s.load('r');
+ await s.clearWithEvidence('dirty',ev({note:'prepared'}));
+ assert.deepEqual([s.state.uncertain,s.state.retryable,s.state.clearIssue.kind],[true,true,'uncertain']);
+ await assert.rejects(s.clearWithEvidence('fault',ev()),/uncertain operation/i);          // blocked until the first is resolved
+ assert.equal(calls.length,1);
+ await s.retry();
+ assert.equal(calls.length,2);assert.deepEqual(calls[1],calls[0],'identical hold, body and Idempotency-Key');assert.equal(calls[1][2],'k-1');
+ assert.equal(s.state.lastClearance.replayed,true);
+ await s.clearWithEvidence('fault',ev());assert.notEqual(calls[2][2],calls[0][2],'a new action uses a fresh key, never the earlier one');
+ s.dispose();
+});
+
+test('cleanup: reset, dispose and access loss erase the clearance record, issue and pending command; late results leak nothing',async()=>{
+ const gate=deferred();let reads=0;
+ const api=apiFor({read:async()=>{reads++;return record([line({holds:twoHolds()})]);},clearWithEvidence:async()=>{await gate.promise;return reply();}});
+ let s=createRequestSession({api,key:counter()});await s.load('r');
+ const pending=s.clearWithEvidence('dirty',ev());await tick();s.reset();gate.resolve();await pending;await tick();
+ assert.equal(s.state.lastClearance,null);assert.equal(s.state.request,null);assert.equal(reads,1,'no refetch after a reset');s.dispose();
+ s=createRequestSession({api:apiFor({read:async()=>record([line({holds:twoHolds()})]),clearWithEvidence:async()=>reply()}),key:counter()});await s.load('r');await s.clearWithEvidence('dirty',ev());
+ assert.notEqual(s.state.lastClearance,null);s.reset();assert.deepEqual([s.state.lastClearance,s.state.clearIssue],[null,null]);s.dispose();
+ const a=apiFor({read:async()=>record([line({holds:twoHolds()})]),clearWithEvidence:async()=>reply()});s=createRequestSession({api:a,key:counter()});await s.load('r');await s.clearWithEvidence('dirty',ev());
+ a.read=async()=>{throw new RequestError('forbidden',{status:403});};await s.load('r');assert.equal(s.state.phase,'denied');assert.equal(s.state.lastClearance,null);s.dispose();
+});
+
+test('view: evidence form only where the contract permits; legacy button labelled; recorded evidence escaped; legacy and unreported clearances labelled honestly',async()=>{
+ const {root}=rootStub();
+ const holds=[{id:'dirty',kind:'dirty',active:true,placedAt:'t',placedBy:'p'},{id:'fault',kind:'fault',active:true,placedAt:'t',placedBy:'p'},
+  {id:'c1',kind:'maintenance',active:false,placedAt:'t',placedBy:'p',clearedAt:'c',clearedBy:'u',clearance:clearance({evidence:{...clearance().evidence,reference:'<img src=x onerror=1>',note:'<b>n</b>',recordedBy:'<i>u</i>'}})},
+  {id:'c2',kind:'unknown',active:false,placedAt:'t',placedBy:'p',clearedAt:'c',clearedBy:'u',clearance:{basis:'legacy-no-additional-evidence',evidence:null}},
+  {id:'c3',kind:'dirty',active:false,placedAt:'t',placedBy:'p',clearedAt:'c',clearedBy:'u'}];
+ const view=mountRequests(root,{api:apiFor({read:async()=>record([line({holds})]),rules:async()=>({rules:[{kind:'dirty',role:'cleaner'}]})}),permissions:['equipment:write'],role:'cleaner'});
+ await tick();await view.session.load('r');
+ const html=root.innerHTML;
+ assert.match(html,/<form data-evidence="dirty"[^>]*aria-label="Clear dirty hold with evidence"/);assert.doesNotMatch(html,/data-evidence="fault"/,'no form for a kind this role is not configured to clear');
+ assert.match(html,/Clear dirty without evidence \(legacy\)/);assert.match(html,/name="reference"[^>]*required/);assert.match(html,/name="observedAt"[^>]*required/);assert.match(html,/Note \(optional/);
+ assert.match(html,/not check them against any policy/);
+ assert.match(html,/&lt;img src=x onerror=1&gt;/);assert.match(html,/&lt;b&gt;n&lt;\/b&gt;/);assert.match(html,/&lt;i&gt;u&lt;\/i&gt;/);assert.doesNotMatch(html,/<img|<b>n|<i>u/);
+ assert.match(html,/evidence recorded: reference/);assert.match(html,/as asserted by the clearer/);
+ assert.match(html,/cleared without additional evidence \(legacy clearance/);assert.match(html,/clearance evidence is not reported by this response/);
+ const none=mountRequests(rootStub().root,{api:apiFor({read:async()=>record([line({holds})]),rules:async()=>({rules:[{kind:'dirty',role:'cleaner'}]})}),permissions:['equipment:write'],role:'someone-else'});await tick();await none.session.load('r');
+ view.dispose();none.dispose();
+});
+
+test('view: invalid precision shows an accessible inline error and sends nothing; a valid submit shows the receipt and the current stack',async()=>{
+ const {root,listeners}=rootStub();const sent=[];
+ const api=apiFor({read:async()=>record([line({holds:twoHolds()})]),rules:async()=>({rules:[{kind:'dirty',role:'cleaner'}]}),clearWithEvidence:async(...a)=>{sent.push(a);return reply();}});
+ const view=mountRequests(root,{api,permissions:['equipment:write'],role:'cleaner'});await tick();await view.session.load('r');
+ const formFor=values=>({dataset:{evidence:'dirty'},elements:{namedItem:name=>({value:values[name]??''})}});
+ const submit=values=>listeners.get('submit')({preventDefault(){},target:formFor(values)});
+ submit({reference:'LOG-1',observedAt:'2026-11-10T09:30:00.123456Z'});await tick();
+ assert.equal(sent.length,0);assert.match(root.innerHTML,/id="evidence-error-dirty" role="alert"/);assert.match(root.innerHTML,/millisecond/);
+ assert.match(root.innerHTML,/name="observedAt"[^>]*aria-invalid="true" aria-describedby="evidence-error-dirty"/);assert.doesNotMatch(root.innerHTML,/name="reference"[^>]*aria-invalid/);
+ submit({reference:'LOG-1',observedAt:OBSERVED});await tick();await tick();
+ assert.equal(sent.length,1);assert.doesNotMatch(root.innerHTML,/evidence-error-dirty/,'the inline error is gone after a valid submit');
+ assert.match(root.innerHTML,/data-last-clearance/);assert.match(root.innerHTML,/Holds still active on this equipment: FAULT/);assert.match(root.innerHTML,/current state when the server answered, not part of the receipt/);
+ view.dispose();
+});
+
+test('view: role refusal and missing rule show fixed explanations and keep the records on screen',async()=>{
+ for(const [status,code,text] of [[403,'wrong_role',/Your role is not the one configured/],[422,'no_clearance_rule',/No clearance role is configured/],[409,'idempotency_conflict',/no longer matches its earlier submission/]]){
+  const {root,listeners}=rootStub();
+  const api=apiFor({read:async()=>record([line({holds:twoHolds()})]),rules:async()=>({rules:[{kind:'dirty',role:'cleaner'}]}),clearWithEvidence:async()=>{throw new RequestError(code,{status});}});
+  const view=mountRequests(root,{api,permissions:['equipment:write'],role:'cleaner'});await tick();await view.session.load('r');
+  listeners.get('submit')({preventDefault(){},target:{dataset:{evidence:'dirty'},elements:{namedItem:n=>({value:{reference:'LOG-1',observedAt:OBSERVED}[n]??''})}}});await tick();await tick();await tick();
+  assert.match(root.innerHTML,text,code);assert.doesNotMatch(root.innerHTML,new RegExp(`>${code}<`),'the raw code is not shown');assert.match(root.innerHTML,/Independent holds/,'records stay on screen');
+  view.dispose();
+ }
 });
