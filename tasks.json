@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 388,
-  "updatedAt": "2026-11-10T18:59:14.500Z",
+  "revision": 389,
+  "updatedAt": "2026-11-10T19:08:14.091Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2745,6 +2745,13 @@
       "command": "block",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T19:08:14.091Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3284,7 +3291,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3306,8 +3313,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "LOCAL source-only Windows platform frozen eb43dab5681b21252eab91063f8bb5acf523e4f8 from8673 on local/sv017-windows-platform; clean ten-file diff.45 tests pass zero skips including2 static; broker AST and diff check pass. Seven provisional review findings corrected: exact broker exit+close linked final gate/provisional receipts, strict per-operation case-safe connection environment, retained broker/kernel bytes and consumption leases, initialized attribute cleanup, serialized cancel/resume with exact cleanup allowlist, deep immutable common cycle snapshot. Independent corrected-source re-review remains. Genuine initial PowerShell hash-to-image-load lease/identity limitation remains explicitly documented; no exact-image guarantee or arming. C# compile/load and all Win32/native/ACL/socket/PG/recovery/race operations UNRUN. Frozen8673/b440/EA,13 historical receipts and3 wrappers unchanged. No publication, merge or deployment. Future bounded runtime needs separate authorization after source/bootstrap gates. Clear matching lease.",
-      "reviewNote": "Coordinator accepted8673; authorized source-only concrete Windows platform binding; no runtime"
+      "blockedReason": null,
+      "reviewNote": "Authorized original-owner source-only repair of residual pipe ownership and terminal transport-health review findings; no runtime"
     },
     {
       "id": "SV-018",
