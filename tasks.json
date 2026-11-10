@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 371,
-  "updatedAt": "2026-11-10T18:01:49.200Z",
+  "revision": 372,
+  "updatedAt": "2026-11-10T18:07:50.876Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2624,6 +2624,13 @@
       "command": "claim",
       "agent": "cheich-sv010-review-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T18:07:50.876Z",
+      "taskId": "SV-010",
+      "command": "release",
+      "agent": "cheich-sv010-review-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2944,7 +2951,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "claimed",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -2962,13 +2969,7 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "cheich-sv010-review-01",
-        "owner": "cheich",
-        "leaseId": "a5d0e974-441f-428e-b512-067a12802f66",
-        "claimedAt": "2026-11-10T18:01:49.200Z",
-        "expiresAt": "2026-11-10T20:01:49.200Z"
-      },
+      "claim": null,
       "blockedReason": null,
       "reviewNote": "Recipient verified the existing repair ZIP, patch and all 21 authored files for frozen bcfd05ce. Original owner handed off the bounded remaining review/local repair to Cheich. Add controlled failing-before/passing-after regressions for stale post-load focus after destroy/replacement and old destroy erasing a newer mount; keep instance-owned cleanup and disposed guards within existing supplies/replenishment scope. Shared host and lifecycle remain separately owned. Publication and PR-creation access gates unchanged; no proxy claim.",
       "coordinationNotes": [
