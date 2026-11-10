@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 293,
-  "updatedAt": "2026-11-10T01:34:41.274Z",
+  "revision": 294,
+  "updatedAt": "2026-11-10T01:45:53.943Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2062,6 +2062,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T01:45:53.943Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2593,7 +2600,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -2611,17 +2618,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "771dad05-7b13-4b7d-93c3-d7b0c9e900b6",
-        "claimedAt": "2026-11-10T01:19:06.168Z",
-        "expiresAt": "2026-11-10T03:28:00.682Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "Reviewed local ops source ea63db9a8141b56b8ce69bb34fef797bb622ddee remains clean. Wrapper DACL/exact-handle Job Object preparation accepted source-only;16 contract/supervision tests passed, no native/resource acceptance claimed. Blocked on parent binding corrected harness e50679daf862c76a0582fbb8afb89137387ff382 execution/access ownership after denied Git directory reads, plus original common global start/deadline. Disabled adapter preserved. Do not retry/escalate denied harness reads, transfer source via another host/path/owner, start resources, publish, merge or deploy. Preserve wrapper hashes and historical receipts; clear matching lease until coordinator unblocks original owner.",
       "reviewNote": "User approved one bounded local synthetic acceptance cycle. Independent frozen ea63db9a source review passed58 tests and non-ops preservation, explicit11 migrations32 tables. Same original owner may normally claim to prepare the reviewed supervised native runner; actual official18.6 setup/recovery waits for global API-start deadline, immutable source binding and reviewed SV022 harness timing. Preserve all strict assertions, one run, cleanup, no publication or merge."
     },
     {
