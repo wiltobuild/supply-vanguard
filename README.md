@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 391. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 392. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -31,7 +31,7 @@ Revision 391. Live state is on the task-board branch. Use npm run board -- claim
 | SV-024 Add fifteen illustrative NICU equipment assets | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/16) |
 | SV-025 Build illustrative pediatric intensive care ward (PICU) | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/20) |
 | SV-026 Build illustrative pediatric cardiac step-down ward (PCU) | done | — | — | SV-002 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/21) |
-| SV-027 Build task-local request, holds and returns UI | claimed | cheich / cheich-sv027-evidence-ui-01 | 2026-11-10T21:14:20.902Z | SV-007, SV-020, SV-021 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
+| SV-027 Build task-local request, holds and returns UI | review | — | — | SV-007, SV-020, SV-021 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/34) |
 | SV-028 Prepare read-only performance benchmark tooling | done | — | — | SV-001 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/27) |
 | SV-029 Harden benchmark workload bounds and diagnostics | done | — | — | SV-028 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/28) |
 | SV-030 Prepare equipment discovery model and accessible component | done | — | — | SV-001, SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/29) |
