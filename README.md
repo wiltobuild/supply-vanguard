@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 304. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 305. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -23,7 +23,7 @@ Revision 304. Live state is on the task-board branch. Use npm run board -- claim
 | SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e, tools/benchmarks |
 | SV-017 Deployment and operational readiness | blocked | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/17) |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
-| SV-019 Repair auth bootstrap and clean test setup | claimed | cheich / cheich-agent-11 | 2026-11-10T11:04:44.146Z | SV-005 | services/api/db bootstrap/seed, task-specific auth tests/dependency wiring, root package/test-loader and CI changes required for the two regressions only |
+| SV-019 Repair auth bootstrap and clean test setup | review | — | — | SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/26) |
 | SV-020 Requests and atomic item assignments | done | — | — | SV-006 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/11) |
 | SV-021 Independent stacked equipment holds | done | — | — | SV-006, SV-020 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/23) |
 | SV-022 Partial fulfillment and safe returns | blocked | — | — | SV-020, SV-021 | Task-local request fulfillment lifecycle, Task-local return lifecycle integration |

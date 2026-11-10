@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 304,
-  "updatedAt": "2026-11-10T09:04:44.146Z",
+  "revision": 305,
+  "updatedAt": "2026-11-10T09:10:01.432Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2139,6 +2139,13 @@
       "command": "claim",
       "agent": "cheich-agent-11",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T09:10:01.432Z",
+      "taskId": "SV-019",
+      "command": "submit",
+      "agent": "cheich-agent-11",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2715,7 +2722,7 @@
     {
       "id": "SV-019",
       "title": "Repair auth bootstrap and clean test setup",
-      "status": "claimed",
+      "status": "review",
       "priority": "high",
       "dependsOn": [
         "SV-005"
@@ -2737,13 +2744,10 @@
         "Scoped auth/regression tests",
         "Native PostgreSQL bootstrap if available; otherwise precise embedded/native coverage disclosure"
       ],
-      "claim": {
-        "agent": "cheich-agent-11",
-        "owner": "cheich",
-        "leaseId": "0aac560a-9ce7-4be8-a076-a54a685867a6",
-        "claimedAt": "2026-11-10T09:04:44.146Z",
-        "expiresAt": "2026-11-10T11:04:44.146Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/26",
+      "submittedBy": "cheich-agent-11",
+      "submittedAt": "2026-11-10T09:10:01.432Z"
     },
     {
       "id": "SV-020",
