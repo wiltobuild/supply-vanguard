@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 383,
-  "updatedAt": "2026-11-10T18:32:34.111Z",
+  "revision": 384,
+  "updatedAt": "2026-11-10T18:35:33.633Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2709,6 +2709,14 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Record verified source delivery and corrected PR32 contract; preserve already completed normal unblock, every state/claim/lease/scope and historical handoff note"
+    },
+    {
+      "at": "2026-11-10T18:35:33.633Z",
+      "taskId": "SV-034",
+      "command": "migration-add-evidence-race-harness",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Missing native evidence-clear concurrency source; queued original Cheich owner after active UI, inert external-runtime contract, preserve active owners and all completed task histories/scopes/gates"
     }
   ],
   "tasks": [
@@ -4001,6 +4009,42 @@
         "mergeCommit": "b4e008b7896b113f8fc8409b997ac4fbd338cc22",
         "mergedAt": "2026-11-10T17:58:22Z"
       }
+    },
+    {
+      "id": "SV-034",
+      "title": "Prepare native hold-evidence concurrency acceptance harness",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-033"
+      ],
+      "scope": [
+        "services/api/holds/tests"
+      ],
+      "acceptance": [
+        "Use published corrected holds source 8bba1f8b0bae8dd06106b4bf1140a2674afb9406 as exact stable base. Preserve completed SV031/SV033 history and the existing evidence implementation. This is a queued source-only follow-up for the original Cheich holds owner after SV027 closes, with a normal unique claim before repository edits.",
+        "Author a new explicitly opt-in inert native evidence suite plus pure harness collaborators and narrowly scoped README/fixture contract entirely under services/api/holds/tests. Do not import, execute or change the old hold-race.native.test.mjs automatic cluster/role provisioning module; inspect it as text only. Do not edit production API/domain/migrations, shared ops, root loaders/CI/dependencies or the active UI.",
+        "Consume an explicitly supplied isolated synthetic runtime and fixture contract, including absolute matching PostgreSQL tool path, loopback host/port, exact database and run marker, runner-owned protected passfile, fictional actors/organizations/equipment/holds and configured role mappings. No environment fallback to production, inherited connection credentials, default bootstrap login, automatic installation/cluster/role/grant/schema/fixture creation or secret reading/logging. Merely importing or running fake tests must never connect even when PostgreSQL is installed.",
+        "Before native cases can execute, fail closed unless explicit approved opt-in and synthetic target are supplied. Validate actual database/schema/protected-relation nonownership, absence of owner-role membership/superuser/BYPASSRLS or security administration, exact expected server identity/version and applicable RLS readiness derived from the frozen migrations. Preserve the intentional auth_user resolver exception. Check the new evidence tables/function and supplied fixture's tenant, actor, configured role and active membership; no new runtime privileges.",
+        "Cover separate real-session same-key replay producing a single clearance/evidence/receipt; different-key competing clear producing one successful clearance; clear versus claim with independent stacked/new holds; rollback interleavings; configured role/rule changes before replay; actor-private conflict behavior and tenant denial. Assert exact final SQL outcomes and immutable evidence alongside explicitly current summaries without inventing hold policy.",
+        "Use deterministic bounded lock orchestration and exact owned client/session handles, a common externally supplied deadline, finite output buffers and redacted receipts. No unbounded sleeps, numeric-PID/global-session kill fallback, elevated observation grants or relaxed lock/authorization assertions. Missing required native cases, skips or uncertain outcomes cannot become a passed acceptance claim.",
+        "Define the minimum external fixture-control contract for current-role/rule transition cases: privileged setup/control remains solely the future supervised isolated runner's responsibility, with bounded fictional fixture IDs/actions, not bootstrap credentials or elevated runtime permissions in the harness. Cleanup must finish/rollback every owned transaction, release owned locks, close or terminate only owned clients and return proof/uncertainty; runner owns database/role/resource removal."
+      ],
+      "verification": [
+        "Map existing evidence coverage first: evidence.test.mjs serializes PGlite; old native hold suite omits migrations0002/0003 and the evidence function; SV022 e506 covers request lifecycle rather than this gap. Preserve all old tests and root evidence-loader omission as a separately coordinated integration obligation.",
+        "Validate source orchestration using injected fake process/SQL/clock/stream/fixture-control collaborators and syntax/static checks only. Cover absent opt-in/incomplete fixtures, bad ownership/RLS, wrong actor/tenant/rule, exact outcomes, deadlock/timeout/cancelled clients, bounded/redacted errors and unconditional cleanup. Do not import an automatic provisioning fixture merely to inspect it.",
+        "Freeze a tested LOCAL commit/diff and explicit source/runtime contract, recording pure pass counts and all native cases unrun. Clear the normal matching lease. No downloads, tool installation, credential generation, SQL/database/role/grant/fixture/listener/native/browser execution, feature publication, merge or deployment is authorized by this preparation."
+      ],
+      "sourceNotes": [
+        "Parent exact-source audit of PR32 head 8bba1f8b confirms hold-race.native.test.mjs applies holds0001 only and never invokes clear_equipment_hold_with_evidence; evidence.test.mjs uses one serialized PGlite session. This is genuinely missing source coverage, not another repetition of completed repaired-contract review.",
+        "PR32 passed independent source/pure review: current role before replay, millisecond technical precision and current summary contract. Executed SQL role-change/concurrency/populated recovery coverage remains open. All test-role mappings are fictional fixture assertions, not production policy decisions."
+      ],
+      "coordinationNotes": [
+        "Ready prep task depends only on completed SV033; ordered after Cheich's active SV027 by coordination, not a bypass of SV016 final dependencies. Normal claim after releasing prior task: npm run board -- claim SV-034 --owner Cheich --agent cheich-sv034-evidence-races-UNIQUE. No proxy claim or competing implementation.",
+        "Current original SV017 owner is implementing Windows capabilities for frozen b549 with 11 migrations/32 tables, deliberately excluding evidence0002/0003. Do not edit that owner or expand its frozen runtime plan. Existing SV022 native harness is a separate frozen request-lifecycle dependency.",
+        "Parent owns external Slack assignment, source-sharing and eventual publication decisions. Return the confirmed ID/base/scope/claim route through parent, with no duplicate Slack. Authoring this harness does not authorize executing or publishing it or declaring integrated/pilot acceptance."
+      ],
+      "claim": null
     }
   ]
 }
