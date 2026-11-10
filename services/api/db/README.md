@@ -32,6 +32,12 @@ Each migration runs in one transaction with its `schema_migrations` record. Migr
 - `equipment_observation` and `equipment_event` are append-only (update and delete are rejected).
 - A trigger on `equipment` requires administrative edits to raise `version` by exactly one, applies the same status transitions as `packages/domain/contracts.js` (retired is final), and refuses to move `last_verified_at` backward. Observations update location confidence without touching `version`.
 
+## Seeding with row-level security (SV-019)
+
+After the auth migration, row-level security is FORCED on the tenant tables, so even the table owner is subject to it, and no policy lets anyone create the first organization. `seed` therefore runs in ONE transaction as the table owner: it switches FORCE off for the tables that had it, loads the synthetic rows, switches FORCE back on, and checks it is on again. If anything fails, nothing is loaded and RLS is exactly as before. No policy, schema or runtime role changes, and the application's runtime role never gets a bypass. A role that does not own the tables fails with "must be owner". Running `seed` again does nothing.
+
+Coverage: `tests/db.test.mjs` proves this on a real PostgreSQL cluster with a non-superuser owner. It is skipped when PostgreSQL is not installed. The embedded PGlite auth tests do not cover bootstrap.
+
 ## Tests
 
 `npm test` runs `tests/db.test.mjs` against a throwaway cluster in a temp folder and removes it afterwards. Without PostgreSQL installed the database tests are skipped and say so.

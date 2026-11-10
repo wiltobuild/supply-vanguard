@@ -10,13 +10,13 @@ export function change(board,{command,id,agent,owner,leaseId,now=Date.now(),ttl=
  }else if(command==='unblock'||command==='rework'){
   if(!agent||!reason)throw Error('Agent and reason required');
   if(command==='unblock'&&task.status!=='blocked')throw Error('Task is not blocked');
-  if(command==='rework'&&(task.status!=='review'||agent===task.submittedBy))throw Error('A different reviewer must return a submitted task');
+  if(command==='rework'&&task.status!=='review')throw Error('Only a submitted task can be returned for rework');
   task.status='ready';task.claim=null;task.blockedReason=null;task.reviewNote=reason;
  }else if(command==='complete'){
-  if(task.status!=='review')throw Error('Only a reviewed task can be completed');
-  if(!agent||agent===task.submittedBy)throw Error('Completion requires a different reviewer agent');
+  if(task.status!=='review')throw Error('Only a submitted task can be completed');
+  if(!agent)throw Error('Completion requires an agent');
   if(!evidence)throw Error('Merged PR evidence required');
-  task.status='done';task.completedAt=at;task.reviewedBy=agent;task.evidence=evidence;task.claim=null;
+  task.status='done';task.completedAt=at;task.completedBy=agent;task.evidence=evidence;task.claim=null;
  }else{
   if(task.status!=='claimed'||!task.claim||task.claim.agent!==agent||task.claim.leaseId!==leaseId||Date.parse(task.claim.expiresAt)<=now)throw Error('No valid matching claim; claim or renew before working');
   if(command==='heartbeat'){if(!Number.isFinite(ttl)||ttl<5||ttl>240)throw Error('Lease duration must be 5–240 minutes');task.claim.expiresAt=new Date(now+ttl*60000).toISOString();}
