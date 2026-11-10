@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 392,
-  "updatedAt": "2026-11-10T19:14:23.458Z",
+  "revision": 393,
+  "updatedAt": "2026-11-10T19:14:32.509Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2773,6 +2773,13 @@
       "command": "submit",
       "agent": "cheich-sv027-evidence-ui-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T19:14:32.509Z",
+      "taskId": "SV-027",
+      "command": "complete",
+      "agent": "cheich-sv027-evidence-ui-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3726,7 +3733,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -3773,7 +3780,14 @@
       "reviewNote": "CURRENT SV027 handoff supersedes older delivery/contract prerequisites: approved ZIP F0CHD60FB6C shared exactly once in C0CEJ1BKBPU, recipient confirmed all five f29a38f files against SHA256/Git blobs/bytes on afe17ebc and23 frozen tests. Normal unblock already succeeded at revision381; do not duplicate it or proxy-claim. Cheich owns the next normal claim cheich-sv027-evidence-ui-01. Corrected backend contract is independently reviewed PR32/SV033 source8bba1f8b0bae8dd06106b4bf1140a2674afb9406: POST holds/:holdId/clearances, Idempotency-Key, schemaVersion1 evidence{reference,observedAt,note?}, UTC at most3 fractional digits. Keep identical prepared key/body for interrupted-response retries, matching current-role authority, 403 role-loss and422 missing-rule semantics, immutable hold/evidence versus current summaryBasis/stack, safe text and honest legacy history. Preserve original request/return implementation and session/focus/disposal protections; add only task-local client/view/docs/regressions in apps/web/requests and apps/web/tests/request-lifecycle.test.mjs. Shared host, backend/lifecycle/scene and ops remain separately owned; no extra runtime/security setup, dependency/root/CI edits, source publication, merge or deployment. SV019 auth repair is done; its old Linux access blocker in historical notes is obsolete, not a current UI prerequisite. Evidence schema/mounted UI remain outside frozen b54911/32 acceptance until deliberate later integration.",
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/34",
       "submittedBy": "cheich-sv027-evidence-ui-01",
-      "submittedAt": "2026-11-10T19:14:23.458Z"
+      "submittedAt": "2026-11-10T19:14:23.458Z",
+      "completedAt": "2026-11-10T19:14:32.509Z",
+      "completedBy": "cheich-sv027-evidence-ui-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/34",
+        "mergeCommit": "794820891516c20485a4724c23868c899d75ce3b",
+        "mergedAt": "2026-11-10T19:14:26Z"
+      }
     },
     {
       "id": "SV-028",
