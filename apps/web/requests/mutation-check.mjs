@@ -26,6 +26,21 @@ const M=[
   ['view.js','the invalid field is not marked',"` aria-invalid=\"true\" aria-describedby=\"evidence-error-${id}\"`","''"],
   ['view.js','the stack is not labelled as current state',"This is the current state when the server answered, not part of the receipt.","This is the list."],
   ['view.js','the legacy button loses its label',"' without evidence (legacy)'","''"],
+  // SV-035: instance ownership and capability controls
+  // dispose() has two overlapping protections (idempotent + ownership). Each alone is covered by the other, so the single changes are
+  // EXPECTED to survive ('layer'); the combined change must be caught.
+  ['view.js','dispose is not idempotent (ownership check kept)',"dispose(){if(disposed)return;   // idempotent: a repeated call is a no-op\n    disposed=true;","dispose(){\n    disposed=true;",'layer'],
+  ['view.js','dispose empties a root it no longer owns (idempotence kept)',"if(mounts.get(root)===handle){root.replaceChildren();mounts.delete(root);}","root.replaceChildren();mounts.delete(root);",'layer'],
+  ['view.js','dispose is neither idempotent nor ownership-aware',[["dispose(){if(disposed)return;   // idempotent: a repeated call is a no-op\n    disposed=true;","dispose(){\n    disposed=true;"],["if(mounts.get(root)===handle){root.replaceChildren();mounts.delete(root);}","root.replaceChildren();mounts.delete(root);"]],null],
+  ['view.js','a stale resetAccess handle clears a newer mount',"if(disposed||mounts.get(root)!==handle)return;","if(false)return;"],
+  ['view.js','a stale resetAccess handle is only ignored when disposed (a replaced handle is always disposed, so this is equivalent)',"if(disposed||mounts.get(root)!==handle)return;","if(disposed)return;",'layer'],
+  ['view.js','clearance is offered whatever the advertised capability',"const clearanceCapable = () => permissions.includes('inventory:read') || permissions.includes('equipment:write');","const clearanceCapable = () => true;"],
+  ['view.js','clearance needs inventory:read only',"permissions.includes('inventory:read') || permissions.includes('equipment:write');","permissions.includes('inventory:read');"],
+  ['view.js','clearance needs equipment:write only',"permissions.includes('inventory:read') || permissions.includes('equipment:write');","permissions.includes('equipment:write');"],
+  ['view.js','the evidence form is shown without the capability',"const permitted = clearanceCapable() && canClear(h, role, state.rules);","const permitted = canClear(h, role, state.rules);"],
+  ['view.js','a read-only view still submits evidence',"if (!clearableHold(holdId)) return;   // read-only or not the configured role: send nothing, invent no error",""],
+  ['view.js','a read-only view still sends the legacy clear',"if(b.dataset.clear){ if(clearableHold(b.dataset.clear)) run(()=>session.clear(b.dataset.clear)); }","if(b.dataset.clear){ run(()=>session.clear(b.dataset.clear)); }"],
+  ['view.js','the legacy button ignores the capability when drawn',"const off = state.busy || state.uncertain || !clearanceCapable() || !canClear(h, role, state.rules)","const off = state.busy || state.uncertain || !canClear(h, role, state.rules)"],
 ];
 const files=[...new Set(M.map(m=>m[0]))],orig=Object.fromEntries(files.map(f=>[f,readFileSync(join(here,f),'utf8')]));
 const run=()=>spawnSync(process.execPath,['--test',test],{encoding:'utf8'});
@@ -34,13 +49,18 @@ const base=run();console.log(`baseline: ${num(base.stdout,'pass')} pass, ${num(b
 if(num(base.stdout,'fail')!==0){console.error('The tests must pass before mutating. Stopping.');process.exit(2);}
 let gaps=0;
 try{
-  for(const [file,name,from,to] of M){
-    if(!orig[file].includes(from)){console.log(`NOT APPLICABLE  ${name}  (source changed: update this inventory)`);gaps++;continue;}
-    writeFileSync(join(here,file),orig[file].replace(from,to));const out=run();writeFileSync(join(here,file),orig[file]);
-    const failed=num(out.stdout,'fail'),caught=failed>0||out.status!==0;if(!caught)gaps++;
-    console.log(`${caught?'caught  ':'SURVIVED'}  ${name}  (${Number.isNaN(failed)?'would not run':failed+' failing'})`);
+  for(const [file,name,from,to,flag] of M){
+    const edits=Array.isArray(from)?from:[[from,to]];
+    let text=orig[file],ok=true;
+    for(const [a,b] of edits){if(!text.includes(a)){ok=false;break;}text=text.replace(a,b);}
+    if(!ok){console.log(`NOT APPLICABLE  ${name}  (source changed: update this inventory)`);gaps++;continue;}
+    writeFileSync(join(here,file),text);const out=run();writeFileSync(join(here,file),orig[file]);
+    const failed=num(out.stdout,'fail'),caught=failed>0||out.status!==0;
+    if(!caught&&flag!=='layer')gaps++;
+    console.log(`${caught?'caught  ':flag==='layer'?'survived (expected: overlapping layer)':'SURVIVED'}  ${name}  (${Number.isNaN(failed)?'would not run':failed+' failing'})`);
   }
 }finally{for(const f of files)writeFileSync(join(here,f),orig[f]);}
 for(const f of files)if(readFileSync(join(here,f),'utf8')!==orig[f]){console.error(`NOT RESTORED: ${f}`);process.exit(3);}
-console.log(gaps?`${gaps} mutation(s) not caught: the tests have a gap.`:`All ${M.length} mutations caught; files restored.`);
+const byDesign=M.filter(x=>x[4]==='layer').length;
+console.log(gaps?`${gaps} mutation(s) not caught: the tests have a gap.`:`${M.length-byDesign} of ${M.length} mutations caught; the other ${byDesign} survive by design (an overlapping protection covers them, and the combined change is caught). Files restored.`);
 process.exit(gaps?1:0);

@@ -7,6 +7,11 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
   mounts.get(root)?.dispose();
   let drafts = {}, draftRequest = null, disposed = false, evidenceErrors = {}, forceFocus = null;
   const writable = () => permissions.includes('equipment:write');
+  // Advertised UI capability (the host's projection of the authenticated membership; the server stays the authority). Clearance is offered only
+  // when the projection includes inventory:read (the server's route permission for both clearance routes) or equipment:write (the mutation
+  // gate this component has always used; every server role that has it also has inventory:read), AND a configured rule names the current role.
+  // An empty or missing projection is read-only: no clearance control is offered and none can be submitted.
+  const clearanceCapable = () => permissions.includes('inventory:read') || permissions.includes('equipment:write');
   const remember = () => { for (const el of root.querySelectorAll('[data-draft]')) drafts[`${draftRequest ?? "new"}:${el.dataset.draft}`] = el.type === 'checkbox' ? el.checked : el.value; };
   const field = (name, title, type='text', extra='') => `<label>${title}<input data-draft="${name}" name="${name}" type="${type}" ${extra}></label>`;
   const button = (text, attrs = '', disabled = false) => `<button type="button" ${attrs} ${disabled?'disabled':''}>${text}</button>`;
@@ -19,8 +24,8 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
     return ' · clearance evidence is not reported by this response';
   };
   const clearControls = (h, state) => {
-    const off = state.busy || state.uncertain || !canClear(h, role, state.rules) || !['ready','success'].includes(state.phase);
-    const permitted = canClear(h, role, state.rules);   // present the evidence form only when the supplied contract permits this kind and actor
+    const off = state.busy || state.uncertain || !clearanceCapable() || !canClear(h, role, state.rules) || !['ready','success'].includes(state.phase);
+    const permitted = clearanceCapable() && canClear(h, role, state.rules);   // present the evidence form only when the capability AND the configured role allow it
     const id = esc(h.id), err = evidenceErrors[h.id], bad = f => err?.field === f ? ` aria-invalid="true" aria-describedby="evidence-error-${id}"` : '';
     const legacy = button('Clear '+esc(h.kind)+' without evidence (legacy)',`data-clear="${id}" data-focus="clear-${id}"`,off);
     if (!permitted) return legacy;
@@ -78,15 +83,22 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
     const b=event.target.closest('button'); if(!b||!root.contains(b)||b.disabled)return;
     const item=session.state.request?.items.find(i=>String(i.lineNo)===b.dataset.line);
     if(b.dataset.action) run(()=>session.transition(session.state.request.id,item,b.dataset.action,{confirmedNotInTransit:root.querySelector(`[name="transit-${item.lineNo}"]`)?.checked}));
-    if(b.dataset.clear) run(()=>session.clear(b.dataset.clear));
+    if(b.dataset.clear){ if(clearableHold(b.dataset.clear)) run(()=>session.clear(b.dataset.clear)); }
     if(b.dataset.command==='refresh')run(()=>session.load(session.state.request?.id));
     if(b.dataset.command==='retry')run(()=>session.retry());
     if(b.dataset.command==='reconcile')run(()=>session.reconcile());
   };
   const change=event=>{if(event.target.matches('[data-open]')){const id=event.target.value;drafts={};root.replaceChildren();run(()=>session.load(id||undefined));}};
   // Evidence form: validate locally with the server's rules, show accessible inline errors, send nothing on invalid input.
+  const clearableHold = id => {   // the hold, only if capability and configured role currently allow clearing it
+    if (!clearanceCapable()) return null;
+    const hold = session.state.request?.items.flatMap(i => i.holds).find(h => h.id === id);
+    return hold && canClear(hold, role, session.state.rules) ? hold : null;
+  };
   const submitEvidence = form => {
-    const holdId = form.dataset.evidence, read = name => form.elements?.namedItem?.(name)?.value ?? '';
+    const holdId = form.dataset.evidence;
+    if (!clearableHold(holdId)) return;   // read-only or not the configured role: send nothing, invent no error
+    const read = name => form.elements?.namedItem?.(name)?.value ?? '';
     try {
       evidenceErrors = {};
       return session.clearWithEvidence(holdId, {reference: read('reference'), observedAt: read('observedAt'), note: read('note')});
@@ -107,6 +119,10 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
   };
   root.addEventListener('click',click);root.addEventListener('change',change);root.addEventListener('submit',submit);
   render(session.state); session.load();
-  const handle={session,resetAccess(next={}){drafts={};evidenceErrors={};forceFocus=null;permissions=next.permissions||[];role=next.role||null;equipment=next.equipment||[];equipmentTypes=next.equipmentTypes||[];root.replaceChildren();session.reset();root.replaceChildren();},dispose(){disposed=true;drafts={};evidenceErrors={};forceFocus=null;session.dispose();root.removeEventListener('click',click);root.removeEventListener('change',change);root.removeEventListener('submit',submit);root.replaceChildren();mounts.delete(root);}};
+  const handle={session,resetAccess(next={}){if(disposed||mounts.get(root)!==handle)return;   // a stale or disposed handle must not touch a root that a newer mount owns
+    drafts={};evidenceErrors={};forceFocus=null;permissions=next.permissions||[];role=next.role||null;equipment=next.equipment||[];equipmentTypes=next.equipmentTypes||[];root.replaceChildren();session.reset();root.replaceChildren();},dispose(){if(disposed)return;   // idempotent: a repeated call is a no-op
+    disposed=true;drafts={};evidenceErrors={};forceFocus=null;session.dispose();root.removeEventListener('click',click);root.removeEventListener('change',change);root.removeEventListener('submit',submit);
+    if(mounts.get(root)===handle){root.replaceChildren();mounts.delete(root);}   // only the registered owner empties or unregisters the shared root
+  }};
   mounts.set(root,handle);return handle;
 }
