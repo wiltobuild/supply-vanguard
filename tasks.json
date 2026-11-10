@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 322,
-  "updatedAt": "2026-11-10T16:40:43.734Z",
+  "revision": 323,
+  "updatedAt": "2026-11-10T16:40:53.237Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2267,6 +2267,13 @@
       "command": "submit",
       "agent": "cheich-sv028-benchmark-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:40:53.237Z",
+      "taskId": "SV-028",
+      "command": "complete",
+      "agent": "cheich-sv028-benchmark-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3253,7 +3260,7 @@
     {
       "id": "SV-028",
       "title": "Prepare read-only performance benchmark tooling",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-001"
@@ -3289,7 +3296,14 @@
       "reviewNote": "User-directed continuing useful source-only benchmark work for SAME Cheich owner. Preserve frozen e4c6441; first map existing deterministic tests, then add only missing adversarial regressions for global workload and concurrency bounds across endpoints, cancellation and late/noncooperative mocked transport, redirects/destination rejection before transport, mixed failures/empty results and secret-safe errors. Justified runner repairs only within tools/benchmarks. Deliver isolated tested LOCAL patch and full hashes. Normal Cheich claim required; no proxy claim, live target/network/fixture/runtime setup, publication, PR, merge/deploy or SV-016 acceptance/dependency changes.",
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/27",
       "submittedBy": "cheich-sv028-benchmark-01",
-      "submittedAt": "2026-11-10T16:40:43.734Z"
+      "submittedAt": "2026-11-10T16:40:43.734Z",
+      "completedAt": "2026-11-10T16:40:53.237Z",
+      "completedBy": "cheich-sv028-benchmark-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/27",
+        "mergeCommit": "a4438dbf709c0457d575bc9d0de1d0e5f96eed04",
+        "mergedAt": "2026-11-10T16:40:47Z"
+      }
     }
   ]
 }
