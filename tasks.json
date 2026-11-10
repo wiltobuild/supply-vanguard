@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 337,
-  "updatedAt": "2026-11-10T16:53:40.589Z",
+  "revision": 338,
+  "updatedAt": "2026-11-10T16:54:35.196Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2374,6 +2374,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T16:54:35.196Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2616,7 +2623,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -2644,17 +2651,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "85ce8a72-1c10-47cf-8d2b-92f9099c0a50",
-        "claimedAt": "2026-11-10T16:52:18.717Z",
-        "expiresAt": "2026-11-10T18:53:40.589Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Source-only additive current-main candidate frozen clean at058383df2f79ef1b6f98362e3bee35c5f1040079 on local/sv008-coherent-maina443-20261110. Exact parents e176aa3a69b22d404df67c14e14f0706a1800e68 and public maina4438dbf709c0457d575bc9d0de1d0e5f96eed04. Only four added tools/benchmarks files differ frome176; all are byte-identical to publica443 and reviewed sourcee4c6441a3546b4860e21f489c9fe6d186f3fa521. Every other path including fixture repair/backend/UI/replenishment/ops/maintenance/acceptance runner unchanged. Syntax-only parse and diff audits passed; unchanged pure tests were not rerun and benchmark was not executed. Original b4f01aa/e176/065/dd8 refs and public heads preserved. Normal unblock335/claim336/renew337; now clearing lease pending coordinator source review/publication decisions. No SQL/fixture/roles/tokens/listeners/browser/native or ended-cycle restart, benchmark fixes, feature publication, PR metadata, remote feature merge or deployment.",
       "reviewNote": "Authorized source-only additive composition of exact public maina4438dbf709c0457d575bc9d0de1d0e5f96eed04 into separate local branch from frozen e176aa3a69b22d404df67c14e14f0706a1800e68; benchmark files inherited byte-for-byte only, no benchmark execution or implementation/runtime/publication changes.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
