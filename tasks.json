@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 280,
-  "updatedAt": "2026-11-10T01:12:58.662Z",
+  "revision": 281,
+  "updatedAt": "2026-11-10T01:13:03.650Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1971,6 +1971,13 @@
       "command": "unblock",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T01:13:03.650Z",
+      "taskId": "SV-022",
+      "command": "claim",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": "Wil"
     }
   ],
   "tasks": [
@@ -2671,7 +2678,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2695,7 +2702,13 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-vale-sv022-20261110-safe-a72c",
+        "owner": "Wil",
+        "leaseId": "22dab01b-5c75-48cc-abf1-35585a07d8d8",
+        "claimedAt": "2026-11-10T01:13:03.650Z",
+        "expiresAt": "2026-11-10T03:13:03.650Z"
+      },
       "blockedReason": null,
       "reviewNote": "Authorized source-only Windows native harness preparation on a separate test branch; frozen backend 7348eb66abdd90dc68cd8745c6920e66465bfd53 remains unchanged and runtime approval is pending."
     },
