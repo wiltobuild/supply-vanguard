@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 277,
-  "updatedAt": "2026-11-10T00:58:56.284Z",
+  "revision": 278,
+  "updatedAt": "2026-11-10T01:02:15.007Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1950,6 +1950,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T01:02:15.007Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2192,7 +2199,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -2219,17 +2226,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "764e6329-0567-4b97-a225-f19bbed469ff",
-        "claimedAt": "2026-11-10T00:34:50.508Z",
-        "expiresAt": "2026-11-10T02:58:56.284Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "LOCAL shared-app milestone frozen clean at b62667f8327b94c3b0511e61185dfe9c98e86471 on local/sv008-app-candidate-20261110 in task-9/sv008-app-candidate-20261110. Parent base1292bd20768e92711b20f62f44c2b6a03614b790 preserves dd8f1111, backend7348eb66, reviewed UI f29a38f1 and replenishmentbcfd05ce byte-for-byte. Thirteen authored files remain in owned scope. Same-authorization capability metadata, session guards and read-only clearance-rule exposure implemented. Final permitted suite116 pass/2 explicit authenticated SQL gate skips; selected repository37 pass; syntax/assets/diff checks pass. No SQL fixture, credential/role/grant/token/database/listener setup or browser/native retry ran. Waiting for reviewed immutable ops11/32 source and separately approved authenticated runtime/SQL/browser/native stages plus coordinator publication sequencing. Protected served dd8f1111 and public draftPR14 bb277809 unchanged. No feature push, new review submission, merge or deployment.",
       "reviewNote": "Corrected UI f29a38f17931fdc095e197d5723d565faf6ef273 is frozen and independently reviewed; backend7348eb66 and replenishmentbcfd05ce are immutable local dependencies. Original SV008 owner may claim normally ONLY in a fresh separate candidate checkout task-9/sv008-app-candidate-20261110, preserving the served task-9/sv008 at dd8f1111 and port4180. Author only existing shared/host scope plus two registered integration tests; preserve dependency directories/publication targets. Local composition and permitted non-listening tests only; no copied lease, bad ec8 UI, new provisioning/listener/native retry, publication, PR403 retry, merge or deployment.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
