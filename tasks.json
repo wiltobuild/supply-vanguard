@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 381,
-  "updatedAt": "2026-11-10T18:30:59.987Z",
+  "revision": 382,
+  "updatedAt": "2026-11-10T18:31:16.544Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2694,6 +2694,13 @@
       "command": "unblock",
       "agent": "cheich-sv027-evidence-ui-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T18:31:16.544Z",
+      "taskId": "SV-027",
+      "command": "claim",
+      "agent": "cheich-sv027-evidence-ui-01",
+      "owner": "cheich"
     }
   ],
   "tasks": [
@@ -3647,7 +3654,7 @@
     {
       "id": "SV-027",
       "title": "Build task-local request, holds and returns UI",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-007",
@@ -3687,7 +3694,13 @@
         "Use the frozen SV-022 contract when available and coordinate adapter shapes through the sole coordinator. Do not copy unreviewed implementation or mutate another owner's checkout. No integration/E2E/pilot or operational sign-off is implied by module tests.",
         "User-authorized queued Cheich handoff preserves reviewed f29a38f17931fdc095e197d5723d565faf6ef273, original source at C:/Users/Wil/sv-request-ui-20261110, and five-file UI patch against afe17ebc with SHA256B4DC7CD46548BD35A23C1105AF534D56FF722A7376B7649F78D1CB33F544B4D2 retained in task16. Original native implementation context was /root/execute_supply_backlog/build_request_return_ui under parent control; no current claim or competing builder. Actual frozen contract currently clears holds with no body and has actor/time but no new evidence field. SV031 now owns only the missing public holds API/domain persistence contract. Queue this task-local UI evidence collection/rendering/validation after that contract is frozen and recipient access to the exact UI source is confirmed; coordinator then normal unblock and Cheich claim. Do not rebuild the module, invent evidence sufficiency/roles, silently treat placement reason as clearance evidence, or edit SV031/backend/shared host source. Existing23 pure tests and fixes stay frozen; browser/mounted/SQL/native acceptance and publication remain distinct gates. No source upload/publication is implied by preparation."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "cheich-sv027-evidence-ui-01",
+        "owner": "cheich",
+        "leaseId": "c2fc362d-f282-4965-8b8f-d34a65754ecd",
+        "claimedAt": "2026-11-10T18:31:16.544Z",
+        "expiresAt": "2026-11-10T20:31:16.544Z"
+      },
       "blockedReason": null,
       "reviewNote": "Handoff condition met at the recipient's request: SV027-f29-ui-handoff.zip downloaded and verified (zip 829F76AD..., patch b4dc7cd4... and all 5 files equal the manifest for f29a38f on sha256, git blob and bytes; frozen 23 tests pass in a scratch rebuild). Unblocking only the bounded evidence-UI claim in apps/web/requests; publication, SV-008 shared-host mounting and SV-022 integration stay separate and unchanged."
     },
