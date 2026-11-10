@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 289,
-  "updatedAt": "2026-11-10T01:21:58.092Z",
+  "revision": 290,
+  "updatedAt": "2026-11-10T01:22:02.921Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2034,6 +2034,13 @@
       "command": "unblock",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T01:22:02.921Z",
+      "taskId": "SV-022",
+      "command": "claim",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": "Wil"
     }
   ],
   "tasks": [
@@ -2740,7 +2747,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2764,7 +2771,13 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-vale-sv022-20261110-safe-a72c",
+        "owner": "Wil",
+        "leaseId": "828b0829-42e3-4dae-baf0-8ea18e3a31ef",
+        "claimedAt": "2026-11-10T01:22:02.921Z",
+        "expiresAt": "2026-11-10T03:22:02.921Z"
+      },
       "blockedReason": null,
       "reviewNote": "Source-only corrections for exact native harness review: reject database/schema ownership and require full protected-relation RLS. Frozen application remains unchanged."
     },
