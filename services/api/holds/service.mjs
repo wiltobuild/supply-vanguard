@@ -64,7 +64,9 @@ export async function clearHoldWithEvidence(ctx,id,body,{idempotencyKey}={}){
  try{outcome=(await ctx.query('SELECT public.clear_equipment_hold_with_evidence($1, $2, $3, $4, $5::timestamptz, $6) AS result',[id,key,clearanceRequestHash(id,input),input.evidence.reference,input.evidence.observedAt,input.evidence.note??null])).rows[0].result;}
  catch(error){throw mapDbError(error);}
  const hold=(await ctx.query(`${HOLD_ROWS} WHERE h.organization_id = $1 AND h.id = $2`,[ctx.organizationId,id])).rows[0];
- return {hold:shapeHold(hold),replayed:Boolean(outcome.replayed),...(await listHolds(ctx,hold.equipment_external_id,{state:'active'}))};
+ // `hold` (the cleared hold and its evidence) is the receipt: a replay returns exactly the original. `summary` and `holds` are the CURRENT
+ // stack for the equipment when the response is made, and may differ from the first response if another hold changed since.
+ return {hold:shapeHold(hold),replayed:Boolean(outcome.replayed),summaryBasis:'current',...(await listHolds(ctx,hold.equipment_external_id,{state:'active'}))};
 }
 export async function listRules(ctx){
  const r=await ctx.query('SELECT kind, role FROM hold_clearance_rule WHERE organization_id = $1',[ctx.organizationId]);

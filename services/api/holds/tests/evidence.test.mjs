@@ -19,7 +19,8 @@ const NOW=Date.parse('2026-11-10T12:00:00Z');
 test('evidence input is validated, normalized, and never echoes what was sent',()=>{
  const good={schemaVersion:1,evidence:{reference:'Cleaning log #12',observedAt:'2026-11-10T09:30:00Z',note:'wiped down'}};
  assert.deepEqual(validateClearanceInput(good,{now:NOW}),{schemaVersion:1,evidence:{reference:'Cleaning log #12',observedAt:'2026-11-10T09:30:00.000Z',note:'wiped down'}});
- assert.deepEqual(validateClearanceInput({schemaVersion:1,evidence:{reference:'A',observedAt:'2026-11-10T09:30:00.123456Z'}},{now:NOW}).evidence,{reference:'A',observedAt:'2026-11-10T09:30:00.123Z'});
+ assert.equal(validateClearanceInput({schemaVersion:1,evidence:{reference:'A',observedAt:'2026-11-10T09:30:00.123Z'}},{now:NOW}).evidence.observedAt,'2026-11-10T09:30:00.123Z');
+ assert.equal(validateClearanceInput({schemaVersion:1,evidence:{reference:'A',observedAt:'2026-11-10T09:30:00.1Z'}},{now:NOW}).evidence.observedAt,'2026-11-10T09:30:00.100Z');
  assert.equal(validateClearanceInput({schemaVersion:1,evidence:{reference:'A',observedAt:'2026-11-10T12:00:00Z'}},{now:NOW}).evidence.observedAt,'2026-11-10T12:00:00.000Z','now is allowed, only the future is not');
  const E=(over)=>({schemaVersion:1,evidence:{reference:'LOG-1',observedAt:'2026-11-10T09:30:00Z',...over}});
  const bad=[null,[],'x',{},{schemaVersion:1},{schemaVersion:2,evidence:E().evidence},{schemaVersion:'1',evidence:E().evidence},{evidence:E().evidence},
@@ -36,6 +37,19 @@ test('evidence input is validated, normalized, and never echoes what was sent',(
  assert.throws(()=>validateIdempotencyKey(marker+' '),e=>!e.message.includes(marker));
  assert.equal(validateIdempotencyKey('k-1.a:b_c'),'k-1.a:b_c');
  for(const k of [undefined,null,'',' ','a b','x'.repeat(EVIDENCE_LIMITS.idempotencyKey+1),'k/1',5])assert.throws(()=>validateIdempotencyKey(k));
+});
+test('observedAt precision is milliseconds: finer input is refused instead of silently truncated (SV-033)',()=>{
+ const at=observedAt=>validateClearanceInput({schemaVersion:1,evidence:{reference:'A',observedAt}},{now:NOW}).evidence.observedAt;
+ // Two instants that differ only below a millisecond used to be accepted and collapsed into one request (one hash).
+ for(const fine of ['2026-11-10T09:30:00.123001Z','2026-11-10T09:30:00.123999Z','2026-11-10T09:30:00.1234Z','2026-11-10T09:30:00.123456Z'])assert.throws(()=>at(fine),/millisecond/i,fine);
+ // 12:00:00.000999 is after the supplied present-time boundary 12:00:00.000. It used to pass by truncation.
+ assert.throws(()=>at('2026-11-10T12:00:00.000999Z'),Error);assert.equal(at('2026-11-10T12:00:00.000Z'),'2026-11-10T12:00:00.000Z');
+ assert.throws(()=>at('2026-11-10T12:00:00.001Z'),/future/);
+ assert.equal(at('2026-11-10T09:30:00.123Z'),'2026-11-10T09:30:00.123Z');
+ const id='00000000-0000-4000-8000-000000000001';
+ const hashOf=o=>clearanceRequestHash(id,validateClearanceInput({schemaVersion:1,evidence:{reference:'A',observedAt:o}},{now:NOW}));
+ assert.notEqual(hashOf('2026-11-10T09:30:00.123Z'),hashOf('2026-11-10T09:30:00.124Z'),'distinct accepted instants never share a request hash');
+ assert.equal(hashOf('2026-11-10T09:30:00.12Z'),hashOf('2026-11-10T09:30:00.120Z'),'only spellings of the same instant do');
 });
 test('the request hash is stable for the same meaning and changes with the hold or any evidence field',()=>{
  const a=validateClearanceInput({schemaVersion:1,evidence:{reference:'R',observedAt:'2026-11-10T09:30:00Z'}},{now:NOW});
@@ -90,6 +104,7 @@ before(async()=>{
  await db.exec(sql('../../requests/migrations/0001_requests.up.sql'));
  await db.exec(sql('../migrations/0001_holds.up.sql'));
  await db.exec(sql('../migrations/0002_hold_clearance_evidence.up.sql'));
+ await db.exec(sql('../migrations/0003_hold_evidence_replay_role.up.sql'));
  await db.exec(sql('../../db/seed/seed.sql'));
  orgA=(await db.query("SELECT id FROM organization WHERE name LIKE 'Demo%'")).rows[0].id;
  await db.exec(`
@@ -194,12 +209,13 @@ test('only the configured role can clear, with or without evidence, and a refusa
 
 test('an exact retry returns the original result; a changed payload or someone else\'s key is a safe conflict',{skip},async()=>{
  const hold=await place('EQ-006','fault'),other=await place('EQ-006','maintenance'),before=await counts();
- const body=evidence({note:'first'});
+ const half=new Date(Date.now()-60000);half.setMilliseconds(500);                  // .500 so a shorter spelling (.5) is exactly the same instant
+ const body=evidence({note:'first',observedAt:half.toISOString()});
  const first=await clearEv('equipment_manager',hold.id,{body,key:'retry-1'}),a=await first.json();assert.equal(first.status,201);
  const again=await clearEv('equipment_manager',hold.id,{body,key:'retry-1'}),b=await again.json();
  assert.equal(again.status,200);assert.equal(again.headers.get('idempotent-replay'),'true');assert.equal(b.replayed,true);
  assert.deepEqual(b.hold,a.hold,'the original clearance and evidence, unchanged');
- const spelled=await clearEv('equipment_manager',hold.id,{body:evidence({note:'first',observedAt:body.evidence.observedAt.replace('Z','000Z')}),key:'retry-1'});assert.equal(spelled.status,200,'the same instant spelled differently is the same request');
+ const spelled=await clearEv('equipment_manager',hold.id,{body:evidence({note:'first',observedAt:body.evidence.observedAt.replace('500Z','5Z')}),key:'retry-1'});assert.equal(spelled.status,200,'the same instant spelled differently is the same request');
  assert.deepEqual(await counts(),{e:before.e+1,r:before.r+1},'retries stored nothing more');
  // Changed payload, same key and actor.
  await expectError(await clearEv('equipment_manager',hold.id,{body:evidence({note:'changed'}),key:'retry-1'}),409,'idempotency_conflict');
@@ -280,11 +296,75 @@ test('evidence and receipts are append-only and tenant-scoped at the database',{
  await assert.rejects(asRole('viewer',orgA,c=>c.query("INSERT INTO hold_clearance_receipt (organization_id, idempotency_key, actor, request_hash, hold_id, evidence_id) VALUES ($1, 'k', 'user:someone-else', $2, $3, $3)",[orgA,'a'.repeat(64),hold.id])),/row-level security|violates/);
 });
 
-test('rolling 0002 back and forward leaves holds intact',{skip},async()=>{
- const before=(await owner('SELECT count(*)::int AS n FROM equipment_hold')).rows[0].n;
+// ---- SV-033: replay must pass the CURRENT role check; replay returns the original hold/evidence with CURRENT stack state ----
+const setMembership=async(who,{role,active})=>{
+ const before=(await owner('SELECT role, active FROM auth_membership WHERE user_id = $1 AND organization_id = $2',[users[who],orgA])).rows[0];
+ await owner('UPDATE auth_membership SET role = COALESCE($3, role), active = COALESCE($4, active) WHERE user_id = $1 AND organization_id = $2',[users[who],orgA,role??null,active??null]);
+ return ()=>owner('UPDATE auth_membership SET role = $3, active = $4 WHERE user_id = $1 AND organization_id = $2',[users[who],orgA,before.role,before.active]);
+};
+test('a replay is checked against the CURRENT configured role, with no extra writes (SV-033)',{skip},async()=>{
+ const hold=await place('EQ-008','fault'),body=evidence({note:'replay-auth'}),key='replay-auth-1';
+ const first=await clearEv('equipment_manager',hold.id,{body,key});assert.equal(first.status,201);
+ const written=await counts();
+ // Positive control: still the right role, an exact replay succeeds.
+ const ok=await clearEv('equipment_manager',hold.id,{body,key});assert.equal(ok.status,200);assert.equal((await ok.json()).replayed,true);
+ // 1. Role downgrade: the caller no longer holds the configured role.
+ let restore=await setMembership('equipment_manager',{role:'viewer'});
+ await expectError(await clearEv('equipment_manager',hold.id,{body,key}),403,'wrong_role');
+ await expectError(await clearEv('equipment_manager',hold.id,{body:evidence({note:'different'}),key}),403,'wrong_role');   // a changed payload is also refused on role first
+ await restore();
+ // 2. The organization changed the rule for this kind to another role.
+ assert.equal((await setRule('fault','admin')).status,200);
+ await expectError(await clearEv('equipment_manager',hold.id,{body,key}),403,'wrong_role');
+ assert.equal((await setRule('fault','equipment_manager')).status,200);
+ // 3. The rule was removed.
+ const rule=(await owner("SELECT role FROM hold_clearance_rule WHERE organization_id = $1 AND kind = 'fault'",[orgA])).rows[0].role;
+ await owner("DELETE FROM hold_clearance_rule WHERE organization_id = $1 AND kind = 'fault'",[orgA]);
+ await expectError(await clearEv('equipment_manager',hold.id,{body,key}),422,'no_clearance_rule');
+ await owner("INSERT INTO hold_clearance_rule (organization_id, kind, role) VALUES ($1, 'fault', $2)",[orgA,rule]);
+ // 4. Membership revoked: this still fails at authorization.
+ restore=await setMembership('equipment_manager',{active:false});
+ const revoked=await clearEv('equipment_manager',hold.id,{body,key});assert.equal(revoked.status,403);assert.notEqual((await revoked.json()).replayed,true);
+ await restore();
+ // Nothing was written by any of the refused replays, and the original outcome is untouched.
+ assert.deepEqual(await counts(),written);
+ assert.equal((await owner('SELECT count(*)::int AS n FROM hold_clearance_evidence WHERE hold_id = $1',[hold.id])).rows[0].n,1);
+ // With everything restored the same replay works again, and another actor's reuse of the key is still the private 409.
+ const back=await clearEv('equipment_manager',hold.id,{body,key});assert.equal(back.status,200);
+ const other=await place('EQ-008','maintenance');
+ await expectError(await clearEv('equipment_manager2',other.id,{body,key}),409,'idempotency_conflict');
+});
+
+test('a replay returns the same cleared hold and evidence, with the CURRENT stack state labelled as current (SV-033)',{skip},async()=>{
+ const fault=await place('EQ-005','fault'),body=evidence({note:'stack-basis'}),key='stack-basis-1';
+ const first=await (await clearEv('equipment_manager',fault.id,{body,key})).json();
+ assert.equal(first.summaryBasis,'current');assert.equal(first.summary.blocked,false);
+ await place('EQ-005','unknown');                                               // another hold appears after the clearance
+ const replayRes=await clearEv('equipment_manager',fault.id,{body,key}),replay=await replayRes.json();
+ assert.equal(replayRes.status,200);assert.equal(replay.replayed,true);
+ assert.deepEqual(replay.hold,first.hold,'the receipt part (the cleared hold and its evidence) is exactly the original');
+ assert.equal(replay.summaryBasis,'current','summary and holds are current state, not receipt history');
+ assert.equal(replay.summary.blocked,true);assert.deepEqual(replay.summary.activeKinds,['unknown']);
+ assert.notDeepEqual(replay.summary,first.summary,'the stack part may differ from the original response');
+ assert.deepEqual(replay.holds.map(h=>h.kind),['unknown']);
+});
+
+test('migrations 0003 and 0002 roll back and forward without losing holds or grants',{skip},async()=>{
+ const holds=()=>owner('SELECT count(*)::int AS n FROM equipment_hold').then(r=>r.rows[0].n);
+ const body=()=>owner("SELECT prosrc FROM pg_proc WHERE proname = 'clear_equipment_hold_with_evidence'").then(r=>r.rows[0].prosrc);
+ const canRun=()=>owner("SELECT has_function_privilege('sv_auth_test_runtime', 'clear_equipment_hold_with_evidence(uuid,text,text,text,timestamptz,text)', 'EXECUTE') AS ok").then(r=>r.rows[0].ok);
+ const before=await holds();
+ assert.match(await body(),/SV-033/,'0003 is in force');
+ // 0003 is a function replacement: undoing it restores the 0002 body and keeps the grant; redoing it is idempotent.
+ await db.exec(sql('../migrations/0003_hold_evidence_replay_role.down.sql'));
+ assert.doesNotMatch(await body(),/SV-033/);assert.equal(await canRun(),true,'CREATE OR REPLACE keeps existing EXECUTE grants');
+ await db.exec(sql('../migrations/0003_hold_evidence_replay_role.up.sql'));
+ assert.match(await body(),/SV-033/);assert.equal(await canRun(),true);
+ // 0002 itself can still be undone and redone; 0003 then re-applies on top.
  await db.exec(sql('../migrations/0002_hold_clearance_evidence.down.sql'));
  assert.equal((await owner("SELECT to_regclass('public.hold_clearance_evidence') AS t")).rows[0].t,null);
- assert.equal((await owner('SELECT count(*)::int AS n FROM equipment_hold')).rows[0].n,before);
+ assert.equal(await holds(),before);
  await db.exec(sql('../migrations/0002_hold_clearance_evidence.up.sql'));
- assert.ok((await owner("SELECT to_regclass('public.hold_clearance_receipt') AS t")).rows[0].t);
+ await db.exec(sql('../migrations/0003_hold_evidence_replay_role.up.sql'));
+ assert.ok((await owner("SELECT to_regclass('public.hold_clearance_receipt') AS t")).rows[0].t);assert.match(await body(),/SV-033/);
 });
