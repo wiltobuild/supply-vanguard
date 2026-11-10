@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 331,
-  "updatedAt": "2026-11-10T16:50:13.893Z",
+  "revision": 332,
+  "updatedAt": "2026-11-10T16:50:16.801Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2332,6 +2332,13 @@
       "command": "claim",
       "agent": "cheich-sv029-benchmark-hardening-01",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-10T16:50:16.801Z",
+      "taskId": "SV-029",
+      "command": "submit",
+      "agent": "cheich-sv029-benchmark-hardening-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3360,7 +3367,7 @@
     {
       "id": "SV-029",
       "title": "Harden benchmark workload bounds and diagnostics",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-028"
@@ -3390,13 +3397,10 @@
         "This follow-up receives the same tools/benchmarks scope from completed SV028; original done task/history stays unchanged. No overlap with active SV008 fixture repair, lifecycle, requests UI, maintenance, replenishment, operations or references.",
         "User directed useful ongoing work for Cheich and coordinated plan/task division. Registration publishes only board metadata. The implementation-plan patch remains local until publication is authorized. No extension or restart of the ended runtime cycle, denied-operation reroute, identity/security change or feature publication is granted."
       ],
-      "claim": {
-        "agent": "cheich-sv029-benchmark-hardening-01",
-        "owner": "cheich",
-        "leaseId": "b3ac3c55-3ee2-45a3-b4f9-59a004a0d4d6",
-        "claimedAt": "2026-11-10T16:50:13.893Z",
-        "expiresAt": "2026-11-10T18:50:13.893Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/28",
+      "submittedBy": "cheich-sv029-benchmark-hardening-01",
+      "submittedAt": "2026-11-10T16:50:16.801Z"
     },
     {
       "id": "SV-030",
