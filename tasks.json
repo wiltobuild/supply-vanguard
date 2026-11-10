@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 375,
-  "updatedAt": "2026-11-10T18:10:38.473Z",
+  "revision": 376,
+  "updatedAt": "2026-11-10T18:10:47.743Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2652,6 +2652,13 @@
       "command": "submit",
       "agent": "cheich-sv010-review-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T18:10:47.743Z",
+      "taskId": "SV-010",
+      "command": "complete",
+      "agent": "cheich-sv010-review-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -2972,7 +2979,7 @@
     {
       "id": "SV-010",
       "title": "Replenishment queue and low-stock alerts",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-007",
@@ -2998,7 +3005,14 @@
       ],
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/33",
       "submittedBy": "cheich-sv010-review-01",
-      "submittedAt": "2026-11-10T18:10:38.473Z"
+      "submittedAt": "2026-11-10T18:10:38.473Z",
+      "completedAt": "2026-11-10T18:10:47.743Z",
+      "completedBy": "cheich-sv010-review-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/33",
+        "mergeCommit": "df8056d878a472fe489cbd60cd349e177a423a05",
+        "mergedAt": "2026-11-10T18:10:42Z"
+      }
     },
     {
       "id": "SV-011",
