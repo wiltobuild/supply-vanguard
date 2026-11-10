@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 254,
-  "updatedAt": "2026-11-10T00:07:53.546Z",
+  "revision": 255,
+  "updatedAt": "2026-11-10T00:09:12.609Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -1787,6 +1787,13 @@
       "command": "rework",
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null
+    },
+    {
+      "at": "2026-11-10T00:09:12.609Z",
+      "taskId": "SV-022",
+      "command": "claim",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": "Wil"
     }
   ],
   "tasks": [
@@ -2478,7 +2485,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "ready",
+      "status": "claimed",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -2502,7 +2509,13 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": null
+      "claim": {
+        "agent": "wil-vale-sv022-20261110-safe-a72c",
+        "owner": "Wil",
+        "leaseId": "7c65709c-025c-4c12-829c-07168a1eec4f",
+        "claimedAt": "2026-11-10T00:09:12.609Z",
+        "expiresAt": "2026-11-10T02:09:12.609Z"
+      }
     },
     {
       "id": "SV-023",
