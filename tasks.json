@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 456,
-  "updatedAt": "2026-11-11T17:57:48.226Z",
+  "revision": 457,
+  "updatedAt": "2026-11-11T17:59:11.515Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3251,6 +3251,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Distinct bounded follow-up to completed SV036: close-after-exit fault accounting, complete r3 proof, named-other tenant denial, pre-spawn setup ownership and timestamp precision; queued after SV037; no other task or scope change."
+    },
+    {
+      "at": "2026-11-11T17:59:11.515Z",
+      "taskId": "SV-008",
+      "command": "unblock",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3493,7 +3500,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3525,8 +3532,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": "Separate helper snapshot fix a53b484943be53efb53c8b5cbb1d16c79d7ba3dd parentc38;3 selected snapshot tests pass after2 fail-before alias controls. New concrete lazy adapter source frozen4c33af9bfde614076c197a283376275fb440d6c2 parenta53, tree6971c5011444f0da7cc142e27293f45ef4c53dee;5 new task-local files,32 fake-only tests pass, syntax/npm check pass, clean tree. Implements DB/bootstrap/grants/catalog/RLS/body checks/serialized pool, canonical identity/host, clock/probe wrappers. Pending independent source review, authenticated composed catalog/cycle authority, approved executor/dependency binding and real capability/runtime acceptance; SV037/publication holds remain. No real DB/SQL/provider/socket/listener, arming, feature publication or prior-denial retry.",
-      "reviewNote": "Authorized original-owner concrete lazy functional adapter source under new functional-v2-adapters directory, fake-only execution; reviewed c38 files frozen.",
+      "blockedReason": null,
+      "reviewNote": "Authorized same-owner narrow concrete evidence-policy structural verifier repair and fake inversion controls; frozen source and runtime holds preserved.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
         "Authorized LOCAL application composition: same original SV-008 owner after normal unblock/claim, on a separate local branch. Preserve frozen dd8f1111bb8ca9c28dbbf8a1f963f42d9ebe7e42 publication target and all public heads. Consume immutable SV-022 7348eb66abdd90dc68cd8745c6920e66465bfd53 and replenishment bcfd05ceb49c08c3155e99bec82aa93726ab8894 only as local dependencies. UI ec8a5436000f08e09dd8d246e81ba6e00afe4367 is held for material request-identity, focus and async-conflict findings: do not import or accept it; wait for the corrected frozen SV-027 commit and independent review. Existing owned shared paths and services/api/check-in host may compose existing request/holds/replenishment handlers through one authorization, add navigation/mount/session lifecycle and canonical refresh, and add apps/web/tests/request-lifecycle-integration.test.mjs and apps/web/tests/replenishment-integration.test.mjs. SV-022 keeps backend/domain/root-wrapper files; SV-027 keeps apps/web/requests and apps/web/tests/request-lifecycle.test.mjs; SV-010 keeps apps/web/supplies and services/api/replenishment; SV-011 keeps maintenance modules/test; ops remains with SV-017. Never edit those inherited dependency files. No new fixture/credential/role/grant provisioning, listener/native/browser denial retry, feature publication, PR creation or metadata retry, merge or deployment. Local dependency composition is not a workaround for publication/403 holds. Run only permitted local checks and disclose unrun mounted/browser/native gates. No hold-clearance observation field or invented policies/roles/thresholds; retain the stated acceptance limitation. Original ops owner must later reconcile lifecycle plus replenishment into final explicit 11-migration/32-table coverage; 9/27 and historical 8/26 receipts remain distinct.",
