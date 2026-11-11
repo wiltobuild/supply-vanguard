@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 446,
-  "updatedAt": "2026-11-11T17:19:25.711Z",
+  "revision": 447,
+  "updatedAt": "2026-11-11T17:26:39.576Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3154,6 +3154,38 @@
       "command": "claim",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-11T17:26:39.576Z",
+      "taskId": "SV-011",
+      "command": "migration-reconcile-reviewed-blockers",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Remove superseded source-review/access prerequisites; preserve genuine acceptance, source publication and external evidence gates, all states/claims/dependencies/scopes unchanged"
+    },
+    {
+      "at": "2026-11-11T17:26:39.576Z",
+      "taskId": "SV-015",
+      "command": "migration-reconcile-reviewed-blockers",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Remove superseded source-review/access prerequisites; preserve genuine acceptance, source publication and external evidence gates, all states/claims/dependencies/scopes unchanged"
+    },
+    {
+      "at": "2026-11-11T17:26:39.576Z",
+      "taskId": "SV-017",
+      "command": "migration-reconcile-reviewed-blockers",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Remove superseded source-review/access prerequisites; preserve genuine acceptance, source publication and external evidence gates, all states/claims/dependencies/scopes unchanged"
+    },
+    {
+      "at": "2026-11-11T17:26:39.576Z",
+      "taskId": "SV-022",
+      "command": "migration-reconcile-reviewed-blockers",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Remove superseded source-review/access prerequisites; preserve genuine acceptance, source publication and external evidence gates, all states/claims/dependencies/scopes unchanged"
     }
   ],
   "tasks": [
@@ -3541,11 +3573,12 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T16:13:29.318Z",
-      "blockedReason": "Local-only compatibility merge 53c49b9420db488f40635f2503f048520a98c548 combines frozen PR22 984e6aec255aa6c880442a8268191360611efd15 and exact main80a9041a50f1c7404cd7ef55dc6a4bf8ad3cdc79 cleanly; all maintenance and transferred host blobs unchanged. 45 source/DOM/mock tests, 10 static import/export contracts and npm run check pass. Source-only compatibility finding: SV008-owned apps/web/tests/api-fixture.mjs:27-30 invokes now-idempotent seed.sql twice then assumes second organization exists; coordinator/SV008 must reconcile fixture. No SQL/runtime reproduction or combined mounted acceptance run; root/PGlite/native/listener tests held. Candidate remains local; source publication and PR merge decision held. Original checkout/branch remains clean at published984; no runtime restarted.",
-      "reviewNote": "User approved finishing maintenance first against merged auth repair on main80a9041a. Original owner retains all maintenance paths and must preserve published984e6aec, prior runtime receipts and transferred shared-file ownership. Prepare a separate LOCAL current-main compatibility branch, verify normal claim before edits, run source-only non-provisioning checks. No fixture/roles/tokens/listeners/native or ended-cycle restart, source publication, merge or deployment.",
+      "blockedReason": "Reconciled completion evidence: the source-only main80 compatibility commit 53c49b9420db488f40635f2503f048520a98c548 remains preserved. Its formerly blocking SV008 fixture seed assumption is FIXED at b4f01aa847cd11b8e736e10b180f66c70b28dfda and independently reviewed with six pure regressions; coherent b549 contains it. The memory-only seed/helper check passed without roles, tokens or listeners. Maintenance lease cleanup is complete. Do not rebuild maintenance or reassign shared host files. Remaining gates are exact compatibility/source publication and PR22 merge decisions, deliberate final composition and actual mounted/current-candidate acceptance; no fresh runtime approval follows. Published PR22 head 984e6aec255aa6c880442a8268191360611efd15 is unchanged. No unresolved fixture-access or maintenance-lease blocker remains.",
+      "reviewNote": "Reconciled completion evidence: the source-only main80 compatibility commit 53c49b9420db488f40635f2503f048520a98c548 remains preserved. Its formerly blocking SV008 fixture seed assumption is FIXED at b4f01aa847cd11b8e736e10b180f66c70b28dfda and independently reviewed with six pure regressions; coherent b549 contains it. The memory-only seed/helper check passed without roles, tokens or listeners. Maintenance lease cleanup is complete. Do not rebuild maintenance or reassign shared host files. Remaining gates are exact compatibility/source publication and PR22 merge decisions, deliberate final composition and actual mounted/current-candidate acceptance; no fresh runtime approval follows. Published PR22 head 984e6aec255aa6c880442a8268191360611efd15 is unchanged. No unresolved fixture-access or maintenance-lease blocker remains.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements.",
-        "This approved SV008 transfer supersedes only the earlier reservation of the six shared web files: their sole implementation owner is now original SV008 owner after normal claiming. SV011 retains apps/web/maintenance, services/api/maintenance and apps/web/tests/maintenance-integration.test.mjs. Published PR22 remains frozen; any shared-file repair requires fresh coordinator ownership reconciliation. No maintenance implementation lease or feature publication/merge/deployment is granted by this scope migration."
+        "This approved SV008 transfer supersedes only the earlier reservation of the six shared web files: their sole implementation owner is now original SV008 owner after normal claiming. SV011 retains apps/web/maintenance, services/api/maintenance and apps/web/tests/maintenance-integration.test.mjs. Published PR22 remains frozen; any shared-file repair requires fresh coordinator ownership reconciliation. No maintenance implementation lease or feature publication/merge/deployment is granted by this scope migration.",
+        "Reconciled completion evidence: the source-only main80 compatibility commit 53c49b9420db488f40635f2503f048520a98c548 remains preserved. Its formerly blocking SV008 fixture seed assumption is FIXED at b4f01aa847cd11b8e736e10b180f66c70b28dfda and independently reviewed with six pure regressions; coherent b549 contains it. The memory-only seed/helper check passed without roles, tokens or listeners. Maintenance lease cleanup is complete. Do not rebuild maintenance or reassign shared host files. Remaining gates are exact compatibility/source publication and PR22 merge decisions, deliberate final composition and actual mounted/current-candidate acceptance; no fresh runtime approval follows. Published PR22 head 984e6aec255aa6c880442a8268191360611efd15 is unchanged. No unresolved fixture-access or maintenance-lease blocker remains."
       ]
     },
     {
@@ -3667,8 +3700,11 @@
         "Add and run task-specific acceptance checks"
       ],
       "claim": null,
-      "blockedReason": "Software register drift repaired in LOCAL-ONLY commit e99088024a10f7bf06e8e3dbb2ce6941c42de170 on task/sv-015-wil-sol-sv015-20261105-b9c2-register-refresh-20261109, based on main afe17ebc52c125ae1e3d1d95881a5b294e9dee16. All 15 additions/placements covered; original 35 records and 12 GLBs retained; 12 focused tests and npm run check pass; consistency exit 0, authorized gate expected exit 2. Full npm test has missing PGlite dependency (52 passed, 47 skipped, 1 import failure). No push/new PR: publication remains separate. PR6 is already merged (6b03e804), not draft. PHYSICAL VALIDATION STILL BLOCKED: owner-approved access/reuse permission, current measured drawings or authorized measurements/tolerances, synthetic-to-real mapping, approved equipment dimensions/placement and facilities/ward-staff approval remain unavailable. Zero measured claims, architecturalAccuracyClaimed=false, authorizedReview=null; exact required evidence retained in packages/scene/references/register.json.",
-      "reviewNote": "Bounded references-only consistency repair authorized: current main has 15 added illustrative models missing from register coverage, so seven of eight reference tests fail. Original owner wil-sol-sv015-20261105-b9c2 alone may normally reclaim and update packages/scene/references records, hashes, tests and documentation against inspected authored current-main values. Preserve original twelve GLBs, zero measured elements, no architectural-accuracy claim and fail-closed authorized-review gate. PR6 is already merged; its draft wording was historical. External permissions, measured drawings, synthetic-to-real mapping, approved equipment placement and facilities/ward-staff sign-off remain unresolved and must stay documented. This readies only the consistency repair, not physical validation. Tested local commit first; publication approval separate. No scene geometry/assets/shared web/auth/root/CI edits, credentials, provisioning, merge or deployment; preserve prior operation-specific stops."
+      "blockedReason": "Reconciled completion evidence: local references-only consistency repair e99088024a10f7bf06e8e3dbb2ce6941c42de170 passed independent exact-source review and eight targeted pure controls. All 15 additions remain estimated/unverified/static/untracked; original35 records, six sources and12 original GLB identities preserved. No additional source repair is currently identified. Separate source publication remains pending. Physical/reference acceptance still needs authorized access/reuse rights, current measured references/tolerances, synthetic-to-real mapping, approved placement/dimensions and facilities/ward sign-off. These external evidence requirements cannot be removed by a board label; no measured or architectural-accuracy claim is established.",
+      "reviewNote": "Reconciled completion evidence: local references-only consistency repair e99088024a10f7bf06e8e3dbb2ce6941c42de170 passed independent exact-source review and eight targeted pure controls. All 15 additions remain estimated/unverified/static/untracked; original35 records, six sources and12 original GLB identities preserved. No additional source repair is currently identified. Separate source publication remains pending. Physical/reference acceptance still needs authorized access/reuse rights, current measured references/tolerances, synthetic-to-real mapping, approved placement/dimensions and facilities/ward sign-off. These external evidence requirements cannot be removed by a board label; no measured or architectural-accuracy claim is established.",
+      "coordinationNotes": [
+        "Reconciled completion evidence: local references-only consistency repair e99088024a10f7bf06e8e3dbb2ce6941c42de170 passed independent exact-source review and eight targeted pure controls. All 15 additions remain estimated/unverified/static/untracked; original35 records, six sources and12 original GLB identities preserved. No additional source repair is currently identified. Separate source publication remains pending. Physical/reference acceptance still needs authorized access/reuse rights, current measured references/tolerances, synthetic-to-real mapping, approved placement/dimensions and facilities/ward sign-off. These external evidence requirements cannot be removed by a board label; no measured or architectural-accuracy claim is established."
+      ]
     },
     {
       "id": "SV-016",
@@ -3721,8 +3757,11 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "LOCAL source-only recovery-flow repair frozen c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 tree9d583c28d1180f78327efe6083342cbe73c5927e on local/sv017-clearance-sql-contract-repair, exact02729cf parent preserved. Five ops-only files. Temporary CHECK/column/policy oracles omit standalone FKs to avoid illegal temporary-to-permanent links; all source columns/CHECKs/primary/unique/policies preserved and three permanent FK requirements remain strict. Wrong-role fault probe selects exact inherited EQ003 hold ID AND equipment, retains SV403/sv:wrong_role with no LIMIT. Source-derived actualDDL/fixture controls failed2of4 before, pass4of4 after0skips. Immutable13/34 source binding, changed Node syntax and diff checks pass; unchanged baselines not rerun. Exact Git root/head/tree/raw+blob hashes and diff receipt sv017-clearance-sql-contract-source-c2eea31.json. Prior02729cf branch/receipt/patch,13 historical artifacts and3 wrappers preserved. Profile UNARMED candidateApprovedfalse. Independent corrected-source review needed; SQL/oracle/fixture/native recovery remain UNRUN. Final candidate/SV036 runner acceptance, initial launcher-trust decision and fresh bounded runtime approval remain separate. No SQL/PG/roles/grants/credentials/native/C#compile/ACL/security/browser/listener execution, publication, merge or deployment. Clear only matching lease.",
-      "reviewNote": "Authorized original-owner source-only repair of temporary-oracle FK persistence and exact baseline wrong-role hold selection"
+      "blockedReason": "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance.",
+      "reviewNote": "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance.",
+      "coordinationNotes": [
+        "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance."
+      ]
     },
     {
       "id": "SV-018",
@@ -3897,8 +3936,11 @@
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
       "claim": null,
-      "blockedReason": "Source-only native harness review fixes complete at local test-branch commit e50679daf862c76a0582fbb8afb89137387ff382. Independent exact-commit review resolved both ownership/RLS findings with no remaining material source finding. Nine pure/mock checks pass; four native races skipped. Frozen application branch and implementation/migrations remain 7348eb66abdd90dc68cd8745c6920e66465bfd53 byte-identical. No native process, cluster, role, listener or credential setup executed. Coordinator-assigned approved native runner/fixtures and actual race evidence still pending. Unpublished; lease cleared after source-only deliverable.",
-      "reviewNote": "Source-only corrections for exact native harness review: reject database/schema ownership and require full protected-relation RLS. Frozen application remains unchanged."
+      "blockedReason": "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008.",
+      "reviewNote": "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008.",
+      "coordinationNotes": [
+        "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008."
+      ]
     },
     {
       "id": "SV-023",
