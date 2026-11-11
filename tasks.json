@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 417,
-  "updatedAt": "2026-11-11T15:36:51.712Z",
+  "revision": 418,
+  "updatedAt": "2026-11-11T15:43:03.987Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2951,6 +2951,13 @@
       "command": "block",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T15:43:03.987Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3490,7 +3497,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3512,8 +3519,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "LOCAL source-only event-order repair frozen8ecaaf6433206c2a999b6a14921124189c25b561 tree4b2d542a729dbe1f3742d8a188cd358c56c5f0fa in task-18/sv017-platform-prep branch local/sv017-exit-stdio-order, parent2f013fe.17 focused fake tests pass0fail0skip; diff check pass. Zero-code exit retires NEW calls but permits outstanding disposal ACK bytes until end/close or original bounded timeout. Full/partial ACK after exit now pass; missing ACK, nonzero/signal, protocol/read errors and post-ACK data still fail linked terminal-health acceptance. C# unchanged; prior16 checks not rerun.2f013fe branch/receipt/patch,13 historical receipts and3 wrappers preserved; exact four-file hashes/tree/diff in sv017-platform-event-order-source-8ecaaf6.json. Independent corrected-source re-review pending. Initial interpreter hash-to-image-load lease remains separate unresolved bootstrap assumption; fresh bounded runtime authorization required. Profiles unarmed; no C# compile/native/ACL/secret/process/SQL/socket runtime, publication, merge or deployment. Clear matching lease.",
-      "reviewNote": "Authorized narrow source-only correction for disposal ACK buffered after process exit; no runtime"
+      "blockedReason": null,
+      "reviewNote": "Authorized source-only provisional5c13/34 recovery inventory/evidence extension on separate checkout"
     },
     {
       "id": "SV-018",
