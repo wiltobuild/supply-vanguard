@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 436,
-  "updatedAt": "2026-11-11T16:33:09.061Z",
+  "revision": 437,
+  "updatedAt": "2026-11-11T16:36:48.199Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3084,6 +3084,13 @@
       "command": "complete",
       "agent": "cheich-sv036-harness-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T16:36:48.199Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3623,7 +3630,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3645,8 +3652,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "LOCAL source-only13/34 frozen02729cfc88ba5d14cad2232c9de20ef41f95c915 tree3723fe06802d3e369fbf5000dded02e45a27a954 in task-18/sv017-evidence-5c-prep branch local/sv017-provisional-13-34, exact5c3635b1 parent. Twelve ops-only files; non-ops Git diff empty. Explicit holds0001->0002->0003 inventory13 migrations/34 tables. Synthetic clearance evidence/receipt/hold/actor/hash/time links, unchanged in-use EQ004, retained independent fault stack, current-role replay body, rollback-only protection source and exact metadata oracle source authored. Strict data/schema/CHECK/security comparisons retained.66 scoped tests passed0fail0skip before transport interruption; ordering-only patch reconciled/completed after reconnect,5 focused guards passed0fail0skip; unchanged66 not rerun for activity. Actual5c Git/raw migration/seed/ops byte binding and all ops syntax passed; diff check passed. Source/profile/controller boundary rejects11/32 receipts; UNARMED candidateApprovedfalse. Old13 receipts,3 wrappers and ea63/8eca/b549/e506 checkouts unchanged. Receipt/diff/hashes sv017-provisional-13-34-source-02729cf.json. Needs independent source/UNRUN SQL review, final UI/source candidate approval/rebind for shared20cd if selected, accepted SV036 fixture/harness/runner binding; seven evidence native cases and four lifecycle races remain separate. No SQL/native/runtime/role/grant/credential/listener/C#compile/ACL execution; no publication/merge/deploy. Fresh bounded runtime authorization and initial interpreter loaded-image trust decision remain required. Clear only matching lease.",
-      "reviewNote": "Authorized source-only provisional5c13/34 recovery inventory/evidence extension on separate checkout"
+      "blockedReason": null,
+      "reviewNote": "Authorized original-owner source-only repair of temporary-oracle FK persistence and exact baseline wrong-role hold selection"
     },
     {
       "id": "SV-018",
