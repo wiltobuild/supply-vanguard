@@ -6,8 +6,8 @@ A **source-only, opt-in, inert** harness for the race and authorization cases th
 
 | | Status |
 |---|---|
-| Pure tests of the harness itself (fake child process, an in-memory model of the database, a fake clock): `node --test services/api/holds/tests/evidence-native.test.mjs` | run: 31 pass, 1 skipped |
-| Mutation inventory of the harness: `node services/api/holds/tests/native-evidence-mutations.mjs` | run: 38 of 38 caught |
+| Pure tests of the harness itself (fake child process, an in-memory model of the database, a fake clock): `node --test services/api/holds/tests/evidence-native.test.mjs` | run: 40 pass, 1 skipped (SV-036: 9 new tests) |
+| Mutation inventory of the harness: `node services/api/holds/tests/native-evidence-mutations.mjs` | run: 87 entries, 86 caught, 1 survives by design (overlapping layer; the combined entry is caught) |
 | The seven native cases against real PostgreSQL | **NOT RUN** |
 | Any SQL, database, role, grant, listener, download, install or credential step | **NOT RUN, not authorized** |
 
@@ -93,7 +93,7 @@ console.log(JSON.stringify(redactedReceipt(receipt, contract)));      // receipt
 | `rollbackInterleavings` | When the holder rolls back, the waiter becomes the first clear and the rolled-back evidence does not survive; a raised error (evidence from the future) leaves no trace. |
 | `roleOrRuleChangeBeforeReplay` | After the runner changes the configured rule, removes it, downgrades the member's role or deactivates the membership, the replay is refused (`wrong_role`, `no_clearance_rule`, `wrong_role`, `hold_not_found`) with no extra rows; after restore it replays again. |
 | `actorPrivateConflict` | Another actor's key is invisible and answered as `idempotency_conflict`; on the cleared hold they learn nothing about the key; the owner's replay still works. |
-| `tenantDenial` | A user of the other organization cannot clear (own tenant or by naming the other), cannot read the evidence, and writes nothing. |
+| `tenantDenial` | A clearer of the hold's own tenant first clears it with evidence, and that populated record and its receipt are confirmed in full. Then a user of the other organization cannot clear it (own tenant or by naming the other), cannot read the evidence, receipt or hold, and the record is unchanged. An empty hold is not isolation proof. |
 
 Final summaries (active hold kinds) are asserted as **current state**, not as part of the receipt. No hold policy, role or evidence-sufficiency rule is invented.
 
@@ -111,3 +111,15 @@ Final summaries (active hold kinds) are asserted as **current state**, not as pa
 - `waitQueued` (observing the waiting session) matters only against a real database; the in-memory model cannot show its removal, so it is the one deliberate hole in the mutation inventory.
 - The root `npm test` still does not import the evidence tests; wiring them (and any CI use of this harness) is a separate, coordinated integration obligation.
 - Frozen request-lifecycle (SV-022) and ops (SV-017) harnesses are separate dependencies and were not touched.
+
+## SV-036 repairs (source only, still nothing run against a database)
+Seven defects found by independent review of the SV-034 harness, each reproduced first with fakes and now covered by a failing-before / passing-after test:
+1. **Deadline admission:** an expired deadline spawns nothing and writes no SQL, including statements queued behind an expired one.
+2. **Stream errors:** stdin, stdout, stderr and the child have error listeners for the whole session life, including after cleanup was requested. A fault rejects pending work, is recorded as a fixed code only, and makes the run unacceptable (`receipt.cleanup.faults`).
+3. **Process error is not exit:** only an exit or close event (or a recorded exit code or signal) counts as the process being gone. A sent kill or an error event does not.
+4. **Verifier start-up failure:** every handle the factory still owns is closed and accounted for on every path. An unresponsive handle keeps `cleanup.certain` false.
+5. **Tenant denial** needs populated evidence (see above).
+6. **Persisted record:** every case that clears something compares the stored schema version, reference, observed time, note, tenant, hold, recording actor and evidence identity, and the receipt's link, actor and request hash with the exact prepared request.
+7. **Preflight:** the owner of each of the four protected functions is read from the catalog and must not be the runtime role, and the runtime role must not be a member of any owner role (database, schema, tables or functions). Nothing is granted. The `auth_user` exception is unchanged.
+
+Fixture note: nothing new is required of the runner. `tenantDenial` still consumes one plain `fault` hold. The in-memory model is still only a model of the harness.

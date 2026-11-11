@@ -119,7 +119,7 @@ function fakeChild(reply){
   const child=new EventEmitter();child.stdout=new EventEmitter();child.stderr=new EventEmitter();child.signals=[];child.input=[];let gone=false;
   const exit=()=>{if(!gone){gone=true;child.emit('exit',0,null);}};
   child.die=exit;
-  child.stdin={write(text){
+  child.stdin=Object.assign(new EventEmitter(),{write(text){
     if(gone)throw new Error('EPIPE');child.input.push(text);
     if(text.startsWith('\\q')){if(!reply.ignoreQuit)queueMicrotask(exit);return;}
     const m=/\\echo SVEND (\S+) (\d+) /.exec(text);if(!m)return;
@@ -127,7 +127,7 @@ function fakeChild(reply){
     if(r.silent)return;
     const out=[...(r.rawLines??[]),...(r.rows??[]),`SVEND ${r.nonce??m[1]} ${r.seq??m[2]} ${r.error?'true':'false'} ${r.error?.sqlstate??'00000'} ${r.error?.message??''}`].join('\n')+'\n';
     if(r.chunks){for(let i=0;i<out.length;i+=r.chunks)queueMicrotask(()=>child.stdout.emit('data',out.slice(i,i+r.chunks)));}else queueMicrotask(()=>child.stdout.emit('data',out));
-  },end(){}};
+  },end(){}});
   child.kill=sig=>{child.signals.push(sig);if(reply.dieOn===sig)queueMicrotask(exit);return true;};
   return child;
 }
@@ -214,13 +214,13 @@ test('withDeadline settles with the value, the rejection, or a TimeoutError, and
 function healthyAnswers(c,over={}){
   const r=c.runtime,f=c.fixture,rls=name=>name==='auth_user'?'t|f':'t|t';
   return sql=>{
-    const hit=(k)=>over[k]??null;
+    const hit=(k)=>(typeof over[k]==='function'?over[k](sql):over[k])??null;
     if(sql.includes('current_database(), current_user'))return hit('identity')??[`${r.database}|${r.runtimeRole}|${r.runtimeRole}|16.4|127.0.0.1|${r.port}`];
     if(sql.includes('rolsuper'))return hit('attrs')??['f|f|f|f|f'];
     if(sql.includes('pg_get_userbyid(datdba)'))return hit('owners')??[`${r.expected.databaseOwner}|database`,`${r.expected.databaseOwner}|schema`,`${r.expected.databaseOwner}|relation`];
-    if(sql.includes("'MEMBER'"))return hit('member')??['f'];
+    if(sql.includes("'MEMBER'"))return hit('member')??[Array.from({length:(sql.match(/pg_has_role/g)||[]).length},()=>'f').join('|')];
     if(sql.includes('relrowsecurity'))return hit('rls')??[...FORCED_RELATIONS,'auth_user'].map(n=>`${n}|${rls(n)}`);
-    if(sql.includes('to_regprocedure')&&sql.includes('prosecdef'))return hit('fns')??FUNCTIONS.map((fn,i)=>`${nameOf(fn)}|f|${i===0?'t':'f'}`);
+    if(sql.includes('to_regprocedure')&&sql.includes('prosecdef'))return hit('fns')??FUNCTIONS.map((fn,i)=>`${nameOf(fn)}|f|${i===0?'t':'f'}|${r.expected.databaseOwner}`);
     if(sql.includes('has_table_privilege'))return hit('priv')??['hold_clearance_evidence|t|t|f|f|f|f|f','hold_clearance_receipt|t|t|f|f|f|f|f','execute|t'];
     if(sql.includes('FROM organization WHERE id'))return hit('org')??[`Synthetic org ${RUN}|id`];
     if(sql.includes('FROM auth_membership'))return hit('member_row')??['1'];
@@ -252,8 +252,8 @@ test('every unsafe or mismatched target fails the preflight with a fixed code',a
     'rls not forced':[{rls:[...FORCED_RELATIONS.map(n=>n==='hold_clearance_evidence'?`${n}|t|f`:`${n}|t|t`),'auth_user|t|f']},'rls_not_enabled_and_forced'],
     'rls missing on a table':[{rls:[...FORCED_RELATIONS.filter(n=>n!=='equipment_hold').map(n=>`${n}|t|t`),'auth_user|t|f']},'protected_relation_missing'],
     'auth_user exception changed':[{rls:[...FORCED_RELATIONS.map(n=>`${n}|t|t`),'auth_user|t|t']},'auth_user_exception_not_as_designed'],
-    'evidence function is not 0003':[{fns:FUNCTIONS.map(fn=>`${nameOf(fn)}|f|f`)},'evidence_function_not_the_corrected_version'],
-    'function is security definer':[{fns:FUNCTIONS.map((fn,i)=>`${nameOf(fn)}|t|${i===0?'t':'f'}`)},'function_is_security_definer'],
+    'evidence function is not 0003':[{fns:FUNCTIONS.map(fn=>`${nameOf(fn)}|f|f|${r.expected.databaseOwner}`)},'evidence_function_not_the_corrected_version'],
+    'function is security definer':[{fns:FUNCTIONS.map((fn,i)=>`${nameOf(fn)}|t|${i===0?'t':'f'}|${r.expected.databaseOwner}`)},'function_is_security_definer'],
     'extra evidence privilege (UPDATE)':[{priv:['hold_clearance_evidence|t|t|t|f|f|f|f','hold_clearance_receipt|t|t|f|f|f|f|f','execute|t']},'evidence_privileges_not_select_and_insert_only'],
     'extra receipt privilege (DELETE)':[{priv:['hold_clearance_evidence|t|t|f|f|f|f|f','hold_clearance_receipt|t|t|f|t|f|f|f','execute|t']},'evidence_privileges_not_select_and_insert_only'],
     'no insert privilege':[{priv:['hold_clearance_evidence|t|f|f|f|f|f|f','hold_clearance_receipt|t|t|f|f|f|f|f','execute|t']},'evidence_privileges_not_select_and_insert_only'],
@@ -399,6 +399,169 @@ test('a case that tries to reuse a consumed fixture item, or asks for an unsuppo
   const r=await run({cases:[twice]});assert.equal(r.receipt.cases[0].status,'NOT RUN');assert.equal(r.receipt.cases[0].code,'fixture_incomplete');
   const bad={name:'bad',needs:{},usesControl:true,async run(h){await h.control.apply({action:'drop-database'});return {status:'PASS',code:'ok'};}};
   const b=await run({cases:[bad]});assert.equal(b.receipt.cases[0].status,'FAIL');assert.equal(b.receipt.cases[0].code,'bad_control_action');
+});
+
+// ---------------- SV-036: seven harness repairs. Each test below failed against the SV-034 source (PR #35, 6c51096) and passes after the repair ----------------
+// Everything here uses fake children, fake streams, a fake clock and the in-memory model. No process, database or connection is involved.
+function manualClock(start=1000000){
+  let t=start,id=0;const timers=new Map();
+  return {now:()=>t,setTimer:(fn,ms)=>{const h=++id;timers.set(h,{at:t+ms,fn});return h;},clearTimer:h=>{timers.delete(h);},
+    advance(ms){t+=ms;for(const [h,x] of [...timers])if(x.at<=t){timers.delete(h);x.fn();}}};
+}
+const okPreflight=async()=>({passed:true,checks:[{id:'fake',ok:true,code:'ok'}]});
+const silentOn=word=>sql=>sql.startsWith('SELECT pg_backend_pid')?{rows:['1']}:sql===word?{silent:true}:{rows:[]};
+
+test('SV-036 (1) an expired deadline sends no SQL: not on a new call, not for queued work, and no process is spawned for it',async()=>{
+  const clock=manualClock(),{factory,spawned}=factoryWith({on:silentOn('HANG')},clock);
+  const live=Deadline.after(clock,5000),s=await factory.open('a',live),sent=()=>spawned[0].child.input.join('');
+  const hang=s.submit('HANG',live),queued=s.submit('QUEUED',live);
+  await new Promise(r=>setImmediate(r));
+  assert.ok(sent().includes('HANG'),'the first statement was sent while the deadline was still live');
+  clock.advance(6000);
+  await assert.rejects(hang,TimeoutError);
+  await assert.rejects(queued,TimeoutError,'queued work behind an expired statement is refused');
+  assert.ok(!sent().includes('QUEUED'),'the queued statement was never written');
+  await assert.rejects(s.submit('LATE',live),TimeoutError);
+  assert.ok(!sent().includes('LATE'),'a new call after the deadline writes nothing');
+  await assert.rejects(factory.open('b',new Deadline(clock,clock.now()-1)),TimeoutError);
+  assert.equal(spawned.length,1,'no process was spawned for an expired deadline');
+  assert.equal(factory.ownedHandles().length,1,'only the first session is owned');
+});
+test('SV-036 (1) the in-memory model also refuses to run anything after the deadline (so the runner tests are faithful)',async()=>{
+  const clock=manualClock(),c=contractOf(),w=createFakeWorld({contract:c}),dl=Deadline.after(clock,100),s=await w.factory.open('a',dl);
+  const before=w.world.statements;clock.advance(500);
+  await assert.rejects(s.submit('SELECT 1',dl),TimeoutError);assert.equal(w.world.statements,before);
+});
+
+test('SV-036 (2) stream errors on stdin, stdout and stderr never escape, reject pending work, and are recorded without their text',async()=>{
+  for(const [stream,inFlight] of ['stdin','stdout','stderr'].flatMap(x=>[[x,false],[x,true]])){
+    const {factory,spawned}=factoryWith({on:silentOn('WAIT')});
+    const dl=Deadline.after(realClock,5000),s=await factory.open('a',dl),child=spawned[0].child;
+    const pending=s.submit('WAIT',dl);
+    if(inFlight)await new Promise(r=>setImmediate(r));          // true: the statement is already written and awaited when the error arrives
+    assert.doesNotThrow(()=>child[stream].emit('error',new Error(`EPIPE at /secret/dir for ${RUN}`)),`${stream}: an error event must have a listener`);
+    await assert.rejects(pending,e=>e instanceof SessionError&&e.code==='stream_error'&&!e.message.includes('/secret')&&!e.message.includes(RUN),`${stream} inFlight=${inFlight}`);
+    await assert.rejects(s.submit('NEXT',dl),SessionError,`${stream}: a broken session accepts no more work`);
+    assert.deepEqual(factory.faults().map(f=>({name:f.name,code:f.code})),[{name:'a',code:'stream_error'}],stream);
+    assert.ok(!JSON.stringify(factory.faults()).includes('/secret'),'faults carry codes only');
+    assert.equal(s.hadFault(),true);
+    await s.close();
+    assert.doesNotThrow(()=>child[stream].emit('error',new Error('late error after cleanup')),`${stream}: a late error after cleanup is handled too`);
+    assert.ok(factory.faults().length>=1);
+  }
+  // An idle session (nothing pending) is recorded too.
+  const idle=factoryWith(base),dl=Deadline.after(realClock,5000),s=await idle.factory.open('a',dl);
+  assert.doesNotThrow(()=>idle.spawned[0].child.stdout.emit('error',new Error('x')));assert.equal(idle.factory.faults().length,1);await s.close();
+});
+test('SV-036 (2) a stream fault makes the run unacceptable even though every case passed',async()=>{
+  const c=contractOf(),w=createFakeWorld({contract:c}),factory={...w.factory,faults:()=>[{name:'c0a',code:'stream_error'}]};
+  const receipt=await runAcceptance({contract:c,factory,control:w.control,clock:realClock,deadlineMs:8000,preflight:okPreflight});
+  assert.ok(receipt.cases.every(x=>x.status==='PASS'),'the cases themselves passed');
+  assert.equal(receipt.accepted,false);assert.notEqual(receipt.status,'PASS');assert.equal(receipt.cleanup.certain,false);
+  assert.deepEqual(receipt.cleanup.faults,[{name:'c0a',code:'stream_error'}]);
+});
+
+test('SV-036 (3) a child process error is not proof of exit: the handle stays owned and cleanup stays uncertain until exit or close is observed',async()=>{
+  // The process never exits, whatever we do: the error event alone must not count as cleanup.
+  const stuck=factoryWith({ignoreQuit:true,on:silentOn('WAIT')}),dl=Deadline.after(realClock,5000),s=await stuck.factory.open('a',dl),child=stuck.spawned[0].child;
+  const pending=s.submit('WAIT',dl);
+  assert.doesNotThrow(()=>child.emit('error',new Error('spawn problem at /secret/dir')));
+  await assert.rejects(pending,e=>e instanceof SessionError&&e.code==='session_error'&&!e.message.includes('/secret'));
+  assert.equal(s.isOpen(),false,'an errored session takes no more work');
+  const proof=await s.close();
+  assert.equal(proof.uncertain,true,'no exit was observed');assert.equal(proof.graceful,false);
+  assert.deepEqual(child.signals,['SIGTERM','SIGKILL'],'the owned child was still asked to end, and sending a signal is not proof');
+  assert.deepEqual(stuck.factory.ownedHandles().map(x=>x.name),['a'],'still reported as owned');
+  assert.deepEqual(stuck.factory.faults().map(f=>f.code),['process_error']);
+  // Exit observed later (here: because the quit is honoured) makes the cleanup certain.
+  for(const [label,arrange] of [['exit during cleanup',()=>{}],['exit code already known',ch=>{ch.exitCode=1;}],['close event observed before cleanup',ch=>{ch.emit('close',1);}],['close event observed during cleanup',ch=>{queueMicrotask(()=>ch.emit('close',1));}]]){
+    const f=factoryWith(label==='exit during cleanup'?base:{ignoreQuit:true,on:base.on}),d=Deadline.after(realClock,5000),x=await f.factory.open('a',d),ch=f.spawned[0].child;
+    ch.emit('error',new Error('x'));arrange(ch);
+    const p=await x.close();
+    assert.equal(p.uncertain,false,label);assert.equal(f.factory.ownedHandles().length,0,label);
+  }
+});
+
+test('SV-036 (4) a verifier that fails to start is still accounted for: the owned handle is closed, and an unresponsive one blocks certainty and acceptance',async()=>{
+  const build=closeProof=>{
+    const owned=new Set(),calls=[],handle={name:'v',pid:1,appName:'x',isOpen:()=>true,isTainted:()=>false,stderrSummary:()=>'',submit:async()=>({rows:[],error:null,overflow:false}),
+      async close(){calls.push('close');const p=closeProof();if(p===null){owned.delete(handle);throw new Error('close failed');}if(!p.uncertain)owned.delete(handle);return {name:'v',...p};}};
+    return {calls,owned,factory:{ownedHandles:()=>[...owned],async open(){owned.add(handle);throw new SessionError('session_not_ready');}}};
+  };
+  const c=contractOf();
+  const stuck=build(()=>({graceful:false,terminated:true,uncertain:true}));
+  const a=await runAcceptance({contract:c,factory:stuck.factory,control:undefined,clock:realClock,deadlineMs:5000,preflight:okPreflight});
+  assert.ok(stuck.calls.length>=1,'the runner asked the owned handle to close');
+  assert.equal(a.cleanup.certain,false);assert.equal(a.accepted,false);assert.ok(a.cleanup.sessions.some(x=>x.uncertain),'the doubt is in the receipt');
+  assert.ok(a.cases.every(x=>x.status==='NOT RUN'));assert.equal(a.preflight.checks[0].id,'connect');
+  const throwing=build(()=>null);
+  const b=await runAcceptance({contract:c,factory:throwing.factory,control:undefined,clock:realClock,deadlineMs:5000,preflight:okPreflight});
+  assert.equal(b.cleanup.certain,false,'a close that throws is doubt');assert.equal(b.accepted,false);
+  const clean=build(()=>({graceful:true,terminated:false,uncertain:false}));
+  const d=await runAcceptance({contract:c,factory:clean.factory,control:undefined,clock:realClock,deadlineMs:5000,preflight:okPreflight});
+  assert.equal(d.cleanup.certain,true,'a handle that really closed is certain');assert.equal(clean.owned.size,0);assert.equal(d.accepted,false,'a failed start is never an acceptance');
+  assert.ok(d.cleanup.sessions.some(x=>x.name==='v'&&x.graceful),'the closed handle is in the accounting');
+});
+
+test('SV-036 (5) tenant denial needs evidence that is really there: a populated record is confirmed first, then hidden from the other tenant',async()=>{
+  const ok=await run();assert.equal(byName(ok.receipt).tenantDenial.status,'PASS');
+  const leak=await run({bugs:{evidenceVisibleAcrossTenants:true}}),l=byName(leak.receipt).tenantDenial;
+  assert.deepEqual([l.status,l.code],['FAIL','other_tenant_can_read_evidence'],'populated evidence visible to another tenant must fail the test');
+  assert.equal(leak.receipt.accepted,false);
+  for(const [bug,code] of [['receiptsVisibleAcrossTenants','other_tenant_can_read_receipt'],['holdVisibleAcrossTenants','other_tenant_can_read_hold']]){
+    const r=await run({bugs:{[bug]:true}}),t=byName(r.receipt).tenantDenial;
+    assert.deepEqual([t.status,t.code],['FAIL',code],bug);assert.equal(r.receipt.accepted,false,bug);
+  }
+  const empty=await run({bugs:{dropEvidence:true}}),e=byName(empty.receipt).tenantDenial;
+  assert.equal(e.status,'FAIL','an empty hold is not isolation proof');assert.equal(e.code,'tenant_evidence_not_populated');
+  assert.equal(empty.receipt.accepted,false);
+});
+
+test('SV-036 (6) acceptance compares the full persisted clearance and its receipt with the exact prepared request',async()=>{
+  const defects={
+    wrongReference:'persisted_reference',wrongObservedAt:'persisted_observed_at',droppedNote:'persisted_note',wrongSchemaVersion:'persisted_schema_version',
+    wrongRecordedBy:null,receiptReadsWrongEvidence:'persisted_receipt_link',receiptReadsWrongHash:'persisted_receipt_hash',
+  };
+  for(const [bug,code] of Object.entries(defects)){
+    const {receipt}=await run({bugs:{[bug]:true}});
+    assert.equal(receipt.accepted,false,`${bug} must prevent acceptance`);assert.equal(receipt.status,'FAIL',bug);
+    const failing=receipt.cases.filter(x=>x.status==='FAIL');assert.ok(failing.length>=1,bug);
+    if(code)assert.ok(failing.some(x=>x.code===code),`${bug}: expected ${code}, got ${JSON.stringify(failing)}`);
+  }
+  // Corruptions that only the detailed read shows, each caught by its own comparison.
+  for(const [bug,code] of Object.entries({detailWrongHold:'persisted_hold',detailWrongTenant:'persisted_tenant',detailWrongActor:'persisted_actor',detailWrongEvidenceId:'persisted_evidence_identity',receiptReadsTwoRows:'persisted_receipt_count'})){
+    const {receipt}=await run({bugs:{[bug]:true}});
+    assert.equal(receipt.accepted,false,bug);assert.ok(receipt.cases.some(x=>x.status==='FAIL'&&x.code===code),`${bug}: expected ${code}, got ${JSON.stringify(receipt.cases.filter(x=>x.status==='FAIL'))}`);
+  }
+  // Every case that clears something runs the comparison (a wrong reference stored only for ONE clearance is found in the case that made it).
+  const labelled={a:['sameKeyReplay','differentKeyCompetingClear'],s1:['clearVersusClaimStackedAndNewHolds'],s2:['clearVersusClaimStackedAndNewHolds'],r1:['rollbackInterleavings'],c:['roleOrRuleChangeBeforeReplay'],p1:['actorPrivateConflict'],t:['tenantDenial']};
+  for(const [label,names] of Object.entries(labelled)){
+    const {receipt}=await run({bugs:{wrongReferenceWhen:label}}),cs=byName(receipt);
+    for(const n of names)assert.deepEqual([cs[n].status,cs[n].code],['FAIL','persisted_reference'],`${label}: ${n}`);
+    assert.equal(receipt.accepted,false,label);
+  }
+  // A denied cross-tenant attempt must leave the populated record exactly as it was.
+  const tampered=await run({bugs:{deniedAttemptTampers:true}}),tt=byName(tampered.receipt).tenantDenial;
+  assert.deepEqual([tt.status,tt.code],['FAIL','persisted_reference']);assert.equal(tampered.receipt.accepted,false);
+  const good=await run();assert.equal(good.receipt.accepted,true,'positive control: an exact record is accepted');
+  // The same check runs for every case that clears something, not only one of them.
+  const {receipt}=await run({bugs:{wrongReference:true}});
+  assert.ok(receipt.cases.filter(x=>x.code==='persisted_reference').length>=4,JSON.stringify(receipt.cases));
+});
+
+test('SV-036 (7) the preflight checks the owner of every protected function and the runtime role\'s membership in those owners',async()=>{
+  const c=contractOf(),r=c.runtime,owned=(i,owner)=>FUNCTIONS.map((fn,k)=>`${nameOf(fn)}|f|${k===0?'t':'f'}|${k===i?owner:r.expected.databaseOwner}`);
+  const failing=async over=>(await runPreflight({contract:c,query:asQuery(healthyAnswers(c,over))})).checks.filter(x=>!x.ok).map(x=>x.code);
+  assert.deepEqual(await failing({}),[],'positive control');
+  for(let i=0;i<FUNCTIONS.length;i++)assert.ok((await failing({fns:owned(i,r.runtimeRole)})).includes('runtime_role_owns_protected_functions'),`${FUNCTIONS[i]} owned by the runtime role`);
+  assert.ok((await failing({fns:owned(2,'fn_owner_role'),member:sql=>[sql.includes("'fn_owner_role'")?sql.split('pg_has_role').slice(1).map(x=>x.includes("'fn_owner_role'")?'t':'f').join('|'):'f']})).includes('runtime_role_is_member_of_an_owner_role'),'membership in a FUNCTION owner role');
+  assert.ok((await failing({fns:FUNCTIONS.map((fn,k)=>`${nameOf(fn)}|f|${k===0?'t':'f'}`)})).includes('function_owner_unreadable'),'a missing owner column fails closed');
+  assert.ok((await failing({fns:FUNCTIONS.map((fn,k)=>`${nameOf(fn)}|f|${k===0?'t':'f'}|`)})).includes('function_owner_unreadable'),'an empty owner fails closed');
+  assert.ok((await failing({member:['f|f|f|f|f|f|f|f|f|f']})).includes('owner_membership_unreadable'),'a membership answer of the wrong size fails closed');
+  const sent=[];await runPreflight({contract:c,query:async sql=>{sent.push(sql);return {rows:healthyAnswers(c)(sql),error:null,overflow:false};}});
+  assert.ok(sent.some(s=>s.includes('proowner')),'function owners are read from the catalog');
+  assert.ok(!/\b(INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|GRANT|REVOKE|TRUNCATE)\b/.test(sent.join('\n').replace(/has_table_privilege\([^)]*\)/g,'')),'still read-only: nothing granted, nothing changed');
+  assert.equal((await failing({rls:[...FORCED_RELATIONS.map(n=>`${n}|t|t`),'auth_user|t|f']})).length,0,'the intentional auth_user exception is unchanged');
 });
 
 // ---------------- structural guarantees: importing this suite can never connect ----------------
