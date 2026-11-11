@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 454. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 455. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -20,7 +20,7 @@ Revision 454. Live state is on the task-board branch. Use npm run board -- claim
 | SV-013 Provider-neutral observation ingestion simulator | done | — | — | SV-001, SV-004, SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/10) |
 | SV-014 Location confidence and RTLS adapter boundary | done | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/18) |
 | SV-015 Validate ward reference geometry | blocked | — | — | SV-002 | packages/scene/references |
-| SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e |
+| SV-016 End-to-end and performance verification | ready | — | — | SV-007, SV-008, SV-010, SV-011, SV-012, SV-014 | tests/e2e/journeys |
 | SV-017 Deployment and operational readiness | blocked | — | — | SV-006, SV-013 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/17) |
 | SV-018 Ward pilot and release sign-off | ready | — | — | SV-015, SV-016, SV-017 | planning/pilot |
 | SV-019 Repair auth bootstrap and clean test setup | done | — | — | SV-005 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/26) |
@@ -42,3 +42,4 @@ Revision 454. Live state is on the task-board branch. Use npm run board -- claim
 | SV-035 Repair request UI replacement ownership and read-only capability controls | done | — | — | SV-027 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/36) |
 | SV-036 Repair native hold-evidence harness deadline, cleanup and proof gaps | done | — | — | SV-034 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/38) |
 | SV-037 Repair reentrant request UI mount, reset and stale reporting ownership | ready | — | — | SV-035 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
+| SV-038 Adopt and review prepared integrated acceptance evidence validator | ready | — | — | — | tests/e2e/integrated-acceptance |

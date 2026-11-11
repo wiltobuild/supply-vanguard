@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 454,
-  "updatedAt": "2026-11-11T17:48:16.681Z",
+  "revision": 455,
+  "updatedAt": "2026-11-11T17:57:17.610Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3235,6 +3235,14 @@
       "command": "block",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T17:57:17.610Z",
+      "taskId": "SV-038",
+      "command": "migration-split-e2e-validator-adoption",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Adopt existing48-test cloud acceptance validator without duplicate authoring; no retained E2E owner or claim found. Split unclaimed SV016 source paths only, preserving final acceptance/dependencies and all existing tasks, leases and history."
     }
   ],
   "tasks": [
@@ -3763,7 +3771,7 @@
         "SV-014"
       ],
       "scope": [
-        "tests/e2e"
+        "tests/e2e/journeys"
       ],
       "acceptance": [
         "Find/move/check-in/replenish journeys; two-client conflicts and tenant isolation; browser and accessibility report; performance budgets measured."
@@ -3773,7 +3781,10 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null
+      "claim": null,
+      "coordinationNotes": [
+        "Coordinated source-only adoption split: SV038 owns tests/e2e/integrated-acceptance; SV016 final real journey/browser/accessibility/performance/reporting files belong under tests/e2e/journeys. Preserve all final dependencies, acceptance, verification, status and claim. Consume the completed validator as an immutable dependency; source preparation cannot complete or unblock final acceptance."
+      ]
     },
     {
       "id": "SV-017",
@@ -4701,6 +4712,37 @@
         "Original Cheich UI owner may claim normally: npm run board -- claim SV-037 --owner Cheich --agent cheich-sv037-ui-reentrancy-UNIQUE. Do not reopen or re-claim completed SV035; release the other active claim before starting.",
         "SV008 original owner retains the provisional shared adapter branch and expired-claim recovery. This UI follow-up remains a final correctness dependency for deliberate later composition; no shared ownership transfer.",
         "Both server clearance routes still require inventory:read and exact current database configured role. Every canonical equipment-write role also reads. The OR branch supports existing synthetic projection compatibility and is settled; do not request a new policy decision."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-038",
+      "title": "Adopt and review prepared integrated acceptance evidence validator",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [],
+      "scope": [
+        "tests/e2e/integrated-acceptance"
+      ],
+      "acceptance": [
+        "Adopt the existing parent-cloud source artifact exactly; do not duplicate its authoring. It contains15 scenarios/65 criteria, a pure fail-closed validator,48 injected tests and explicit NOT_RUN/SIMULATED_COMPLETE fixtures. Verify the supported transfer manifest, exact bytes/hashes and provenance before repository edits. A cloud scratch path is not a desktop file.",
+        "Use stable public checkout base 5e06b07a973d3f54874aee9a058aec63419743fd for source-only adoption, not as a claimed integrated application candidate. Preserve original cloud authorship and add only justified scoped adoption/contract repairs. Inspect imports before executing the pure tests; no live transport, server, database, native client, browser, credentials or fixture setup.",
+        "Reconcile manifest requirements against the documented verified public plan and provided maintained PRD evidence. Preserve the known unavailable old Claude artifact/browser route; do not retry it or pretend full PRD access. Record source identities, versions, discrepancies and unresolved requirements explicitly. No clinical or operational policy, thresholds, roles, sign-off or observations may be fabricated.",
+        "Bind real acceptance only to explicitly supplied exact integrated source/schema/catalog/scope/run identities. Prepare canonical mappings to actual final runner case IDs, including every corrected SV036 evidence race and existing e506 lifecycle case. Validate source-derived migration/table inventory against the deliberately reviewed final schema. Until final source/catalog and PRD reconciliation are available, bindings remain visibly UNBOUND/NOT_RUN and cannot produce a real completion claim.",
+        "Preserve strict rejection of missing/skipped required receipts, mismatched source/schema/catalog/scope/run IDs, old11/32 receipts used for expanded scope, fake/embedded substitution, absent measurements and inflated completion. A complete simulated fixture must keep real integrated/pilot/production flags false. Source-only completion is not SV016 runtime acceptance or SV018 sign-off.",
+        "Preserve SV016 final dependencies and acceptance unchanged. The coordinated split reserves tests/e2e/journeys for final real journeys/browser/accessibility/performance/reporting and tests/e2e/integrated-acceptance only for this adoption. Do not edit shared app, feature modules, ops, production contracts, root loader/CI/dependencies or pilot files."
+      ],
+      "verification": [
+        "Inspect the transferred code/manifest first; independently run the existing48 pure injected tests and three syntax checks once in the adopted tree, with exact pass/fail/skip evidence. Add only justified missing adoption/identity/proof regressions, not implementation-mirroring tests or invented real outcomes.",
+        "Check that importing or testing the validator is inert: no networking, SQL, browser/process/runtime provisioning, credentials, access grants or source mutation outside the scoped artifact. Explicit simulations remain separate from actual runner evidence.",
+        "Prepare an isolated normal-claimed branch and clean exact local commit/diff/hash receipts. If source/catalog/PRD binding is unavailable, normally block with that exact unresolved adoption obligation; do not certify final adoption/runtime readiness from placeholder data.",
+        "No publication, PR creation, merge, deployment, runtime approval, physical review or policy sign-off follows from this task. Source transfer and any eventual publication use their separately authorized supported routes."
+      ],
+      "coordinationNotes": [
+        "Two active-history pages and archived history were checked; no retained tests/e2e implementation/preparation owner was identified. SV016 has no claim and its final dependencies remain unfinished. Original cloud artifact author retains authorship; do not rebuild that deliverable.",
+        "Preferred consuming owner is the existing internal Sol context 'Inspect Supply Vanguard requirements', thread01a1ac97-6346-770b-a05a-a7cdeea99025, with normal unique Wil claim only after supported artifact access. No new sidebar chat or competing integration owner. Its old browser PRD inspection stop stays intact.",
+        "Normal claim: npm run board -- claim SV-038 --owner Wil --agent wil-sol-sv038-acceptance-adoption-UNIQUE. Parent arranges supported internal transfer; no external Slack file sharing is authorized by registration and no proxy claim is made.",
+        "Original SV008 owner and reviewer keep current shared repair; SV017 keeps13/34 recovery source; Cheich keepsSV036/SV037. Actual adopting owner must confirm normal claim before edits. Unbound final mappings are genuine source obligations, not a reason to rerun unauthorized runtime."
       ],
       "claim": null
     }
