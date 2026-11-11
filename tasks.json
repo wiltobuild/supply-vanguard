@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 443,
-  "updatedAt": "2026-11-11T17:03:18.231Z",
+  "revision": 444,
+  "updatedAt": "2026-11-11T17:03:48.731Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3133,6 +3133,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T17:03:48.731Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3375,7 +3382,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3403,17 +3410,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "c29672a2-6bda-44c7-b338-cf18a2504201",
-        "claimedAt": "2026-11-11T16:56:06.955Z",
-        "expiresAt": "2026-11-11T19:03:18.231Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Source-only unarmed functional-fixture-v2 frozen0b6477f2539172114a2ccf8d08135f229a9066b1 parentf125b19; three new owned module/test/docs files,20 controlled-fake tests pass, syntax/check pass, old helper/receipt/web fixture fingerprints preserved. Explicit13/34 and34 raw bindings required; opsc2ee receipt-declared Git metadata unverified. Pending independent source review, authenticated armed manifest/composition and concrete approved runtime/bootstrap adapters; SV037 UI correctness and runtime/publication holds remain. No real SQL/DB/roles/tokens/listeners/runtime or feature publication.",
       "reviewNote": "Authorized original-owner source-only versioned unarmed13/34 functional helper and controlled-fake admission/cleanup tests; preserve frozen11/32 runner and receipts.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
