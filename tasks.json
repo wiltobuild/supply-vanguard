@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 432,
-  "updatedAt": "2026-11-11T16:27:27.066Z",
+  "revision": 433,
+  "updatedAt": "2026-11-11T16:30:18.512Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3056,6 +3056,13 @@
       "command": "block",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T16:30:18.512Z",
+      "taskId": "SV-036",
+      "command": "release",
+      "agent": "cheich-sv036-harness-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4438,7 +4445,7 @@
     {
       "id": "SV-036",
       "title": "Repair native hold-evidence harness deadline, cleanup and proof gaps",
-      "status": "claimed",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-034"
@@ -4468,13 +4475,7 @@
         "Independent review reproduced seven P2 test-harness defects with fake collaborators, not production SQL exploits. Its untouched31-pass/one-inert-skip baseline and10-module syntax/26-blob audit need not be repeated for activity; changed paths require meaningful verification.",
         "Expanded13/34 composition and evidence-native suite are separate from frozen b549/ea63/e506/8eca11/32 native runtime proposal; no runtime approval follows from source fixes."
       ],
-      "claim": {
-        "agent": "cheich-sv036-harness-01",
-        "owner": "cheich",
-        "leaseId": "174d4a7e-bbd7-413a-ad6c-27ae880c9108",
-        "claimedAt": "2026-11-11T15:47:43.795Z",
-        "expiresAt": "2026-11-11T17:47:43.795Z"
-      }
+      "claim": null
     },
     {
       "id": "SV-037",
