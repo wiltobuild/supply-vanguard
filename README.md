@@ -11,10 +11,10 @@ Supply Vanguard is an equipment and supply tracking tool for hospital wards, wit
 ## What it does
 
 - **Find equipment:** select an item and locate it in the 3D ward, so staff see which room it is in.
-- **Update location and status:** change an item's room or status, and the change shows in the 3D ward. Changes and recent history persist in the browser demo.
+- **Update location and status:** change an item's room or status, and the change shows in the 3D ward.
 - **Keep unsafe equipment out of circulation:** independent stacked holds (dirty, fault, maintenance, unknown) keep an item unavailable until every hold is cleared.
 - **Track supplies:** see supply locations and stock levels in the ward, and spot low stock.
-- **Know how far to trust a location:** location confidence and stale/uncertain states are handled in the backend; showing them in the UI is planned work.
+- **Know how far to trust a location:** each item shows a freshness label, a count of items that need location verification, and a "next to verify" panel. Freshness updates every second, with thresholds at five and thirty minutes.
 
 ## Tech stack
 
@@ -23,19 +23,28 @@ Supply Vanguard is an equipment and supply tracking tool for hospital wards, wit
 - **Web app:** plain JavaScript (`apps/web`) for the equipment register
 - **Backend:** API service (auth and roles, equipment, holds, requests, supplies, audit) on PostgreSQL 16+ with migrations and tenant-scoped data
 - **Observation ingestion:** a service with a simulator; no live hardware integration yet
-- **Workflow:** shared task board on a git branch, run with the GitHub CLI, so several agents can claim work without overlapping
 
 The demo uses synthetic data and needs no API keys.
 
 ## What's in this repo
 
+- `apps/`: web app (equipment register, 3D ward)
+- `services/`: backend API and observation ingestion
+- `packages/`: shared libraries, including the 3D scene
+- `tests/`: test suite
+- `tools/`: dev scripts
+- `design/`, `planning/`: design notes and task planning
+- `AGENTS.md`, `CLAUDE.md`: instructions for the AI coding agents that work on this repo
+
 Equipment and supply tracking with an explorable NICU concept. This repository contains the complete editable Three.js scene, 25 reusable equipment GLBs, two preserved original ward GLBs, a working browser demo, implementation plan, and shared agent claiming board.
 
 ## Start
 
-Requires Node.js 22+, Git, and GitHub CLI for shared task operations.
+Requires Node.js 22+ and Git. The GitHub CLI is only needed for the shared task board (see Coordinate work below).
 
 ```sh
+git clone https://github.com/wiltobuild/supply-vanguard.git
+cd supply-vanguard
 npm run dev
 # Open http://localhost:4180
 npm run setup:test   # once per clean checkout: installs PGlite, the test-only embedded database
@@ -45,7 +54,11 @@ npm run check
 
 The demo itself needs no install. Only `npm test` needs `npm run setup:test` first; without it the run stops with a message saying so instead of a stack trace. PostgreSQL 16+ is optional: the native database tests are skipped, and say so, when it is not installed.
 
-Select equipment, change its room/status, and locate it in the 3D ward. Changes and recent history persist in this browser. Orbit, walk, inspect equipment models, and explore supply locations in the embedded viewer. No hosted services or API keys are needed for this demo.
+### Connecting the equipment register
+
+The 3D ward and supply viewer open with no setup. The equipment register shows 0 assets until you click **Connect to equipment** and enter an Organization ID and a session token. These come from a trusted local bootstrap of the equipment API: there is no sign-up or token-issuance endpoint, and the synthetic session tokens expire after 15 minutes. To run against an API, set `API_ORIGIN` to its loopback origin and start the web app with `npm run dev --prefix apps/web`. See [apps/web/README.md](apps/web/README.md) and [services/api/auth/README.md](services/api/auth/README.md). Use synthetic data only.
+
+After connecting, select equipment, change its room or status, and locate it in the 3D ward. Orbit, walk, inspect equipment models, and explore supply locations in the embedded viewer. No hosted services or API keys are needed for this demo.
 
 ## Coordinate work
 
