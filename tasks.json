@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 455,
-  "updatedAt": "2026-11-11T17:57:17.610Z",
+  "revision": 456,
+  "updatedAt": "2026-11-11T17:57:48.226Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3243,6 +3243,14 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Adopt existing48-test cloud acceptance validator without duplicate authoring; no retained E2E owner or claim found. Split unclaimed SV016 source paths only, preserving final acceptance/dependencies and all existing tasks, leases and history."
+    },
+    {
+      "at": "2026-11-11T17:57:48.226Z",
+      "taskId": "SV-039",
+      "command": "migration-add-native-evidence-residual-repair",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Distinct bounded follow-up to completed SV036: close-after-exit fault accounting, complete r3 proof, named-other tenant denial, pre-spawn setup ownership and timestamp precision; queued after SV037; no other task or scope change."
     }
   ],
   "tasks": [
@@ -4743,6 +4751,40 @@
         "Preferred consuming owner is the existing internal Sol context 'Inspect Supply Vanguard requirements', thread01a1ac97-6346-770b-a05a-a7cdeea99025, with normal unique Wil claim only after supported artifact access. No new sidebar chat or competing integration owner. Its old browser PRD inspection stop stays intact.",
         "Normal claim: npm run board -- claim SV-038 --owner Wil --agent wil-sol-sv038-acceptance-adoption-UNIQUE. Parent arranges supported internal transfer; no external Slack file sharing is authorized by registration and no proxy claim is made.",
         "Original SV008 owner and reviewer keep current shared repair; SV017 keeps13/34 recovery source; Cheich keepsSV036/SV037. Actual adopting owner must confirm normal claim before edits. Unbound final mappings are genuine source obligations, not a reason to rerun unauthorized runtime."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-039",
+      "title": "Repair residual native evidence stream closure and immutable proof gaps",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-036"
+      ],
+      "scope": [
+        "services/api/holds/tests"
+      ],
+      "acceptance": [
+        "Use exact public PR38/SV036 source 1ccbc600d6af2b315f37e0b1bfc81daef210a007 as immutable baseline. Preserve completed SV036 history and its seven independently passing original repairs. This distinct narrow source/fake-only follow-up is queued for the same Cheich harness owner AFTER SV037; no preemption or proxy claim.",
+        "R1 P2: distinguish process termination from complete stdio closure. An exit event alone must not settle session cleanup or acceptance while owned streams can still fail. Register terminal listeners before quit, await close or equivalent complete owned-stream proof within the cleanup budget, preserve uncertainty on timeout, and snapshot final faults only after that boundary. A verifier stderr error between exit and delayed close must prevent accepted=true.",
+        "R2 P2: retain the exact prepared second recovery-clearance request r3 and assert its complete persisted record AFTER commit: cleared actor, schema/reference/observed time/note, immutable evidence, receipt key/hash/actor/hold/tenant/linkage and intended replay identity. Existing wrongReferenceWhen:r3 corruption must fail; no successful second commit may bypass the full proof.",
+        "R3 P2: populated outsider denial controls must test evidence, receipt and hold reads under both the outsider's own organization and the named other organization. Preserve a positive authorized populated-row proof, reject policies that merely filter the supplied organization without membership, and prove stored state remains unchanged.",
+        "R4 P2: perform fallible pure setup such as newNonce before spawning. Once spawn returns a child, immediately establish ownership, lifetime error handling and cleanup obligation before fallible initialization. Unwind every later failure through that owned-handle path. Injected nonce/setup failure must not leave a live untracked child while cleanup.certain=true.",
+        "R5 P3: preserve full stored PostgreSQL timestamp precision, or prove exact equality to the prepared timestamp without millisecond truncation. A one-microsecond corruption must fail the immutable-record comparison. Do not change accepted request precision or business policy.",
+        "Preserve exact target/non-owner/RLS/function-owner preflight, bounded SQL and output framing, all original deadline/stream/cleanup/tenant/provenance repairs, actor-private replay, redaction and unconditional truthful owned-handle accounting. Do not replace assertions with ignores, allowlisted hashes, skipped required controls or generic catches."
+      ],
+      "verification": [
+        "Map existing repaired author40-pass/one-inert-native-skip suite and13 independent controls first; five controls intentionally reproduce the residual findings. Add meaningful fail-before/pass-after injected controls for delayed close plus late stderr/stdout failure, r3 corruption, own/named-other populated leakage, nonce/setup throw and sub-millisecond persisted corruption.",
+        "Run the original seven repair controls plus focused residual controls on the corrected frozen source; report exact pass/fail/skip counts. Inspect imports before execution. Do not rerun mutation/root baselines merely for activity.",
+        "Use inert process/SQL/clock/stream/fixture-control fakes and syntax/source checks only. No actual spawn/psql/SQL/PostgreSQL, credentials, fixture provisioning/control, native cleanup, listener/browser, tooling installation or security changes. All real native cases remain NOT RUN.",
+        "Freeze a clean narrow local commit/diff/hash receipt through a normal unique claim, then clear its lease normally. Changes stay under services/api/holds/tests; no production holds/domain/migrations, shared app/host/ops/root/CI or SV016 changes. Publication/merge/runtime authorizations remain separate."
+      ],
+      "coordinationNotes": [
+        "Queue after Cheich completes/releases SV037; choose one normal claim at a time. Claim route: npm run board -- claim SV-039 --owner Cheich --agent cheich-sv039-harness-residual-UNIQUE. Parent's existing Slack worker owns the single external assignment.",
+        "This is a distinct continuation of the authorized public-source harness repairs. It makes no SV016 scope mutation and does not register/adopt an acceptance validator. All existing tasks, scopes, claims, completed evidence and history must be preserved.",
+        "The independent review verified26 immutable blobs and ten-module syntax; original repaired controls passed, while five inert controls exposed residual proof gaps. These are harness defects, not demonstrated production SQL or native failures.",
+        "Keep frozen b549/ea63/e506/8eca 11/32 evidence, expanded13/34 source preparation, original shared owner and UI repair ownership separate. No new integration owner or native/runtime approval follows from this task."
       ],
       "claim": null
     }
