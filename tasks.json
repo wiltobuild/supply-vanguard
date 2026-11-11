@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 426,
-  "updatedAt": "2026-11-11T16:18:03.107Z",
+  "revision": 427,
+  "updatedAt": "2026-11-11T16:21:08.264Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3014,6 +3014,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T16:21:08.264Z",
+      "taskId": "SV-017",
+      "command": "heartbeat",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3576,7 +3583,7 @@
         "owner": "wil",
         "leaseId": "5cafd0ed-1e18-4e3d-bb18-12ccc6ee8ef2",
         "claimedAt": "2026-11-11T15:43:28.272Z",
-        "expiresAt": "2026-11-11T18:18:03.107Z"
+        "expiresAt": "2026-11-11T18:21:08.264Z"
       },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
