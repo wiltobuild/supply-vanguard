@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 463,
-  "updatedAt": "2026-11-11T18:44:09.599Z",
+  "revision": 464,
+  "updatedAt": "2026-11-11T18:44:13.490Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3300,6 +3300,13 @@
       "command": "unblock",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T18:44:13.490Z",
+      "taskId": "SV-008",
+      "command": "claim",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -3542,7 +3549,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3570,7 +3577,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-sol-sv008-20261105-f28c",
+        "owner": "wil",
+        "leaseId": "e6c423e6-5d0d-4194-84fa-2400e99eed1a",
+        "claimedAt": "2026-11-11T18:44:13.490Z",
+        "expiresAt": "2026-11-11T20:44:13.490Z"
+      },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
