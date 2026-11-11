@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 414,
-  "updatedAt": "2026-11-11T15:35:42.970Z",
+  "revision": 415,
+  "updatedAt": "2026-11-11T15:36:16.761Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2929,6 +2929,14 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Independent public PR35 review reproduced seven bounded harness deadline, stream, cleanup, tenant evidence and immutable proof/preflight gaps; original Cheich source-only follow-up, preserve all current owners and completed histories"
+    },
+    {
+      "at": "2026-11-11T15:36:16.761Z",
+      "taskId": "SV-037",
+      "command": "migration-add-request-ui-reentrancy-repair",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Independent public PR36 review confirmed claimed fixes but reproduced remaining reentrant reset/mount/render and stale reporting gaps; narrow original Cheich follow-up, preserve resolved capability contract and completed histories"
     }
   ],
   "tasks": [
@@ -4346,6 +4354,41 @@
         "Original Cheich harness owner may claim normally: npm run board -- claim SV-036 --owner Cheich --agent cheich-sv036-harness-repair-UNIQUE. One task per agent; preserve SV008 retained source ownership.",
         "Independent review reproduced seven P2 test-harness defects with fake collaborators, not production SQL exploits. Its untouched31-pass/one-inert-skip baseline and10-module syntax/26-blob audit need not be repeated for activity; changed paths require meaningful verification.",
         "Expanded13/34 composition and evidence-native suite are separate from frozen b549/ea63/e506/8eca11/32 native runtime proposal; no runtime approval follows from source fixes."
+      ],
+      "claim": null
+    },
+    {
+      "id": "SV-037",
+      "title": "Repair reentrant request UI mount, reset and stale reporting ownership",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-035"
+      ],
+      "scope": [
+        "apps/web/requests",
+        "apps/web/tests/request-lifecycle.test.mjs"
+      ],
+      "acceptance": [
+        "Use exact public PR36/SV035 source 07a0f738f837732ec51bb7c7cfd3b1e9b231b62e as stable baseline. Preserve completed SV035 history and all six independently verified repairs. This is a remaining source-only ownership follow-up, not a regression claim against that PR.",
+        "Repair resetAccess ownership across synchronous callbacks: A's session.reset may synchronously abort and mount B before A resumes. Recheck current-instance authority after that callback boundary so stale A cannot erase/unregister/restyle/refocus the replacement. Preserve current owner's effective access cleanup and idempotence.",
+        "Make mount arbitration safe when outer B disposes A and A's abort callback mounts nested C. Establish one coherent current instance, dispose/retire superseded listeners and sessions without an unbounded disposal loop, and prevent stale or unregistered instances from rendering even when their disposed flag is false. Preserve usable replacement controls, styles and external focus.",
+        "Guard stale report/run rejection handling after replacement, including inert synthetic pending-command rejection on a normally disabled control. It must not change the replacement's status or steal outside focus. Preserve actual disabled uncertain-action controls and prove no second command is sent.",
+        "Preserve the resolved capability contract: matching configured role AND (inventory:read OR equipment:write). Empty/missing projection refuses command dispatch; inventory-read-only plus matching role may clear while equipment-write actions remain disabled; wrong/missing role/rule refuses clearance. Preserve three-argument canClear compatibility. This is local projection compatibility, not alternate server authority or a reason to change backend roles/policy.",
+        "Preserve evidence-v1 headers and identical prepared retry key/body, millisecond timestamp rules, role refusal versus access-loss cleanup, immutable evidence versus current stack, text-safe rendering and all existing request UI lifecycle behavior."
+      ],
+      "verification": [
+        "Add controlled failing-before/passing-after synchronous-abort and microtask regressions for reset-triggered replacement, nested mount/listener cleanup/current instance usability, late unregistered render, and stale synthetic error reporting/focus. Assert one current instance, no leaked listeners or unbounded disposal, no extra command and correct current-owner cleanup.",
+        "Retain the41 existing focused cases. The independent prior suite passed41 and the PR34-view control gave35pass/6fail; remaining review probes gave6pass/3fail with the same3 failures on baseline. Do not relabel these source/DOM results as real browser or authorization bypass evidence.",
+        "Use inert synthetic DOM/transport/abort/clock collaborators and applicable syntax/static checks only; declare actual dependency and skip counts. No HTTP/database/auth fixture, browser/CUA, listener/native setup, new dependency, credentials or grants.",
+        "Freeze a clean small local commit with exact diff/test/hash receipts and normal board workflow. Do not author shared app/host, backend/domain/migrations, scene, ops/root/CI/loader or other owners' files. Mounted host/browser/HTTP/SQL/SV022 acceptance remains open."
+      ],
+      "coordinationNotes": [
+        "Parent's existing Slack worker is sole external assignment sender. This registers a bounded follow-up, not a proxy claim or duplicate implementation. Original completed task history is preserved.",
+        "No publication, PR creation, merge, deployment, native execution, fixture provisioning, credentials, access grants or security changes are authorized by registration. Use normal claim before edits and retain all operation-specific denials.",
+        "Original Cheich UI owner may claim normally: npm run board -- claim SV-037 --owner Cheich --agent cheich-sv037-ui-reentrancy-UNIQUE. Do not reopen or re-claim completed SV035; release the other active claim before starting.",
+        "SV008 original owner retains the provisional shared adapter branch and expired-claim recovery. This UI follow-up remains a final correctness dependency for deliberate later composition; no shared ownership transfer.",
+        "Both server clearance routes still require inventory:read and exact current database configured role. Every canonical equipment-write role also reads. The OR branch supports existing synthetic projection compatibility and is settled; do not request a new policy decision."
       ],
       "claim": null
     }
