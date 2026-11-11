@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 460. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 461. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -41,6 +41,6 @@ Revision 460. Live state is on the task-board branch. Use npm run board -- claim
 | SV-034 Prepare native hold-evidence concurrency acceptance harness | done | — | — | SV-033 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/35) |
 | SV-035 Repair request UI replacement ownership and read-only capability controls | done | — | — | SV-027 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/36) |
 | SV-036 Repair native hold-evidence harness deadline, cleanup and proof gaps | done | — | — | SV-034 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/38) |
-| SV-037 Repair reentrant request UI mount, reset and stale reporting ownership | ready | — | — | SV-035 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
+| SV-037 Repair reentrant request UI mount, reset and stale reporting ownership | claimed | Cheich / cheich-sv037-ui-reentrancy-01 | 2026-11-11T20:09:35.581Z | SV-035 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
 | SV-038 Adopt and review prepared integrated acceptance evidence validator | ready | — | — | — | tests/e2e/integrated-acceptance |
 | SV-039 Repair residual native evidence stream closure and immutable proof gaps | ready | — | — | SV-036 | services/api/holds/tests |
