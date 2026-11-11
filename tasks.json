@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 475,
-  "updatedAt": "2026-11-11T19:04:11.284Z",
+  "revision": 476,
+  "updatedAt": "2026-11-11T19:10:19.161Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3384,6 +3384,13 @@
       "command": "block",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T19:10:19.161Z",
+      "taskId": "SV-017",
+      "command": "unblock",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3930,7 +3937,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3952,8 +3959,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance.",
-      "reviewNote": "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance.",
+      "blockedReason": null,
+      "reviewNote": "Authorized bounded local ops-only delivery projection on pinned ec45 main with1557 ancestry; source unchanged, no publication",
       "coordinationNotes": [
         "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance."
       ]
