@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 447,
-  "updatedAt": "2026-11-11T17:26:39.576Z",
+  "revision": 448,
+  "updatedAt": "2026-11-11T17:27:53.043Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3186,6 +3186,13 @@
       "agent": "wil-sol-pr-manager-20261105",
       "owner": null,
       "reason": "Remove superseded source-review/access prerequisites; preserve genuine acceptance, source publication and external evidence gates, all states/claims/dependencies/scopes unchanged"
+    },
+    {
+      "at": "2026-11-11T17:27:53.043Z",
+      "taskId": "SV-008",
+      "command": "heartbeat",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3461,7 +3468,7 @@
         "owner": "wil",
         "leaseId": "af9cae1c-56aa-4e6a-9a42-28b286037247",
         "claimedAt": "2026-11-11T17:19:25.711Z",
-        "expiresAt": "2026-11-11T19:19:25.711Z"
+        "expiresAt": "2026-11-11T19:27:53.043Z"
       },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
