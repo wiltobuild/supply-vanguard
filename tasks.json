@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 471,
-  "updatedAt": "2026-11-11T18:58:32.542Z",
+  "revision": 472,
+  "updatedAt": "2026-11-11T19:00:16.076Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3356,6 +3356,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T19:00:16.076Z",
+      "taskId": "SV-011",
+      "command": "block",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3714,7 +3721,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3733,17 +3740,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv011-20261106-maintenance",
-        "owner": "wil",
-        "leaseId": "dda832bd-ce7b-4683-90b2-a62858aeaf63",
-        "claimedAt": "2026-11-11T18:57:43.333Z",
-        "expiresAt": "2026-11-11T20:58:32.542Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T16:13:29.318Z",
-      "blockedReason": null,
+      "blockedReason": "Local-only delivery staging complete and clean: branch staging/sv011-main-ec45-20261111 at592200abd8eb7f2e3a4d5086eb609e0da5aa23fd, tree31ad97ed1e5ce1c4c1ea0eedcaa209a923719e1e, parents ec45d673be45872de17f59a5fc6c9c85525dd54e and reviewed b4f01aa847cd11b8e736e10b180f66c70b28dfda. Exact supported source read/fetch succeeded.29 paths relativeec45 audited: maintenance/shared-mount delta matches public984; two fixture/test blobs exactlyb4; all remaining inherited main bytes exactlyec45. No hand edits, conflicts or unowned99 source. Six fake-only seeding regressions passed once,18 changed JS/MJS syntax checks and11 static import/export checks passed; no factories invoked. Initial audit assertion used wrong baseline; corrected to actual PR mergebaseafe17 passed without source changes. Public984 and compatibility53 preserved clean. Publication requires exact-head/destination approval; mounted/current-candidate/runtime/native/SQL acceptance and PR22 merge remain held. No source push, PR metadata, runtime restart or deployment.",
       "reviewNote": "Specific supported elevated read succeeded exit0 for immutable b4f01aa and ec45d673 objects in exact non-served SV008 checkout. Resume only previously authorized separate local delivery staging; no source reimplementation, runtime or publication.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements.",
