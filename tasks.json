@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 469,
-  "updatedAt": "2026-11-11T18:57:26.527Z",
+  "revision": 470,
+  "updatedAt": "2026-11-11T18:57:43.333Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3342,6 +3342,13 @@
       "command": "unblock",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T18:57:43.333Z",
+      "taskId": "SV-011",
+      "command": "claim",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": "wil"
     }
   ],
   "tasks": [
@@ -3700,7 +3707,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "ready",
+      "status": "claimed",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3719,7 +3726,13 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": null,
+      "claim": {
+        "agent": "wil-sol-sv011-20261106-maintenance",
+        "owner": "wil",
+        "leaseId": "dda832bd-ce7b-4683-90b2-a62858aeaf63",
+        "claimedAt": "2026-11-11T18:57:43.333Z",
+        "expiresAt": "2026-11-11T20:57:43.333Z"
+      },
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T16:13:29.318Z",
