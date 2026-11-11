@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 478,
-  "updatedAt": "2026-11-11T19:13:30.014Z",
+  "revision": 479,
+  "updatedAt": "2026-11-11T19:16:38.689Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3405,6 +3405,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T19:16:38.689Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3951,7 +3958,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3969,17 +3976,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "e81bfafe-b8a7-4533-bf29-1816088da5e5",
-        "claimedAt": "2026-11-11T19:10:55.925Z",
-        "expiresAt": "2026-11-11T21:13:30.014Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "LOCAL OPS-ONLY delivery staged de7b2a319184937ba2bfbfcf7c09924ba2c1c61b treeb23c44b139a8c669c5677aaea0fe852726f38ca5 in task-18/sv017-ops-delivery-ec45 branch local/sv017-ops-delivery-ec45. Parent normal clean baseline merged97? exact baseline d79c23c70154e77b37612f425883e70666b5a095 parents ec45d673be45872de17f59a5fc6c9c85525dd54e and1557b4f5ebc344f6dd903e2b74704c586853bdc4.40 tracked ops paths/modes/blobs and rawbytes exactly reviewedc2ee; identical ops subtree91aef5bf8982ab90080d986523419e0a116cac8c. All non-ops paths exactlyec45; c2ee mixed ancestry NOT merged; published1557 ancestry verified. No hand-edited source/profile/grant/policy/candidate data.29 syntax-only parses and deterministic path/blob/mode/ancestry/whitespace checks pass; no drivers/fixtures imported or test/nativebaseline rerun. Complete40-path/SHA/blob manifest and diff in sv017-ops-delivery-source-de7b2a3.json. Profiles remain UNARMED bound to5c, not newdelivery; standalone main lacks check-in0001 and requestslifecycle0002, so13/34 acceptance remains incomplete. Coordinator must reconcile maintenance/lifecycle/shared/check-in dependencies and final candidate/authority rebind. Source c2ee/027/ea63,13 historicalreceipts/3wrappers/platform preserved. No push/PR metadata/publication/remote merge/deploy, SQL/native/credential/role/grant/listener/C#compile/ACL/runtime actions. Fresh runtime approval/initial launcher trust remain separate. Clear matching lease.",
       "reviewNote": "Authorized bounded local ops-only delivery projection on pinned ec45 main with1557 ancestry; source unchanged, no publication",
       "coordinationNotes": [
         "Reconciled completion evidence: receipt-declared local c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 corrected both generated-SQL blockers and PASSED bounded raw-source re-review: four generated-SQL tests, three changed-module syntax checks, corrected hashes and all34 profile byte bindings (20ops+13migrations+seed). Independent Git metadata remains unverified because the reviewer Git process returned Permission denied; no retry or alternate route. No residual actionable source issue was found in that correction scope. Profile remains unarmed. Actual SQL, expanded13migration/34table recovery, native concurrency, final candidate/runner binding, explicit launcher-trust decision and fresh bounded runtime approval remain open. Frozen11/32 sources and historical receipts remain separate; do not repeat completed source repair or claim native acceptance."
