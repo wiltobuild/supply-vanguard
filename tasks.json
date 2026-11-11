@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 435,
-  "updatedAt": "2026-11-11T16:33:02.971Z",
+  "revision": 436,
+  "updatedAt": "2026-11-11T16:33:09.061Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3077,6 +3077,13 @@
       "command": "submit",
       "agent": "cheich-sv036-harness-01",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T16:33:09.061Z",
+      "taskId": "SV-036",
+      "command": "complete",
+      "agent": "cheich-sv036-harness-01",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4459,7 +4466,7 @@
     {
       "id": "SV-036",
       "title": "Repair native hold-evidence harness deadline, cleanup and proof gaps",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-034"
@@ -4492,7 +4499,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/38",
       "submittedBy": "cheich-sv036-harness-01",
-      "submittedAt": "2026-11-11T16:33:02.971Z"
+      "submittedAt": "2026-11-11T16:33:02.971Z",
+      "completedAt": "2026-11-11T16:33:09.061Z",
+      "completedBy": "cheich-sv036-harness-01",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/38",
+        "mergeCommit": "56df7263e8564fddc5a5fc99cd427c1c1fb2f161",
+        "mergedAt": "2026-11-11T16:33:06Z"
+      }
     },
     {
       "id": "SV-037",
