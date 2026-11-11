@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 413,
-  "updatedAt": "2026-11-11T15:35:16.575Z",
+  "revision": 414,
+  "updatedAt": "2026-11-11T15:35:42.970Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -2921,6 +2921,14 @@
       "command": "claim",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-11T15:35:42.970Z",
+      "taskId": "SV-036",
+      "command": "migration-add-evidence-harness-repair",
+      "agent": "wil-sol-pr-manager-20261105",
+      "owner": null,
+      "reason": "Independent public PR35 review reproduced seven bounded harness deadline, stream, cleanup, tenant evidence and immutable proof/preflight gaps; original Cheich source-only follow-up, preserve all current owners and completed histories"
     }
   ],
   "tasks": [
@@ -4305,6 +4313,41 @@
         "mergeCommit": "5e06b07a973d3f54874aee9a058aec63419743fd",
         "mergedAt": "2026-11-10T21:50:33Z"
       }
+    },
+    {
+      "id": "SV-036",
+      "title": "Repair native hold-evidence harness deadline, cleanup and proof gaps",
+      "status": "ready",
+      "priority": "normal",
+      "dependsOn": [
+        "SV-034"
+      ],
+      "scope": [
+        "services/api/holds/tests"
+      ],
+      "acceptance": [
+        "Use exact public PR35/SV034 source 6c510961bc3dc8dd1e2c090433115db9f2361782 as stable review baseline. Preserve completed SV034 and its history. Repair only native-evidence harness modules, their inert pure/fake test wrappers and narrow fixture documentation under services/api/holds/tests; no old automatic provisioning module import or modification.",
+        "Validate deadline and admission BEFORE constructing or writing SQL. An already expired deadline must cause zero SQL writes and no new work. Preserve the existing common deadline, bounded command framing and cancellation semantics without resets.",
+        "Install appropriate persistent stdin/stdout/stderr error handling across actual session lifetime, including late errors after requested cleanup. Errors must be redacted, reject pending work and invalidate acceptance without synchronous unhandled diagnostics. A ChildProcess error is not proof of exit: retain owned handles/uncertainty until independently observed exit/close according to the actual process contract.",
+        "Track a verifier/session handle as owned before startup can fail. Every path, including verifier-open failure, must reach unconditional exact-owned-handle cleanup and final accounting. An unresponsive opened fake must not produce cleanup.certain=true or accepted=true. Preserve truthful uncertainty and do not infer termination from a sent kill or an error event.",
+        "Strengthen tenant evidence denial with an actually populated evidence record created or confirmed through the existing authorized fictional fixture-control contract before the denied read. Deliberately cross-tenant-visible populated evidence must fail the test; an empty hold is not isolation proof.",
+        "Compare full persisted immutable clearance payload and provenance against the exact prepared request and expected authenticated actor/time/tenant/hold identities, including schema version, reference, observedAt, note, evidence/receipt linkage and intended replay identity. WRONG-REFERENCE or other mismatched fields/linkage must prevent acceptance; retain explicit current-stack versus immutable-evidence semantics.",
+        "Extend fail-closed preflight to ownership of every protected function actually used and membership in its owner roles, alongside existing database/schema/table/runtime/RLS checks. Derive exact function identities from the frozen migrations; preserve the intentional auth resolver exception. Do not grant observer privileges, add security authority or invent policy."
+      ],
+      "verification": [
+        "Map existing author31 pure passes/one inert native skip and the seven independent fake reproductions first. Add failing-before/passing-after focused injected probes for all seven findings, including early/late stream errors, expired zero-write admission, process-error-without-exit, unresponsive verifier-open failure, populated tenant leakage, complete field/provenance/linkage corruption and function-owner role membership.",
+        "Use fake/injected process, SQL, clock, stream and fixture-control collaborators plus syntax/source checks only. No real psql/PostgreSQL, native framing, fixture control, database/cluster/roles/grants/credentials/listener/browser/download/tool setup. All seven real native cases and actual cleanup remain NOT RUN.",
+        "Keep cleanup bounded, exact-handle based and nonsecret. Test redacted retained receipts and unresolved ownership after failures; no blanket hash allowlist, catch-and-pass, skipped required proof or weakening of assertions.",
+        "Freeze a clean narrow local commit with exact hashes, pass/fail/skip counts and honest test limits, then release/block/submit through normal board flow as authorized. Do not edit production holds/domain/migrations, shared host/ops/root/CI/loader, lifecycle harness e506 or frozen b54911/32."
+      ],
+      "coordinationNotes": [
+        "Parent's existing Slack worker is sole external assignment sender. This registers a bounded follow-up, not a proxy claim or duplicate implementation. Original completed task history is preserved.",
+        "No publication, PR creation, merge, deployment, native execution, fixture provisioning, credentials, access grants or security changes are authorized by registration. Use normal claim before edits and retain all operation-specific denials.",
+        "Original Cheich harness owner may claim normally: npm run board -- claim SV-036 --owner Cheich --agent cheich-sv036-harness-repair-UNIQUE. One task per agent; preserve SV008 retained source ownership.",
+        "Independent review reproduced seven P2 test-harness defects with fake collaborators, not production SQL exploits. Its untouched31-pass/one-inert-skip baseline and10-module syntax/26-blob audit need not be repeated for activity; changed paths require meaningful verification.",
+        "Expanded13/34 composition and evidence-native suite are separate from frozen b549/ea63/e506/8eca11/32 native runtime proposal; no runtime approval follows from source fixes."
+      ],
+      "claim": null
     }
   ]
 }
