@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 472,
-  "updatedAt": "2026-11-11T19:00:16.076Z",
+  "revision": 473,
+  "updatedAt": "2026-11-11T19:02:56.767Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3363,6 +3363,13 @@
       "command": "block",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T19:02:56.767Z",
+      "taskId": "SV-022",
+      "command": "unblock",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4085,7 +4092,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "blocked",
+      "status": "ready",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -4110,8 +4117,8 @@
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
       "claim": null,
-      "blockedReason": "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008.",
-      "reviewNote": "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008.",
+      "blockedReason": null,
+      "reviewNote": "Original owner resumes authorized local delivery staging of reviewed e50679d plus verified public main ec45d673; preserve frozen application/harness blobs, no runtime or publication.",
       "coordinationNotes": [
         "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008."
       ]
