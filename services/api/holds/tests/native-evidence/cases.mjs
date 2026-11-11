@@ -41,6 +41,28 @@ async function openClear(h,session,actor,p,key,orgKey){
   return outcome(await session.submit(clearOpen(ctxOf(h),actor,p,key,orgKey),h.deadline));
 }
 async function finishTxn(h,session,verb){return session.submit(verb,h.deadline);}
+// SV-036: compare EVERYTHING persisted for one clearance with the exact prepared request and the identities the harness expects: schema version,
+// reference, observed time, note, tenant, hold, recording actor, the receipt's link to that evidence, its actor and its request hash. A single
+// mismatch is a failure with its own code. The returned evidence id must also be the persisted one (replay identity) when it is supplied.
+async function assertPersisted(h,actorName,{hold,p,key,evidenceId}){
+  const fx=h.contract.fixture,actor=fx.actors[actorName],org=fx.organizations[actor.organization],who=actorString(actor.userId);
+  const ev=(await h.read(actorName,q.evidenceDetail(hold.id))).rows.map(r=>r.split('|'));
+  must(ev.length===1,'persisted_evidence_count');
+  const [id,evOrg,evHold,schema,reference,observedAt,noteIsNull,note,recordedBy]=ev[0];
+  must(schema==='1','persisted_schema_version');
+  must(reference===p.reference,'persisted_reference');
+  must(Number.isFinite(Date.parse(observedAt))&&Date.parse(observedAt)===Date.parse(p.observedAt),'persisted_observed_at');
+  must(p.note===null?noteIsNull==='t':noteIsNull==='f'&&note===p.note,'persisted_note');
+  must(evHold===hold.id,'persisted_hold');
+  must(evOrg===org,'persisted_tenant');
+  must(recordedBy===who,'persisted_actor');
+  if(evidenceId!==undefined)must(id===evidenceId,'persisted_evidence_identity');
+  const rc=(await h.read(actorName,q.receiptDetail(key))).rows.map(r=>r.split('|'));
+  must(rc.length===1,'persisted_receipt_count');
+  const [rHold,rEvidence,rActor,rHash,rOrg]=rc[0];
+  must(rHold===hold.id&&rEvidence===id&&rActor===who&&rOrg===org,'persisted_receipt_link');
+  must(rHash===p.hash,'persisted_receipt_hash');
+}
 // Immutable evidence: the runtime role can neither rewrite nor delete what was recorded.
 async function assertImmutable(h,actor,holdId,key){
   const upd=await h.read(actor,q.tryUpdateEvidence(holdId));
@@ -71,6 +93,7 @@ export const CASES=Object.freeze([
       must(receipts.length===1&&receipts[0][1]===a.value.evidenceId,'receipt_not_single');
       const st=await holdState(h,'clearerA',hold.id);
       must(st[0]==='f'&&st[2]===actorString(h.contract.fixture.actors.clearerA.userId),'hold_not_cleared_by_the_actor');
+      await assertPersisted(h,'clearerA',{hold,p,key,evidenceId:a.value.evidenceId});
       await assertImmutable(h,'clearerA',hold.id,key);
       return {status:'PASS',code:'ok'};
     },
@@ -91,6 +114,7 @@ export const CASES=Object.freeze([
       const ev=await evidenceRows(h,'clearerA',hold.id);
       must(ev.length===1&&ev[0][2]===actorString(h.contract.fixture.actors.clearerA.userId),'not_exactly_one_clearance');
       must((await receiptRows(h,'clearerA',k1)).length===1&&(await receiptRows(h,'clearerA2',k2)).length===0,'receipts_wrong');
+      await assertPersisted(h,'clearerA',{hold,p:p1,key:k1,evidenceId:a.value.evidenceId});          // the winner's request, not the loser's
       return {status:'PASS',code:'ok'};
     },
   },
@@ -113,6 +137,7 @@ export const CASES=Object.freeze([
       await finishTxn(h,C,ROLLBACK);
       await finishTxn(h,A,COMMIT);
       must((await evidenceRows(h,'clearerA',first.id)).length===1,'evidence_not_single');
+      await assertPersisted(h,'clearerA',{hold:first,p,key,evidenceId:a.value.evidenceId});
       const kinds=await activeKinds(h,'clearerA',first.equipmentId);
       must(kinds.join(',')==='dirty,maintenance','stack_not_independent');          // explicitly the CURRENT state, not part of the receipt
       must((await holdState(h,'clearerA',second.id))[0]==='t','other_hold_was_cleared');
@@ -135,6 +160,7 @@ export const CASES=Object.freeze([
       await finishTxn(h,C2,COMMIT);
       must((await h.read('operator',q.assignmentsForEquipment(sEq[0]))).rows[0]==='1','assignment_not_exactly_one');
       must((await evidenceRows(h,'clearerA',single.hold.id)).length===1,'evidence_not_single');
+      await assertPersisted(h,'clearerA',{hold:single.hold,p:sp,key:sKey,evidenceId:s.value.evidenceId});
       return {status:'PASS',code:'ok'};
     },
   },
@@ -155,6 +181,7 @@ export const CASES=Object.freeze([
       const ev=await evidenceRows(h,'clearerA',h1.id);
       must(ev.length===1&&ev[0][0]===b.value.evidenceId,'rolled_back_evidence_survived');
       must((await receiptRows(h,'clearerA',k1)).length===1,'receipt_not_single');
+      await assertPersisted(h,'clearerA',{hold:h1,p:p1,key:k1,evidenceId:b.value.evidenceId});
       // A raised error (evidence from the future) stores nothing and leaves the hold active; the next attempt succeeds.
       const bad={...prep(h,h2,'r2'),observedAt:new Date(h.wallNow()+3600e3).toISOString()};
       const bad1=outcome(await A.submit(`${beginAs(ctxOf(h),'clearerA')}\n${clearCall(bad,k2)}`,h.deadline));
@@ -174,6 +201,7 @@ export const CASES=Object.freeze([
       const hold=h.takeHold('fault'),key=h.key('k1'),p=prep(h,hold,'c'),A=await h.open('a'),B=await h.open('b');
       const first=await openClear(h,A,'clearerA',p,key);must(first.ok&&first.value?.replayed===false,'first_clear_failed');
       await finishTxn(h,A,COMMIT);
+      await assertPersisted(h,'clearerA',{hold,p,key,evidenceId:first.value.evidenceId});
       const other=ASSIGNABLE_ROLES.find(r=>r!==h.contract.fixture.rules.fault);
       const transitions=[
         [{action:'set-rule',kind:'fault',role:other},'wrong_role'],
@@ -205,6 +233,7 @@ export const CASES=Object.freeze([
       const h1=h.takeHold('fault'),h2=h.takeHold('fault'),key=h.key('k1'),A=await h.open('a'),B=await h.open('b');
       const p1=prep(h,h1,'p1'),p2=prep(h,h2,'p2');
       const first=await openClear(h,A,'clearerA',p1,key);must(first.ok,'first_clear_failed');await finishTxn(h,A,COMMIT);
+      await assertPersisted(h,'clearerA',{hold:h1,p:p1,key,evidenceId:first.value.evidenceId});
       const clash=await openClear(h,B,'clearerA2',p2,key);
       must(!clash.ok&&clash.code==='idempotency_conflict','foreign_key_reuse_not_a_conflict');
       await finishTxn(h,B,ROLLBACK);
@@ -221,19 +250,29 @@ export const CASES=Object.freeze([
   },
   {
     name:'tenantDenial',needs:{holds:['fault']},
-    // A user of the other organization can neither clear nor read: not with their own tenant context, nor by naming the other tenant.
+    // SV-036: the denial is only meaningful if there is something to deny. A clearer of the hold's OWN tenant clears it with evidence through the normal
+    // authorized path, and that populated record (and its receipt) is confirmed in full. Only then does a user of the other organization try to clear
+    // it, in their own tenant context and by naming the other tenant, and try to read it. An empty hold would prove nothing about isolation.
     async run(h){
-      const hold=h.takeHold('fault'),key=h.key('k1'),p=prep(h,hold,'t'),A=await h.open('a');
+      const hold=h.takeHold('fault'),setupKey=h.key('k0'),key=h.key('k1'),p=prep(h,hold,'t'),A=await h.open('a');
+      const setup=await openClear(h,A,'clearerA',p,setupKey);
+      must(setup.ok&&setup.value?.replayed===false&&setup.value.cleared===true,'tenant_setup_clear_failed');
+      await finishTxn(h,A,COMMIT);
+      must((await evidenceRows(h,'clearerA',hold.id)).length===1,'tenant_evidence_not_populated');
+      await assertPersisted(h,'clearerA',{hold,p,key:setupKey,evidenceId:setup.value.evidenceId});
       const own=await openClear(h,A,'outsider',p,key,'b');
       must(!own.ok&&own.code==='hold_not_found','cross_tenant_clear_not_refused');
       await finishTxn(h,A,ROLLBACK);
       const named=await openClear(h,A,'outsider',p,key,'a');
       must(!named.ok&&named.code==='hold_not_found','named_tenant_clear_not_refused');
       await finishTxn(h,A,ROLLBACK);
-      must((await holdState(h,'clearerA',hold.id))[0]==='t','tenant_denial_changed_the_hold');
-      must((await evidenceRows(h,'clearerA',hold.id)).length===0&&(await receiptRows(h,'clearerA',key)).length===0,'tenant_denial_wrote_rows');
-      const read=await h.read('outsider',q.evidenceForHold(hold.id));
-      must(read.rows.length===0,'other_tenant_can_read_evidence');
+      const st=await holdState(h,'clearerA',hold.id);
+      must(st[0]==='f'&&st[2]===actorString(h.contract.fixture.actors.clearerA.userId),'tenant_denial_changed_the_hold');
+      must((await receiptRows(h,'clearerA',key)).length===0,'tenant_denial_wrote_rows');
+      await assertPersisted(h,'clearerA',{hold,p,key:setupKey,evidenceId:setup.value.evidenceId});      // unchanged by the denied attempts
+      must((await h.read('outsider',q.evidenceDetail(hold.id))).rows.length===0,'other_tenant_can_read_evidence');
+      must((await h.read('outsider',q.receiptDetail(setupKey))).rows.length===0,'other_tenant_can_read_receipt');
+      must((await h.read('outsider',q.holdState(hold.id))).rows.length===0,'other_tenant_can_read_hold');
       return {status:'PASS',code:'ok'};
     },
   },

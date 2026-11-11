@@ -3,7 +3,9 @@
 //   - preflight must pass before any case runs; a failed or incomplete preflight leaves every case NOT RUN;
 //   - each case gets fresh owned sessions and ALWAYS cleans them up (roll back, then close only those handles), pass or fail;
 //   - one shared external deadline bounds everything; a timeout, a dead session, a failed cleanup or an exception is UNCERTAIN, never a pass;
-//   - the receipt can claim acceptance only if every required case passed, cleanup is certain and nothing was skipped.
+//   - the receipt can claim acceptance only if every required case passed, cleanup is certain and nothing was skipped;
+//   - (SV-036) every handle the factory still owns at the end is closed and accounted for, even when the verifier never started, and any stream or
+//     process fault recorded by the factory makes cleanup uncertain.
 import {Deadline,withDeadline,TimeoutError,SessionError} from './session.mjs';
 import {ContractError,OPT_IN_SCOPE,redact} from './contract.mjs';
 import {SqlBuildError,beginAs,q} from './sql.mjs';
@@ -38,7 +40,13 @@ function canSupply(pool,needs={}){
 
 export async function runAcceptance({contract,factory,control,clock,wall=()=>Date.now(),cases=CASES,deadlineMs,preflight=runPreflight}){
   const deadline=Deadline.after(clock,deadlineMs??contract.runtime.deadlineMs);
-  const receipt={schemaVersion:1,scope:OPT_IN_SCOPE,runMarker:contract.runMarker,status:'INCOMPLETE',accepted:false,preflight:null,cases:[],cleanup:{certain:true,sessions:[]}};
+  const receipt={schemaVersion:1,scope:OPT_IN_SCOPE,runMarker:contract.runMarker,status:'INCOMPLETE',accepted:false,preflight:null,cases:[],cleanup:{certain:true,sessions:[],faults:[]}};
+  const attempted=new Set();           // handles whose close this run has already requested (so each is closed once)
+  const closeHandle=async handle=>{
+    attempted.add(handle);
+    try{const proof=await handle.close();receipt.cleanup.sessions.push({name:handle.name,graceful:proof.graceful,terminated:proof.terminated,uncertain:proof.uncertain});return !proof.uncertain;}
+    catch{receipt.cleanup.sessions.push({name:handle.name,graceful:false,terminated:false,uncertain:true});return false;}
+  };
   const notRun=code=>cases.map(c=>({name:c.name,status:STATUS.NOT_RUN,code}));
   const finish=()=>{
     const names=new Set(receipt.cases.filter(c=>c.status===STATUS.PASS).map(c=>c.name));
@@ -49,15 +57,15 @@ export async function runAcceptance({contract,factory,control,clock,wall=()=>Dat
     return receipt;
   };
 
-  let verifier;
-  try{verifier=await factory.open('v',deadline);}
-  catch(e){receipt.preflight={passed:false,checks:[{id:'connect',ok:false,code:e instanceof TimeoutError?'deadline_exceeded':'cannot_connect'}]};receipt.cases=notRun('preflight_failed');return finish();}
-  const sleep=ms=>new Promise(r=>clock.setTimer(r,ms));
-  const read1=async sql=>verifier.submit(sql,deadline);
-  try{
+  let verifier=null;
+  const body=async()=>{
+    try{verifier=await factory.open('v',deadline);}
+    catch(e){receipt.preflight={passed:false,checks:[{id:'connect',ok:false,code:e instanceof TimeoutError?'deadline_exceeded':'cannot_connect'}]};receipt.cases=notRun('preflight_failed');return;}
+    const sleep=ms=>new Promise(r=>clock.setTimer(r,ms));
+    const read1=async sql=>verifier.submit(sql,deadline);
     try{receipt.preflight=await preflight({contract,query:read1});}
     catch(e){receipt.preflight={passed:false,checks:[{id:'preflight',ok:false,code:e instanceof TimeoutError?'deadline_exceeded':'preflight_error'}]};}
-    if(!receipt.preflight.passed){receipt.cases=notRun('preflight_failed');return finish();}
+    if(!receipt.preflight.passed){receipt.cases=notRun('preflight_failed');return;}
 
     const pool=planPool(contract);
     for(const [index,def] of cases.entries()){
@@ -112,8 +120,7 @@ export async function runAcceptance({contract,factory,control,clock,wall=()=>Dat
         let certain=true;
         for(const s of owned){
           try{if(s.isOpen()&&!s.isTainted())await s.submit('ROLLBACK;',deadline);}catch{certain=false;}
-          try{const proof=await s.close();receipt.cleanup.sessions.push({name:s.name,graceful:proof.graceful,terminated:proof.terminated,uncertain:proof.uncertain});if(proof.uncertain)certain=false;}
-          catch{certain=false;receipt.cleanup.sessions.push({name:s.name,graceful:false,terminated:false,uncertain:true});}
+          if(!await closeHandle(s))certain=false;
         }
         if(controlUsed){try{const r=await withDeadline(control.apply({action:'restore',scope:'all'}),deadline,'control');if(!r||r.ok!==true)certain=false;}catch{certain=false;}}
         if(!certain){receipt.cleanup.certain=false;if(entry.status===STATUS.PASS){entry.status=STATUS.UNCERTAIN;entry.code='cleanup_uncertain';}}
@@ -121,10 +128,17 @@ export async function runAcceptance({contract,factory,control,clock,wall=()=>Dat
         receipt.cases.push(entry);
       }
     }
-  }finally{
-    try{const proof=await verifier.close();receipt.cleanup.sessions.push({name:verifier.name,graceful:proof.graceful,terminated:proof.terminated,uncertain:proof.uncertain});if(proof.uncertain)receipt.cleanup.certain=false;}
-    catch{receipt.cleanup.certain=false;}
+  };
+  try{await body();}
+  finally{
+    // Unconditional accounting, on every path (including a verifier that never started): close the verifier, then every other handle this factory
+    // still owns, then fold in any stream or process fault. A handle that is not CONFIRMED gone keeps the run uncertain.
+    if(verifier&&!attempted.has(verifier)&&!await closeHandle(verifier))receipt.cleanup.certain=false;
+    for(const handle of factory.ownedHandles())if(!attempted.has(handle)&&!await closeHandle(handle))receipt.cleanup.certain=false;
     if(factory.ownedHandles().length>0)receipt.cleanup.certain=false;     // anything this run opened and did not close is reported, never ignored
+    const faults=factory.faults?.()??[];
+    receipt.cleanup.faults=faults.map(({name,code})=>({name,code}));
+    if(faults.length>0)receipt.cleanup.certain=false;                      // a broken stream or process means nothing it reported can be trusted
   }
   return finish();
 }

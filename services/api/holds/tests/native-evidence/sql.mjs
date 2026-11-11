@@ -54,6 +54,9 @@ export const q={
   equipmentByExternalId:(externalId)=>`SELECT id, version FROM equipment WHERE external_id = ${lit(externalId)};`,
   holdState:holdId=>`SELECT active, kind, coalesce(cleared_by, '-') FROM equipment_hold WHERE id = ${uuidLit(holdId)};`,
   evidenceForHold:holdId=>`SELECT id, reference, recorded_by FROM hold_clearance_evidence WHERE hold_id = ${uuidLit(holdId)} ORDER BY id;`,
+  // Every persisted field of the clearance, for exact comparison. observed_at is read back as UTC with millisecond precision.
+  evidenceDetail:holdId=>`SELECT id, organization_id, hold_id, schema_version, reference, to_char(observed_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"'), note IS NULL, coalesce(note, ''), recorded_by FROM hold_clearance_evidence WHERE hold_id = ${uuidLit(holdId)} ORDER BY id;`,
+  receiptDetail:key=>`SELECT hold_id, evidence_id, actor, request_hash, organization_id FROM hold_clearance_receipt WHERE idempotency_key = ${lit(key)} ORDER BY id;`,
   receiptsForKey:key=>`SELECT hold_id, evidence_id, actor FROM hold_clearance_receipt WHERE idempotency_key = ${lit(key)} ORDER BY id;`,
   activeHoldKinds:equipmentExternalId=>`SELECT h.kind FROM equipment_hold h JOIN equipment e ON e.id = h.equipment_id AND e.organization_id = h.organization_id WHERE e.external_id = ${lit(equipmentExternalId)} AND h.active ORDER BY h.kind;`,
   assignmentsForEquipment:equipmentUuid=>`SELECT count(*) FROM item_assignment WHERE equipment_id = ${uuidLit(equipmentUuid)} AND active;`,

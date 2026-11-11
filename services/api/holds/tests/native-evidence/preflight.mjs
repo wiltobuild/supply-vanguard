@@ -1,6 +1,8 @@
 // SV-034: fail-closed preflight. It READS facts from the supplied database through a verifier session and decides whether native cases may run.
 // It never changes anything, never grants anything and never provisions. Results carry fixed codes only (no values, no SQL, no paths).
 // Derived from the frozen migrations 0001 (core) / auth / requests / holds 0001-0003, including the intentional auth_user exception.
+// SV-036: the owner of EVERY protected function the cases call (FUNCTIONS) is read from the catalog and must not be the runtime role, and the runtime
+// role must not be a member of any owner role (database, schema, tables or functions). Nothing is granted or changed to make a check pass.
 import {beginAs,lit,sigLit,uuidLit} from './sql.mjs';
 
 // Relations whose row-level security must be enabled AND forced. auth_user is deliberately ENABLE-only (its resolver is the documented
@@ -48,16 +50,14 @@ export async function runPreflight({contract,query}){
   const owners=await run('ownership',`SELECT pg_get_userbyid(datdba) AS owner, 'database' FROM pg_database WHERE datname = current_database()
     UNION SELECT pg_get_userbyid(nspowner), 'schema' FROM pg_namespace WHERE nspname = 'public'
     UNION SELECT DISTINCT pg_get_userbyid(c.relowner), 'relation' FROM pg_class c WHERE c.relnamespace = 'public'::regnamespace AND c.relname IN (${ALL_PROTECTED.map(lit).join(',')});`);
+  const ownerNames=new Set();
   if(owners){
     const names=[...new Set(owners.map(x=>cells(x)[0]))];
     let ok=names.length>0&&!names.includes(r.runtimeRole);
     check('owner_is_not_runtime_role',ok,'runtime_role_owns_protected_objects');
     const databaseOwner=owners.map(cells).find(c=>c[1]==='database')?.[0];
     check('database_owner',databaseOwner===r.expected.databaseOwner,'unexpected_database_owner');
-    if(names.length){
-      const members=await run('owner_membership',`SELECT ${names.map(n=>`pg_has_role(current_user, ${lit(n)}, 'MEMBER')`).join(', ')};`);
-      check('not_member_of_owner_roles',members?.length===1&&cells(members[0]).every(f),'runtime_role_is_member_of_an_owner_role');
-    }
+    names.forEach(n=>ownerNames.add(n));
   }
 
   // 3. Row-level security readiness derived from the frozen migrations.
@@ -71,13 +71,30 @@ export async function runPreflight({contract,query}){
   }
 
   // 4. The evidence function is the corrected (0003) invoker function, and the runtime role has exactly the intended privileges.
-  const fns=await run('functions',FUNCTIONS.map(fn=>`SELECT ${lit(nameOf(fn))}, p.prosecdef, position('SV-033' in p.prosrc) > 0 FROM pg_proc p WHERE p.oid = to_regprocedure(${sigLit(fn)});`).join('\n'));
+  const fns=await run('functions',FUNCTIONS.map(fn=>`SELECT ${lit(nameOf(fn))}, p.prosecdef, position('SV-033' in p.prosrc) > 0, pg_get_userbyid(p.proowner) FROM pg_proc p WHERE p.oid = to_regprocedure(${sigLit(fn)});`).join('\n'));
   if(fns){
     const rows=fns.map(cells);
     check('functions_present',rows.length===FUNCTIONS.length,'function_missing');
     check('functions_are_invokers',rows.every(c=>f(c[1])),'function_is_security_definer');
     const evidenceFn=rows.find(c=>c[0]===nameOf(FUNCTIONS[0]));
     check('evidence_function_is_0003',Boolean(evidenceFn)&&t(evidenceFn[2]),'evidence_function_not_the_corrected_version');
+    // Ownership of every protected function: a missing or empty owner fails closed; the runtime role must not own any of them.
+    const ownersReadable=rows.length===FUNCTIONS.length&&rows.every(c=>typeof c[3]==='string'&&c[3].trim()!=='');
+    check('function_owners_readable',ownersReadable,'function_owner_unreadable');
+    if(ownersReadable){
+      check('function_owner_is_not_runtime_role',rows.every(c=>c[3]!==r.runtimeRole),'runtime_role_owns_protected_functions');
+      rows.forEach(c=>ownerNames.add(c[3]));
+    }
+  }
+  // Membership of the runtime role in EVERY owner role found above (database, schema, relations and functions). The answer must have one cell per role.
+  if(ownerNames.size){
+    const list=[...ownerNames];
+    const members=await run('owner_membership',`SELECT ${list.map(n=>`pg_has_role(current_user, ${lit(n)}, 'MEMBER')`).join(', ')};`);
+    if(members){
+      const answer=members.length===1?cells(members[0]):null;
+      if(!answer||answer.length!==list.length)check('not_member_of_owner_roles',false,'owner_membership_unreadable');
+      else check('not_member_of_owner_roles',answer.every(f),'runtime_role_is_member_of_an_owner_role');
+    }
   }
   const priv=await run('privileges',[
     ...EVIDENCE_RELATIONS.map(rel=>`SELECT ${lit(rel)}, ${['SELECT','INSERT','UPDATE','DELETE','TRUNCATE','REFERENCES','TRIGGER'].map(p=>`has_table_privilege(current_user, ${lit('public.'+rel)}, ${lit(p)})`).join(', ')};`),

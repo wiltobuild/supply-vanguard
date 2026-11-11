@@ -2,7 +2,8 @@
 // process-spawning module. Tests drive it with a fake child process; the real `spawn` is supplied only by the opt-in path.
 //
 // Framing: every statement batch is followed by a `\echo SVEND <nonce> <seq> :ERROR :SQLSTATE :LAST_ERROR_MESSAGE` line, so rows, errors and
-// completion all arrive in order on stdout. psql runs with ON_ERROR_STOP=0 so a raised exception does not kill the session; the error is
+// completion all arrive in order on stdout. SV-036: an expired deadline writes nothing, every stream and the child process have an error listener for the
+// WHOLE session life (late errors included), and a process 'error' is never treated as proof that the process is gone. psql runs with ON_ERROR_STOP=0 so a raised exception does not kill the session; the error is
 // reported through those variables. The nonce is random per session, so result data can never be mistaken for a sentinel.
 import {BoundedText,buildPsqlInvocation,redact} from './contract.mjs';
 
@@ -28,16 +29,26 @@ export function withDeadline(promise,deadline,label){
 
 export function createPsqlSessionFactory({contract,spawn,clock,newNonce}){
   if(typeof spawn!=='function'||typeof newNonce!=='function'||!clock)throw new SessionError('collaborators_required');
-  const owned=new Set();
+  const owned=new Set(),faults=[];
   return {
     // Handles this factory opened and has not yet closed. The cleanup report is derived from this, never from a global process list.
     ownedHandles:()=>[...owned],
+    // Stream and process faults, as fixed codes only (never the error text). Bounded. Any fault means the run cannot be accepted.
+    faults:()=>faults.map(f=>({...f})),
     async open(name,deadline){
+      if(deadline.expired())throw new TimeoutError(`${name}:open`);              // nothing is spawned after the deadline
       const inv=buildPsqlInvocation(contract,name);
       let child;
       try{child=spawn(inv.command,[...inv.args],{...inv.options,env:{...inv.env}});}catch{throw new SessionError('spawn_failed');}
       const nonce=newNonce(),errOut=new BoundedText(2048);
-      let seq=0,buffer='',rows=[],rowChars=0,overflow=false,current=null,exited=false,tainted=false,tail=Promise.resolve();
+      let seq=0,buffer='',rows=[],rowChars=0,overflow=false,current=null,exited=false,broken=null,tainted=false,tail=Promise.resolve();
+      const myFaults=new Set();
+      // exit/close events are the only proof a process is gone; a recorded exit code or signal on the child object is equally independent. 'error' is not.
+      const gone=()=>exited||(child.exitCode!=null)||(child.signalCode!=null);
+      const fault=(code,pendingCode)=>{
+        if(!myFaults.has(code)){myFaults.add(code);if(faults.length<50)faults.push({name,code});}
+        broken??=pendingCode;finishCurrent(null,new SessionError(pendingCode));
+      };
       const finishCurrent=(result,error)=>{const c=current;current=null;if(!c)return;error?c.reject(error):c.resolve(result);};
       const onLine=line=>{
         if(line.startsWith(`SVEND ${nonce} `)){
@@ -58,31 +69,39 @@ export function createPsqlSessionFactory({contract,spawn,clock,newNonce}){
         let at;while((at=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,at).replace(/\r$/,'');buffer=buffer.slice(at+1);onLine(line);}
       });
       child.stderr.on('data',chunk=>errOut.push(chunk));
-      child.on('error',()=>{exited=true;finishCurrent(null,new SessionError('session_error'));});
-      child.on('exit',()=>{exited=true;finishCurrent(null,new SessionError('session_closed'));});
+      // Persistent listeners: an error on any stream, or on the child, can arrive at any time, including after cleanup was requested.
+      for(const stream of [child.stdin,child.stdout,child.stderr])stream?.on?.('error',()=>fault('stream_error','stream_error'));
+      child.on('error',()=>fault('process_error','session_error'));
+      const onGone=()=>{exited=true;finishCurrent(null,new SessionError('session_closed'));};
+      child.on('exit',onGone);child.on('close',onGone);
       const session={
         name,appName:inv.appName,pid:null,
-        isOpen:()=>!exited,
+        isOpen:()=>!exited&&!broken,
         isTainted:()=>tainted,
+        hadFault:()=>myFaults.size>0,
         stderrSummary:()=>redact(errOut.toString(),contract),
         // Queued: statements on one session run strictly in order. The promise settles when THIS statement completes.
         submit(sql,deadline){
-          const run=()=>withDeadline(new Promise((resolve,reject)=>{
-            if(exited)return reject(new SessionError('session_closed'));
-            current={seq:++seq,resolve,reject};
-            try{child.stdin.write(`${sql}\n\\echo SVEND ${nonce} ${seq} :ERROR :SQLSTATE :LAST_ERROR_MESSAGE\n`);}
-            catch{finishCurrent(null,new SessionError('write_failed'));}
-          }),deadline,`${name}:submit`).catch(e=>{if(e instanceof TimeoutError)tainted=true;throw e;});
+          const run=()=>{
+            // Admission is checked when the statement is about to run (so queued work behind an expired one is refused too), BEFORE anything is written.
+            if(deadline.expired())return Promise.reject(new TimeoutError(`${name}:submit`));
+            return withDeadline(new Promise((resolve,reject)=>{
+              if(exited||broken)return reject(new SessionError(broken??'session_closed'));
+              current={seq:++seq,resolve,reject};
+              try{child.stdin.write(`${sql}\n\\echo SVEND ${nonce} ${seq} :ERROR :SQLSTATE :LAST_ERROR_MESSAGE\n`);}
+              catch{finishCurrent(null,new SessionError('write_failed'));}
+            }),deadline,`${name}:submit`).catch(e=>{if(e instanceof TimeoutError)tainted=true;throw e;});
+          };
           const result=tail.then(run,run);tail=result.then(()=>{},()=>{});return result;
         },
         // Closes ONLY this handle: ask psql to quit, then terminate the owned child process. Never a PID lookup and never a server-side termination of a backend.
         async close(){
           const proof={name,graceful:false,terminated:false,uncertain:false};
-          if(exited){owned.delete(session);proof.graceful=true;return proof;}
-          const exitedPromise=new Promise(r=>{child.on('exit',()=>r(true));});
+          if(gone()){owned.delete(session);proof.graceful=true;return proof;}
+          const exitedPromise=new Promise(r=>{child.on('exit',()=>r(true));child.on('close',()=>r(true));});
           try{child.stdin.write('\\q\n');child.stdin.end();}catch{/* handled below */}
           const waitExit=ms=>new Promise(r=>{const h=clock.setTimer(()=>r(false),ms);exitedPromise.then(v=>{clock.clearTimer(h);r(v);});});
-          if(exited||await waitExit(2000)){proof.graceful=true;owned.delete(session);return proof;}
+          if(gone()||await waitExit(2000)){proof.graceful=true;owned.delete(session);return proof;}
           try{child.kill('SIGTERM');proof.terminated=true;}catch{proof.uncertain=true;}
           if(await waitExit(2000)){owned.delete(session);return proof;}
           try{child.kill('SIGKILL');proof.terminated=true;}catch{proof.uncertain=true;}

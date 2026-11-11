@@ -2,7 +2,7 @@
 // It is not a database and proves nothing about PostgreSQL: it lets the orchestration (lock waits, commit/rollback ordering, outcome
 // checks, cleanup, failure classification) run with no process, no connection and no credentials. It interprets exactly the statements
 // that sql.mjs builds. `bugs` switches on deliberate defects so the cases can be shown to FAIL when the behaviour is wrong.
-import {withDeadline} from './session.mjs';
+import {withDeadline,TimeoutError} from './session.mjs';
 
 const ERRORS={no_tenant_context:'42501',hold_not_found:'SV404',idempotency_conflict:'SV409',hold_already_cleared:'SV409',no_clearance_rule:'SV422',wrong_role:'SV403',evidence_invalid:'SV422',equipment_on_hold:'SV422'};
 class Db extends Error {constructor(code,sqlstate,message){super(message??`sv:${code}`);this.sqlstate=sqlstate??ERRORS[code]??'XX000';}}
@@ -60,7 +60,7 @@ export function createFakeWorld({contract,wall=()=>Date.now(),bugs={},failRestor
     await acquire(s,`hold:${holdId}`);
     const v=merged(s),actor=`user:${ctx.user}`;
     const hold=visible(ctx)?v.holds.find(h=>h.id===holdId&&h.org===ctx.org):null;
-    if(!hold)throw new Db('hold_not_found');
+    if(!hold){if(bugs.deniedAttemptTampers)world.evidence.forEach(e=>{e.reference='TAMPERED-BY-DENIAL';});throw new Db('hold_not_found');}
     const rule=world.rules.get(hold.kind),mine=world.memberships.get(ctx.user);
     const roleCheck=(replay=false)=>{if(!rule&&replay&&bugs.replayIgnoresRemovedRule)return;if(!rule)throw new Db('no_clearance_rule');if(!(mine.active&&mine.role===rule))throw new Db('wrong_role');};
     const receipt=v.receipts.find(r=>r.key===key&&r.org===ctx.org&&(bugs.receiptsVisibleToAll||r.actor===actor));
@@ -74,7 +74,13 @@ export function createFakeWorld({contract,wall=()=>Date.now(),bugs={},failRestor
     if(Date.parse(observedAt)>wall())throw new Db('evidence_invalid');
     const evidenceId=uid();
     s.txn.staged.holds.set(holdId,{...hold,active:false,clearedBy:actor});
-    s.txn.staged.evidence.push({id:evidenceId,holdId,reference,recordedBy:actor});
+    // The stored row. Deliberate persistence defects (bugs.*) corrupt what is STORED while the call still reports success.
+    if(!bugs.dropEvidence)s.txn.staged.evidence.push({
+      id:evidenceId,holdId,org:ctx.org,schemaVersion:bugs.wrongSchemaVersion?2:1,
+      reference:bugs.wrongReference||(bugs.wrongReferenceWhen&&reference.endsWith(`-${bugs.wrongReferenceWhen}`))?'WRONG-REFERENCE':reference,
+      observedAt:new Date(Date.parse(observedAt)+(bugs.wrongObservedAt?1000:0)).toISOString(),
+      note:bugs.droppedNote?null:note,recordedBy:bugs.wrongRecordedBy?'user:someone-else':actor,
+    });
     if(v.receipts.some(r=>r.key===key&&r.org===ctx.org))throw new Db('idempotency_conflict');
     s.txn.staged.receipts.push({key,org:ctx.org,actor,hash,holdId,evidenceId});
     return {holdId,evidenceId,cleared:true,replayed:false};
@@ -115,11 +121,18 @@ export function createFakeWorld({contract,wall=()=>Date.now(),bugs={},failRestor
     if((m=/^SELECT hold_id, evidence_id, actor FROM hold_clearance_receipt WHERE idempotency_key = '([^']+)' ORDER BY id$/.exec(sql)))
       return {rows:visible(ctx)?v().receipts.filter(r=>r.key===m[1]&&r.org===ctx.org&&(bugs.receiptsVisibleToAll||r.actor===`user:${ctx.user}`)).map(r=>`${r.holdId}|${r.evidenceId}|${r.actor}`):[]};
     if((m=/^SELECT active, kind, coalesce\(cleared_by, '-'\) FROM equipment_hold WHERE id = '([^']+)'::uuid$/.exec(sql))){
-      const h=v().holds.find(x=>x.id===m[1]);return {rows:visible(ctx)&&h&&h.org===ctx.org?[`${h.active?'t':'f'}|${h.kind}|${h.clearedBy??'-'}`]:[]};
+      const h=v().holds.find(x=>x.id===m[1]);return {rows:(bugs.holdVisibleAcrossTenants?Boolean(ctx.user&&actorOf(ctx)&&h):visible(ctx)&&h&&h.org===ctx.org)?[`${h.active?'t':'f'}|${h.kind}|${h.clearedBy??'-'}`]:[]};
     }
     if((m=/^SELECT h\.kind FROM equipment_hold h JOIN equipment e .* WHERE e\.external_id = '([^']+)' AND h\.active ORDER BY h\.kind$/.exec(sql)))
       return {rows:visible(ctx)?v().holds.filter(h=>h.equipment===m[1]&&h.active&&h.org===ctx.org).map(h=>h.kind).sort():[]};
     if((m=/^SELECT id, version FROM equipment WHERE external_id = '([^']+)'$/.exec(sql))){const e=world.equipment.get(m[1]);return {rows:visible(ctx)&&e?[`${e.uuid}|${e.version}`]:[]};}
+    if((m=/^SELECT id, organization_id, hold_id, schema_version, reference, to_char\(.*\), note IS NULL, coalesce\(note, ''\), recorded_by FROM hold_clearance_evidence WHERE hold_id = '([^']+)'::uuid ORDER BY id$/.exec(sql))){
+      const hold=v().holds.find(h=>h.id===m[1]);
+      const mayRead=bugs.evidenceVisibleAcrossTenants?Boolean(ctx.user&&actorOf(ctx)):visible(ctx)&&hold&&hold.org===ctx.org;
+      return {rows:mayRead?v().evidence.filter(e=>e.holdId===m[1]).map(e=>[bugs.detailWrongEvidenceId?uid():e.id,bugs.detailWrongTenant?f.organizations.b:e.org,bugs.detailWrongHold?uid():e.holdId,e.schemaVersion,e.reference,e.observedAt,e.note===null||e.note===undefined?'t':'f',e.note??'',bugs.detailWrongActor?'user:someone-else':e.recordedBy].join('|')):[]};
+    }
+    if((m=/^SELECT hold_id, evidence_id, actor, request_hash, organization_id FROM hold_clearance_receipt WHERE idempotency_key = '([^']+)' ORDER BY id$/.exec(sql)))
+      return {rows:(bugs.receiptsVisibleAcrossTenants?Boolean(ctx.user&&actorOf(ctx)):visible(ctx))?v().receipts.filter(r=>r.key===m[1]&&(bugs.receiptsVisibleAcrossTenants||(r.org===ctx.org&&r.actor===`user:${ctx.user}`))).flatMap(r=>{const row=[r.holdId,bugs.receiptReadsWrongEvidence?uid():r.evidenceId,r.actor,bugs.receiptReadsWrongHash?'0'.repeat(64):r.hash,r.org].join('|');return bugs.receiptReadsTwoRows?[row,row]:[row];}):[]};
     if((m=/^SELECT count\(\*\) FROM item_assignment WHERE equipment_id = '([^']+)'::uuid AND active$/.exec(sql)))return {rows:[String(v().assignments.filter(a=>a.equipment===m[1]).length)]};
     if(/^UPDATE hold_clearance_evidence SET reference = 'TAMPERED'/.test(sql)){
       if(bugs.evidenceMutable){world.evidence.forEach(e=>{e.reference='TAMPERED';});return {rows:[]};}
@@ -132,6 +145,7 @@ export function createFakeWorld({contract,wall=()=>Date.now(),bugs={},failRestor
   }
   // psql semantics: statements run in order, errors do not stop the batch, and ERROR/SQLSTATE describe the LAST statement.
   async function exec(s,sql){
+    world.statements++;
     const rows=[];let last=null;
     for(const raw of sql.split(/;\s*(?:\n|$)/).map(x=>x.trim()).filter(Boolean)){
       try{const r=await statement(s,raw);rows.push(...r.rows);last=null;}
@@ -145,7 +159,7 @@ export function createFakeWorld({contract,wall=()=>Date.now(),bugs={},failRestor
   }
   let pidCounter=40000;
   const factory={
-    ownedHandles:()=>[...world.sessions],
+    ownedHandles:()=>[...world.sessions].map(x=>x.handle),
     async open(name,deadline){
       if(bugs.cannotConnect)throw new Error('refused');
       const s={name,pid:++pidCounter,appName:`${contract.runMarker}-${name}`,txn:null,ctx:{},waiting:false,tail:Promise.resolve(),closed:false,tainted:false};
@@ -155,6 +169,7 @@ export function createFakeWorld({contract,wall=()=>Date.now(),bugs={},failRestor
         isOpen:()=>!s.closed,isTainted:()=>s.tainted,stderrSummary:()=>'',
         submit(sql,dl){
           if(s.closed)return Promise.reject(Object.assign(new Error('session_closed'),{name:'SessionError',code:'session_closed'}));
+          if(dl.expired())return Promise.reject(new TimeoutError(`${name}:submit`));     // nothing is sent after the deadline
           const run=()=>withDeadline(exec(s,sql),dl,`${name}:submit`).catch(e=>{if(e?.name==='TimeoutError')s.tainted=true;throw e;});
           const out=s.tail.then(run,run);s.tail=out.then(()=>{},()=>{});return out;
         },
