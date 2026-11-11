@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 464,
-  "updatedAt": "2026-11-11T18:44:13.490Z",
+  "revision": 465,
+  "updatedAt": "2026-11-11T18:46:38.433Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3307,6 +3307,13 @@
       "command": "claim",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": "wil"
+    },
+    {
+      "at": "2026-11-11T18:46:38.433Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3549,7 +3556,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3577,17 +3584,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "e6c423e6-5d0d-4194-84fa-2400e99eed1a",
-        "claimedAt": "2026-11-11T18:44:13.490Z",
-        "expiresAt": "2026-11-11T20:44:13.490Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Local current-main staging frozen0674b606c62d38552c2633490302b74ed7fc3dfb parents99c43895644c61f8f3b54832a84b2096a9b0cd0d and exactpublicec45d673be45872de17f59a5fc6c9c85525dd54e; tree0499d4e9d624c51442331551130d09e00011a6bd. Single clean normal local merge, no authored feature diff/conflicts. Raw16-path/blob delta exactly matches9 public commits from794820;13 migration path/blob inventory unchanged,13 changed scripts syntax-only passed and diff check passed. No tests/mutation/native fixtures/runtime executed. README content-diff denial remains stopped, no full-doc review claimed. SV037 unresolved, authenticated composed catalog/executor/real runtime/publication gates unchanged; frozen adapters/backend/helpers/receipts and preview preserved.",
       "reviewNote": "Authorized original-owner local current-main compatibility staging only: preserve99 and inherit exactec45 without feature authoring, runtime or publication.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
