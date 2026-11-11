@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 465,
-  "updatedAt": "2026-11-11T18:46:38.433Z",
+  "revision": 466,
+  "updatedAt": "2026-11-11T18:54:24.314Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3314,6 +3314,13 @@
       "command": "block",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T18:54:24.314Z",
+      "taskId": "SV-011",
+      "command": "unblock",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3672,7 +3679,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3695,8 +3702,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T16:13:29.318Z",
-      "blockedReason": "Reconciled completion evidence: the source-only main80 compatibility commit 53c49b9420db488f40635f2503f048520a98c548 remains preserved. Its formerly blocking SV008 fixture seed assumption is FIXED at b4f01aa847cd11b8e736e10b180f66c70b28dfda and independently reviewed with six pure regressions; coherent b549 contains it. The memory-only seed/helper check passed without roles, tokens or listeners. Maintenance lease cleanup is complete. Do not rebuild maintenance or reassign shared host files. Remaining gates are exact compatibility/source publication and PR22 merge decisions, deliberate final composition and actual mounted/current-candidate acceptance; no fresh runtime approval follows. Published PR22 head 984e6aec255aa6c880442a8268191360611efd15 is unchanged. No unresolved fixture-access or maintenance-lease blocker remains.",
-      "reviewNote": "Reconciled completion evidence: the source-only main80 compatibility commit 53c49b9420db488f40635f2503f048520a98c548 remains preserved. Its formerly blocking SV008 fixture seed assumption is FIXED at b4f01aa847cd11b8e736e10b180f66c70b28dfda and independently reviewed with six pure regressions; coherent b549 contains it. The memory-only seed/helper check passed without roles, tokens or listeners. Maintenance lease cleanup is complete. Do not rebuild maintenance or reassign shared host files. Remaining gates are exact compatibility/source publication and PR22 merge decisions, deliberate final composition and actual mounted/current-candidate acceptance; no fresh runtime approval follows. Published PR22 head 984e6aec255aa6c880442a8268191360611efd15 is unchanged. No unresolved fixture-access or maintenance-lease blocker remains.",
+      "blockedReason": null,
+      "reviewNote": "Coordinator-authorized local-only PR22 delivery staging: inherit exact reviewed SV008 fixture fix b4f01aa and currentmain ec45d673 on a separate branch; preserve public984 and compatibility53. No implementation, runtime or source publication authorized.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements.",
         "This approved SV008 transfer supersedes only the earlier reservation of the six shared web files: their sole implementation owner is now original SV008 owner after normal claiming. SV011 retains apps/web/maintenance, services/api/maintenance and apps/web/tests/maintenance-integration.test.mjs. Published PR22 remains frozen; any shared-file repair requires fresh coordinator ownership reconciliation. No maintenance implementation lease or feature publication/merge/deployment is granted by this scope migration.",
