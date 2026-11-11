@@ -1,6 +1,6 @@
 # Supply Vanguard shared task board
 
-Revision 421. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
+Revision 422. Live state is on the task-board branch. Use npm run board -- claim; do not edit this table manually.
 
 | Task | Status | Owner / agent | Lease expiry (UTC) | Dependencies | Work |
 |---|---|---|---|---|---|
@@ -40,5 +40,5 @@ Revision 421. Live state is on the task-board branch. Use npm run board -- claim
 | SV-033 Repair hold-evidence replay authorization and timestamp precision | done | — | — | SV-031 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/32) |
 | SV-034 Prepare native hold-evidence concurrency acceptance harness | done | — | — | SV-033 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/35) |
 | SV-035 Repair request UI replacement ownership and read-only capability controls | done | — | — | SV-027 | [PR](https://github.com/wiltobuild/supply-vanguard/pull/36) |
-| SV-036 Repair native hold-evidence harness deadline, cleanup and proof gaps | ready | — | — | SV-034 | services/api/holds/tests |
+| SV-036 Repair native hold-evidence harness deadline, cleanup and proof gaps | claimed | cheich / cheich-sv036-harness-01 | 2026-11-11T17:47:43.795Z | SV-034 | services/api/holds/tests |
 | SV-037 Repair reentrant request UI mount, reset and stale reporting ownership | ready | — | — | SV-035 | apps/web/requests, apps/web/tests/request-lifecycle.test.mjs |
