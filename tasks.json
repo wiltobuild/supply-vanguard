@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 474,
-  "updatedAt": "2026-11-11T19:03:00.537Z",
+  "revision": 475,
+  "updatedAt": "2026-11-11T19:04:11.284Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3377,6 +3377,13 @@
       "command": "claim",
       "agent": "wil-vale-sv022-20261110-safe-a72c",
       "owner": "Wil"
+    },
+    {
+      "at": "2026-11-11T19:04:11.284Z",
+      "taskId": "SV-022",
+      "command": "block",
+      "agent": "wil-vale-sv022-20261110-safe-a72c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4099,7 +4106,7 @@
     {
       "id": "SV-022",
       "title": "Partial fulfillment and safe returns",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "high",
       "dependsOn": [
         "SV-020",
@@ -4123,14 +4130,8 @@
         "Current full Claude artifact details remain unverified; do not infer additional roles, deadlines, patient identifiers, UI requirements or other PRD facts.",
         "Continue using the existing generated NICU and assets; additive assets are allowed."
       ],
-      "claim": {
-        "agent": "wil-vale-sv022-20261110-safe-a72c",
-        "owner": "Wil",
-        "leaseId": "7bc17e2a-c4e1-4b27-bb5d-746a2d91aab9",
-        "claimedAt": "2026-11-11T19:03:00.537Z",
-        "expiresAt": "2026-11-11T21:03:00.537Z"
-      },
-      "blockedReason": null,
+      "claim": null,
+      "blockedReason": "Original-owner local delivery staging complete: 8388dff4b3fdf59d4296fd8cad4b5a970452e334 tree88d5c6de27a96ccbb025d6e6557829af4d1b65d8, parents e50679daf862c76a0582fbb8afb89137387ff382 and public main ec45d673be45872de17f59a5fc6c9c85525dd54e. Branch delivery/sv022-reviewed-main-20261111 in original C:\\Users\\Wil\\sv022-safe-returns-20261110. Seven application blobs preserved from7348, three harness/docs blobs preserved frome506, clean/conflict-free. No provisioning imports, native execution, suite reruns or publication. Coordinator review/integration and runtime acceptance remain pending; lease cleared.",
       "reviewNote": "Original owner resumes authorized local delivery staging of reviewed e50679d plus verified public main ec45d673; preserve frozen application/harness blobs, no runtime or publication.",
       "coordinationNotes": [
         "Reconciled completion evidence: frozen backend7348eb66abdd90dc68cd8745c6920e66465bfd53 and source-reviewed native harness e50679daf862c76a0582fbb8afb89137387ff382 remain preserved. Backend source review, embedded/fake tests and complete native ownership/RLS preflight source review are completed. Four actual multi-session lifecycle races remain UNRUN. Future execution needs an exact reviewed integrated candidate, isolated synthetic fixture/non-owner role binding, original execution owners, launcher-trust decision and fresh bounded runtime approval. A generic unblock cannot substitute for those resources or permission. No additional task-local implementation defect is currently identified, and shared host remains exclusively active SV008."
