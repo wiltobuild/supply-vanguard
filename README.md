@@ -28,13 +28,23 @@ The demo uses synthetic data and needs no API keys.
 
 ## What's in this repo
 
+- `apps/`: web app (equipment register, 3D ward)
+- `services/`: backend API and observation ingestion
+- `packages/`: shared libraries, including the 3D scene
+- `tests/`: test suite
+- `tools/`: dev scripts
+- `design/`, `planning/`: design notes and task planning
+- `AGENTS.md`, `CLAUDE.md`: instructions for the AI coding agents that work on this repo
+
 Equipment and supply tracking with an explorable NICU concept. This repository contains the complete editable Three.js scene, 25 reusable equipment GLBs, two preserved original ward GLBs, a working browser demo, implementation plan, and shared agent claiming board.
 
 ## Start
 
-Requires Node.js 22+, Git, and GitHub CLI for shared task operations.
+Requires Node.js 22+ and Git. The GitHub CLI is only needed for the shared task board (see Coordinate work below).
 
 ```sh
+git clone https://github.com/wiltobuild/supply-vanguard.git
+cd supply-vanguard
 npm run dev
 # Open http://localhost:4180
 npm run setup:test   # once per clean checkout: installs PGlite, the test-only embedded database
