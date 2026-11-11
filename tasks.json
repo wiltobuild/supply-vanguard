@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 468,
-  "updatedAt": "2026-11-11T18:55:22.875Z",
+  "revision": 469,
+  "updatedAt": "2026-11-11T18:57:26.527Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3335,6 +3335,13 @@
       "command": "block",
       "agent": "wil-sol-sv011-20261106-maintenance",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T18:57:26.527Z",
+      "taskId": "SV-011",
+      "command": "unblock",
+      "agent": "wil-sol-sv011-20261106-maintenance",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3693,7 +3700,7 @@
     {
       "id": "SV-011",
       "title": "Equipment cleaning and maintenance workflows",
-      "status": "blocked",
+      "status": "ready",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3716,8 +3723,8 @@
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/22",
       "submittedBy": "wil-sol-sv011-20261106-maintenance",
       "submittedAt": "2026-11-09T16:13:29.318Z",
-      "blockedReason": "Local delivery staging paused before source transfer or branch creation. Original public984e6aec and compatibility53c49b94 checkouts clean and preserved. Exact b4f01aa and ec45d673 objects absent from task20. Non-served source Git read denied: git -C C:/Users/Wil/Documents/Codex/2026-11-05/task-9/sv008-fixture-seeding-main80-20261110 cat-file -t b4f01aa847cd11b8e736e10b180f66c70b28dfda (and ec45d673) could not change directory: Permission denied. Stopped without retry or alternate source; no immutable-object transfer, authored changes, tests, staging head, runtime, publication or merge. Specific supported source-access approval/coordination is needed before staging can resume. Reviewed narrow fixture fix remains complete with SV008; no reimplementation needed.",
-      "reviewNote": "Coordinator-authorized local-only PR22 delivery staging: inherit exact reviewed SV008 fixture fix b4f01aa and currentmain ec45d673 on a separate branch; preserve public984 and compatibility53. No implementation, runtime or source publication authorized.",
+      "blockedReason": null,
+      "reviewNote": "Specific supported elevated read succeeded exit0 for immutable b4f01aa and ec45d673 objects in exact non-served SV008 checkout. Resume only previously authorized separate local delivery staging; no source reimplementation, runtime or publication.",
       "coordinationNotes": [
         "Maintenance PR22 integration only: original maintenance owner wil-sol-sv011-20261106-maintenance exclusively owns these added shared paths for static exposure, navigation/session lifecycle, existing API dispatch and available/unassigned/unheld search plus mounted acceptance. Former SV007 web owner has no live claim. Sole coordinator retains integration ownership. This does not lift SV008/check-in scope/publication holds or SV019 reservations. No credentials, persistent access/provisioning, merge or deployment; retain operation-specific denials and separate publication requirements.",
         "This approved SV008 transfer supersedes only the earlier reservation of the six shared web files: their sole implementation owner is now original SV008 owner after normal claiming. SV011 retains apps/web/maintenance, services/api/maintenance and apps/web/tests/maintenance-integration.test.mjs. Published PR22 remains frozen; any shared-file repair requires fresh coordinator ownership reconciliation. No maintenance implementation lease or feature publication/merge/deployment is granted by this scope migration.",
