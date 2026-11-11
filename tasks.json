@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 439,
-  "updatedAt": "2026-11-11T16:40:02.360Z",
+  "revision": 440,
+  "updatedAt": "2026-11-11T16:42:13.641Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3105,6 +3105,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T16:42:13.641Z",
+      "taskId": "SV-017",
+      "command": "block",
+      "agent": "wil-sol-sv017-20261105-ops",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3644,7 +3651,7 @@
     {
       "id": "SV-017",
       "title": "Deployment and operational readiness",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-006",
@@ -3662,17 +3669,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv017-20261105-ops",
-        "owner": "wil",
-        "leaseId": "ad733d8f-56b1-4f42-ad17-e04d837d795c",
-        "claimedAt": "2026-11-11T16:37:28.740Z",
-        "expiresAt": "2026-11-11T18:40:02.360Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/17",
       "submittedBy": "wil-sol-sv017-20261105-ops",
       "submittedAt": "2026-11-09T23:50:59.499Z",
-      "blockedReason": null,
+      "blockedReason": "LOCAL source-only recovery-flow repair frozen c2eea31ae37ca75ed5c468474022a6d6bc33b7c2 tree9d583c28d1180f78327efe6083342cbe73c5927e on local/sv017-clearance-sql-contract-repair, exact02729cf parent preserved. Five ops-only files. Temporary CHECK/column/policy oracles omit standalone FKs to avoid illegal temporary-to-permanent links; all source columns/CHECKs/primary/unique/policies preserved and three permanent FK requirements remain strict. Wrong-role fault probe selects exact inherited EQ003 hold ID AND equipment, retains SV403/sv:wrong_role with no LIMIT. Source-derived actualDDL/fixture controls failed2of4 before, pass4of4 after0skips. Immutable13/34 source binding, changed Node syntax and diff checks pass; unchanged baselines not rerun. Exact Git root/head/tree/raw+blob hashes and diff receipt sv017-clearance-sql-contract-source-c2eea31.json. Prior02729cf branch/receipt/patch,13 historical artifacts and3 wrappers preserved. Profile UNARMED candidateApprovedfalse. Independent corrected-source review needed; SQL/oracle/fixture/native recovery remain UNRUN. Final candidate/SV036 runner acceptance, initial launcher-trust decision and fresh bounded runtime approval remain separate. No SQL/PG/roles/grants/credentials/native/C#compile/ACL/security/browser/listener execution, publication, merge or deployment. Clear only matching lease.",
       "reviewNote": "Authorized original-owner source-only repair of temporary-oracle FK persistence and exact baseline wrong-role hold selection"
     },
     {
