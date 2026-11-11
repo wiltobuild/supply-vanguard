@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 431,
-  "updatedAt": "2026-11-11T16:26:59.125Z",
+  "revision": 432,
+  "updatedAt": "2026-11-11T16:27:27.066Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3049,6 +3049,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T16:27:27.066Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3291,7 +3298,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3319,17 +3326,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "a97d933d-a9f0-48c2-9fad-13c794293621",
-        "claimedAt": "2026-11-11T16:23:22.934Z",
-        "expiresAt": "2026-11-11T18:26:59.125Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Local P3 timer-cleanup repair frozenf125b1924ab678cdc62f79ba7946d0e537d13608 parent20cd950; transport abort now idempotently clears timer/parent listeners before body settlement. Five fake-clock/body/signal probes: four failed before,5/5 passed after; syntax/diff/npm check passed. P2 semantics/host/dependencies unchanged, no repeated P2 tests. Pending independent narrow review and existing UI13/34 schema/runtime/publication gates; no runtime or publication.",
       "reviewNote": "Authorized original-owner narrow P3 transport timer cleanup on signal abort with fake-clock/body tests only; reviewed P2 behavior and immutable source remain unchanged.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
