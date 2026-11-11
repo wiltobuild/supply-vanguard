@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 424,
-  "updatedAt": "2026-11-11T15:52:04.871Z",
+  "revision": 425,
+  "updatedAt": "2026-11-11T15:52:41.634Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3000,6 +3000,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv017-20261105-ops",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T15:52:41.634Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3242,7 +3249,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3270,17 +3277,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "69a00c36-6591-4c98-9d32-41c23627e23d",
-        "claimedAt": "2026-11-11T15:47:12.368Z",
-        "expiresAt": "2026-11-11T17:51:58.790Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Local P2 source repair frozen20cd950bd0283dce03ea5e166ac27f85be373453 parent5c3635b: awaits current post-refresh capabilities; bounds projection128 assignments/64 unique equipment with one overall deadline. Three failing-before probes;21 controlled tests passed plus expanded budget case1/1; npm check exit0. Host/dependencies unchanged. Pending independent repair review, corrected request UI ownership acceptance, deliberate13/34 ops/schema and authorized SQL/browser/native acceptance/publication. No runtime or feature publication.",
       "reviewNote": "Authorized same-owner source-only repair of independent P2 post-refresh capability completion and bounded projection workload findings at frozen5c3635b; controlled regressions only, no runtime/publication.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
