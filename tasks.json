@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 453,
-  "updatedAt": "2026-11-11T17:47:42.023Z",
+  "revision": 454,
+  "updatedAt": "2026-11-11T17:48:16.681Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3228,6 +3228,13 @@
       "command": "heartbeat",
       "agent": "wil-sol-sv008-20261105-f28c",
       "owner": null
+    },
+    {
+      "at": "2026-11-11T17:48:16.681Z",
+      "taskId": "SV-008",
+      "command": "block",
+      "agent": "wil-sol-sv008-20261105-f28c",
+      "owner": null
     }
   ],
   "tasks": [
@@ -3470,7 +3477,7 @@
     {
       "id": "SV-008",
       "title": "Barcode and QR manual check-in",
-      "status": "claimed",
+      "status": "blocked",
       "priority": "normal",
       "dependsOn": [
         "SV-001",
@@ -3498,17 +3505,11 @@
         "npm run check",
         "Add and run task-specific acceptance checks"
       ],
-      "claim": {
-        "agent": "wil-sol-sv008-20261105-f28c",
-        "owner": "wil",
-        "leaseId": "1ed6172f-094b-427c-b67f-4a32c70fc1a0",
-        "claimedAt": "2026-11-11T17:33:31.492Z",
-        "expiresAt": "2026-11-11T19:47:42.023Z"
-      },
+      "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/14",
       "submittedBy": "wil-sol-sv008-20261105-f28c",
       "submittedAt": "2026-11-06T01:05:43.865Z",
-      "blockedReason": null,
+      "blockedReason": "Separate helper snapshot fix a53b484943be53efb53c8b5cbb1d16c79d7ba3dd parentc38;3 selected snapshot tests pass after2 fail-before alias controls. New concrete lazy adapter source frozen4c33af9bfde614076c197a283376275fb440d6c2 parenta53, tree6971c5011444f0da7cc142e27293f45ef4c53dee;5 new task-local files,32 fake-only tests pass, syntax/npm check pass, clean tree. Implements DB/bootstrap/grants/catalog/RLS/body checks/serialized pool, canonical identity/host, clock/probe wrappers. Pending independent source review, authenticated composed catalog/cycle authority, approved executor/dependency binding and real capability/runtime acceptance; SV037/publication holds remain. No real DB/SQL/provider/socket/listener, arming, feature publication or prior-denial retry.",
       "reviewNote": "Authorized original-owner concrete lazy functional adapter source under new functional-v2-adapters directory, fake-only execution; reviewed c38 files frozen.",
       "coordinationNotes": [
         "Approved SV008 integration handoff: original owner wil-sol-sv008-20261105-f28c exclusively owns the six transferred shared paths plus apps/web/tests/check-in-integration.test.mjs, after normal rework and claiming. Consume published SV011 984e6aec255aa6c880442a8268191360611efd15 as an unmerged dependency; never represent it as main or republish/edit maintenance-owned directories/tests. Temporary in-memory test roles, fictional memberships and short-lived test tokens are approved solely for mounted form/API acceptance and verified cleanup; preserve auth/RLS and all operation-specific stops. No feature publication, merge, deployment, unrelated persistent access/provisioning, native/listener denial retry or GitHub403 retry. Sole coordinator retains dependency/integration sequencing.",
