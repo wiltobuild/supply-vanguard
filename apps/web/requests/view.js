@@ -1,11 +1,19 @@
 import {createRequestSession, quantities, canClear, EvidenceError} from './client.js';
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const mounts = new WeakMap();
+const MAX_DISPOSALS = 4;
 const kinds = ['dirty','fault','maintenance','unknown'];
 const label = value => esc(value ?? 'Unknown');
 export function mountRequests(root, {api, permissions = [], role = null, equipment = [], equipmentTypes = []}) {
-  mounts.get(root)?.dispose();
-  let drafts = {}, draftRequest = null, disposed = false, evidenceErrors = {}, forceFocus = null;
+  // Dispose every previous owner. Disposing one can run host callbacks (abort listeners) that mount a replacement, so repeat until the root is
+  // free, but only a few times: a host that keeps mounting from inside every disposal is refused instead of looping.
+  for (let n = 0, prior; (prior = mounts.get(root)); n++) {
+    if (n >= MAX_DISPOSALS) throw new Error('Mount refused: previous instances kept mounting replacements while being disposed.');
+    prior.dispose();
+    if (mounts.get(root) === prior) mounts.delete(root);   // an already-disposed instance never stays registered
+  }
+  let drafts = {}, draftRequest = null, disposed = false, evidenceErrors = {}, forceFocus = null, epoch = 0;
+  const owns = () => !disposed && mounts.get(root) === handle;   // only the registered, undisposed instance may touch the root
   const writable = () => permissions.includes('equipment:write');
   // Advertised UI capability (the host's projection of the authenticated membership; the server stays the authority). Clearance is offered only
   // when the projection includes inventory:read (the server's route permission for both clearance routes) or equipment:write (the mutation
@@ -45,7 +53,7 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
       <p>Holds still active on this equipment: ${kinds}. ${c.stackBasis === 'current' ? 'This is the current state when the server answered, not part of the receipt.' : 'The server did not label this list as current.'}</p></section>`;
   };
   function render(state) {
-    if (disposed) return;
+    if (!owns()) return;   // an unregistered or disposed instance never renders
     const nextRequest = state.request?.id ?? state.requestId ?? null;
     if (state.phase === 'denied' || nextRequest !== draftRequest) { drafts = {}; evidenceErrors = {}; } else remember();
     draftRequest = nextRequest;
@@ -77,8 +85,14 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
     if (forceFocus) { const target=[...root.querySelectorAll('[data-focus], [data-draft]')].find(el=>(el.dataset.focus||el.dataset.draft)===forceFocus); forceFocus=null; if(target&&!target.disabled){target.focus();return;} }
     if (focusKey) { const next=[...root.querySelectorAll('[data-focus], [data-draft]')].find(el=>(el.dataset.focus||el.dataset.draft)===focusKey); if(next&&!next.disabled) next.focus(); else root.querySelector('[data-status]')?.focus(); }
   }
-  const report = error => { const status=root.querySelector('[data-status]'); if(status){status.textContent=error.message;status.setAttribute('role','alert');status.focus();} };
-  const run = fn => { try { Promise.resolve(fn()).catch(report); } catch(error){report(error);} };
+  const report = (error, at = epoch) => {
+    if (!owns() || at !== epoch) return;   // stale: the instance was replaced, disposed or reset after the command was queued
+    const status=root.querySelector('[data-status]'); if(!status)return;
+    status.textContent=error.message;status.setAttribute('role','alert');
+    const doc=root.ownerDocument, active=doc?.activeElement;
+    if(!(active&&active!==doc.body&&!root.contains(active)))status.focus();   // never pull focus from outside the component
+  };
+  const run = fn => { const at = epoch; const fail = error => report(error, at); try { Promise.resolve(fn()).catch(fail); } catch(error){fail(error);} };
   const click = event => {
     const b=event.target.closest('button'); if(!b||!root.contains(b)||b.disabled)return;
     const item=session.state.request?.items.find(i=>String(i.lineNo)===b.dataset.line);
@@ -118,11 +132,12 @@ export function mountRequests(root, {api, permissions = [], role = null, equipme
     if(form.dataset.hold)run(()=>session.place(form.dataset.hold,{kind:data.get('kind'),reason:data.get('reason')}));
   };
   root.addEventListener('click',click);root.addEventListener('change',change);root.addEventListener('submit',submit);
-  render(session.state); session.load();
-  const handle={session,resetAccess(next={}){if(disposed||mounts.get(root)!==handle)return;   // a stale or disposed handle must not touch a root that a newer mount owns
-    drafts={};evidenceErrors={};forceFocus=null;permissions=next.permissions||[];role=next.role||null;equipment=next.equipment||[];equipmentTypes=next.equipmentTypes||[];root.replaceChildren();session.reset();root.replaceChildren();},dispose(){if(disposed)return;   // idempotent: a repeated call is a no-op
+  const handle={session,resetAccess(next={}){if(!owns())return;epoch++;   // a stale or disposed handle must not touch a root that a newer mount owns
+    drafts={};evidenceErrors={};forceFocus=null;permissions=next.permissions||[];role=next.role||null;equipment=next.equipment||[];equipmentTypes=next.equipmentTypes||[];root.replaceChildren();session.reset();if(owns())root.replaceChildren();},dispose(){if(disposed)return;   // idempotent: a repeated call is a no-op
     disposed=true;drafts={};evidenceErrors={};forceFocus=null;session.dispose();root.removeEventListener('click',click);root.removeEventListener('change',change);root.removeEventListener('submit',submit);
     if(mounts.get(root)===handle){root.replaceChildren();mounts.delete(root);}   // only the registered owner empties or unregisters the shared root
   }};
-  mounts.set(root,handle);return handle;
+  mounts.set(root,handle);
+  render(session.state); session.load();   // only after registration, so a mount that was replaced meanwhile renders nothing
+  return handle;
 }

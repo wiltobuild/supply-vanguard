@@ -387,3 +387,72 @@ test('changing the projection through resetAccess takes effect: sufficient becom
   assert.doesNotMatch(d.root.innerHTML,/data-evidence=/);submitEvidenceEvent(d);clickLegacy(d);await tick();assert.deepEqual(d.calls,{evidence:0,legacy:0});
   d.view.dispose();
 });
+
+// ---------------- SV-037: reentrant mounts, reset-triggered replacement and stale reporting ----------------
+// An abort listener runs synchronously inside session.reset()/dispose(), so a host can mount a replacement from inside it.
+const abortingApi=(tag,onAbort,extra={})=>apiFor({read:async()=>({...record([line({lineNo:7,equipmentType:`${tag}-type`})]),id:tag}),
+  rules:async signal=>{signal?.addEventListener?.('abort',()=>onAbort());return {rules:[]};},...extra});
+const mountAborting=async(dom,tag,onAbort,extra)=>{const view=mountRequests(dom.root,{api:abortingApi(tag,onAbort,extra),permissions:['equipment:write','inventory:read'],role:'cleaner'});await tick();await view.session.load(tag);return view;};
+test('SV-037 (i): an instance whose reset triggers a replacement mount rechecks ownership and cannot empty the new instance',async()=>{
+  const dom=ownedRoot();let armed=false,fired=false,B=null,bHtml=null;
+  const A=await mountAborting(dom,'A',()=>{if(!armed||fired)return;fired=true;B=mountRequests(dom.root,{api:apiFor(),permissions:['equipment:write','inventory:read'],role:'cleaner'});bHtml=dom.root.innerHTML;});
+  armed=true;
+  A.resetAccess({permissions:['equipment:write','inventory:read'],role:'cleaner'});
+  assert.ok(B,'positive control: the abort callback really mounted B during A\'s reset');assert.ok(bHtml.length>50,'and B had rendered');
+  assert.equal(dom.root.innerHTML,bHtml,'B\'s DOM survives A\'s remaining reset steps');
+  assert.equal(dom.listenerCount(),3,'exactly one current instance owns listeners');
+  A.resetAccess({});A.dispose();assert.equal(dom.root.innerHTML,bHtml,'a retained A stays inert afterwards');
+  await tick();assert.notEqual(B.session.state.phase,'idle','B\'s own session kept running');
+  B.dispose();assert.equal(dom.listenerCount(),0);assert.equal(dom.root.innerHTML,'');
+});
+test('SV-037 (ii): a mount nested inside the disposal of the previous instance is disposed, never left registered, rendering or listening',async()=>{
+  const dom=ownedRoot(),lateC=deferred();let armed=false,fired=false,C=null;
+  const A=await mountAborting(dom,'A',()=>{if(!armed||fired)return;fired=true;
+    C=mountRequests(dom.root,{api:apiFor({read:()=>lateC.promise}),permissions:['equipment:write','inventory:read'],role:'cleaner'});});
+  armed=true;
+  const B=await mountOn(dom.root,'B');
+  assert.ok(C,'positive control: C mounted while B was disposing A');
+  assert.equal(dom.listenerCount(),3,'only B listens: C\'s listeners were removed');
+  assert.equal(C.session.state.phase,'idle','C was disposed');
+  const bHtml=dom.root.innerHTML;assert.ok(bHtml.length>100,'B has rendered');
+  lateC.resolve({...record([line({lineNo:9,equipmentType:'C-late-type'})]),id:'C'});await tick();await tick();
+  assert.equal(dom.root.innerHTML,bHtml,'C\'s late read cannot render over B');assert.doesNotMatch(dom.root.innerHTML,/C-late-type/);
+  C.dispose();C.resetAccess({});A.dispose();assert.equal(dom.root.innerHTML,bHtml,'retained A and C are inert');
+  B.dispose();assert.equal(dom.listenerCount(),0);
+});
+test('SV-037: replacements mounted during every disposal cannot make a mount loop without bound',async()=>{
+  const dom=ownedRoot();let created=0,pending=null;
+  const make=()=>{created++;if(created>60)throw new Error('runaway');
+    const view=mountRequests(dom.root,{api:abortingApi(`I${created}`,()=>{if(pending){const go=pending;pending=null;go();}}),permissions:['equipment:write','inventory:read'],role:'cleaner'});return view;};
+  const first=make();await tick();await first.session.load('I1');
+  const again=()=>{pending=()=>{try{make();}catch(error){if(error.message==='runaway')throw error;}};};
+  // Every instance that is torn down mounts another one (re-armed each time).
+  const rearm=()=>{pending=()=>{try{make();}catch(error){if(error.message==='runaway')throw error;}rearm();};};rearm();
+  let outcome='mounted';try{make();}catch(error){if(error.message==='runaway')outcome='runaway';else outcome='refused';}
+  assert.notEqual(outcome,'runaway','the disposal loop is bounded');assert.ok(created<=20,`bounded number of mounts (created ${created})`);
+  pending=null;assert.ok(dom.listenerCount()<=3,'at most one current instance owns listeners');
+});
+test('SV-037 (iii): a stale queued rejection cannot overwrite the current status or steal outside focus',async()=>{
+  const dom=ownedRoot(),outside={name:'external'};
+  const A=mountRequests(dom.root,{api:apiFor({read:async()=>({...record([line({lineNo:7})]),id:'A'})}),permissions:['equipment:write','inventory:read'],role:'cleaner'});
+  await tick();await A.session.load('A');
+  const pendingFail=deferred();
+  A.session.transition=()=>pendingFail.promise;                            // a queued command that will reject after the instance is gone
+  dom.fire('click',{target:{closest:()=>({insideRoot:true,disabled:false,dataset:{action:'dispatch',line:'7'}})}});
+  const B=await mountOn(dom.root,'B');dom.doc.activeElement=outside;dom.root.querySelector('[data-status]').textContent='B status';
+  const status=dom.root.querySelector('[data-status]');status.focused=false;
+  pendingFail.reject(new Error('stale failure from A'));await tick();await tick();
+  assert.equal(status.textContent,'B status','B\'s status is not overwritten');assert.notEqual(status.focused,true,'and focus is not taken');assert.equal(dom.doc.activeElement,outside);
+  // The same holds for the current instance once the user has moved focus outside the component.
+  const fresh=deferred();B.session.transition=()=>fresh.promise;
+  dom.fire('click',{target:{closest:()=>({insideRoot:true,disabled:false,dataset:{action:'dispatch',line:'7'}})}});
+  fresh.reject(new Error('current failure'));await tick();await tick();
+  assert.equal(status.textContent,'current failure','the current instance still reports its own failure');assert.notEqual(status.focused,true,'without taking focus from outside the component');
+  // And a rejection that was queued before an access reset is stale.
+  const old=deferred();B.session.transition=()=>old.promise;
+  dom.fire('click',{target:{closest:()=>({insideRoot:true,disabled:false,dataset:{action:'dispatch',line:'7'}})}});
+  B.resetAccess({permissions:['equipment:write','inventory:read'],role:'cleaner'});status.textContent='after reset';
+  old.reject(new Error('rejection from before the reset'));await tick();await tick();
+  assert.equal(status.textContent,'after reset','a rejection queued before resetAccess is dropped');
+  B.dispose();
+});

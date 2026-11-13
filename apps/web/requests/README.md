@@ -58,6 +58,13 @@ Clearance is offered with `inventory:read` (the server's route permission for bo
 
 **One instance owns a root.** Mounting on a root disposes the previous instance on that root. Only the **registered owner** may empty the root, unregister it or reset it. A retained handle of an instance that has been replaced (or already disposed) is inert: `dispose()` is idempotent and a stale `dispose()` or `resetAccess()` cannot empty, unregister, restyle, refocus or reset the newer mount, nor content the host placed on the root afterwards. Disposal and access-loss cleanup of the **current** instance, and the suppression of its late protected writes, are unchanged.
 
+### Reentrant mounts and stale reporting (SV-037)
+- Mounting disposes every previous owner of the root, repeating while a disposal callback (for example an abort listener) mounts a replacement. After 4 rounds the mount is refused with an error rather than looping, and the root keeps at most one registered instance.
+- `resetAccess()` rechecks ownership after `session.reset()`, so a reset that mounted a replacement cannot empty it.
+- An instance renders only while it is the registered, undisposed owner; the first render happens after registration.
+- A command failure reported after the instance was replaced, disposed or reset is dropped, and a failure never takes focus from outside the component.
+- Not verified: a real browser, the shared host (SV-008), real HTTP.
+
 ## Interaction and truthfulness
 
 Pre-dispatch demand cancellation requires an explicit not-in-transit confirmation. Post-dispatch cancellation is labeled demand-only; assignment remains whatever the server returns. Dirty, fault, maintenance and unknown flags are rendered independently. Missing/failed outcomes never imply availability. No overdue deadline, threshold, reconciliation release or business role is invented. All supported lifecycle transitions are available as explicit commands to an authorized writer; server rejects invalid transitions. No action is silently retried.
