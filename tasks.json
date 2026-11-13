@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 480,
-  "updatedAt": "2026-11-13T07:43:46.692Z",
+  "revision": 481,
+  "updatedAt": "2026-11-13T07:45:12.723Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3419,6 +3419,13 @@
       "command": "claim",
       "agent": "cheich-sv037-ui-reentrancy-02",
       "owner": "cheich"
+    },
+    {
+      "at": "2026-11-13T07:45:12.723Z",
+      "taskId": "SV-037",
+      "command": "submit",
+      "agent": "cheich-sv037-ui-reentrancy-02",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4859,7 +4866,7 @@
     {
       "id": "SV-037",
       "title": "Repair reentrant request UI mount, reset and stale reporting ownership",
-      "status": "claimed",
+      "status": "review",
       "priority": "normal",
       "dependsOn": [
         "SV-035"
@@ -4889,13 +4896,10 @@
         "SV008 original owner retains the provisional shared adapter branch and expired-claim recovery. This UI follow-up remains a final correctness dependency for deliberate later composition; no shared ownership transfer.",
         "Both server clearance routes still require inventory:read and exact current database configured role. Every canonical equipment-write role also reads. The OR branch supports existing synthetic projection compatibility and is settled; do not request a new policy decision."
       ],
-      "claim": {
-        "agent": "cheich-sv037-ui-reentrancy-02",
-        "owner": "cheich",
-        "leaseId": "2bc02d3a-c202-4c22-8666-fd79596649af",
-        "claimedAt": "2026-11-13T07:43:46.692Z",
-        "expiresAt": "2026-11-13T09:43:46.692Z"
-      }
+      "claim": null,
+      "pr": "https://github.com/wiltobuild/supply-vanguard/pull/39",
+      "submittedBy": "cheich-sv037-ui-reentrancy-02",
+      "submittedAt": "2026-11-13T07:45:12.723Z"
     },
     {
       "id": "SV-038",
