@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "project": "supply-vanguard",
-  "revision": 481,
-  "updatedAt": "2026-11-13T07:45:12.723Z",
+  "revision": 482,
+  "updatedAt": "2026-11-13T07:45:21.415Z",
   "history": [
     {
       "at": "2026-11-04T19:55:12.033Z",
@@ -3426,6 +3426,13 @@
       "command": "submit",
       "agent": "cheich-sv037-ui-reentrancy-02",
       "owner": null
+    },
+    {
+      "at": "2026-11-13T07:45:21.415Z",
+      "taskId": "SV-037",
+      "command": "complete",
+      "agent": "cheich-sv037-ui-reentrancy-02",
+      "owner": null
     }
   ],
   "tasks": [
@@ -4866,7 +4873,7 @@
     {
       "id": "SV-037",
       "title": "Repair reentrant request UI mount, reset and stale reporting ownership",
-      "status": "review",
+      "status": "done",
       "priority": "normal",
       "dependsOn": [
         "SV-035"
@@ -4899,7 +4906,14 @@
       "claim": null,
       "pr": "https://github.com/wiltobuild/supply-vanguard/pull/39",
       "submittedBy": "cheich-sv037-ui-reentrancy-02",
-      "submittedAt": "2026-11-13T07:45:12.723Z"
+      "submittedAt": "2026-11-13T07:45:12.723Z",
+      "completedAt": "2026-11-13T07:45:21.415Z",
+      "completedBy": "cheich-sv037-ui-reentrancy-02",
+      "evidence": {
+        "url": "https://github.com/wiltobuild/supply-vanguard/pull/39",
+        "mergeCommit": "72f077c1d449a8a9f205e98cf94576b3b1bd71f6",
+        "mergedAt": "2026-11-13T07:45:15Z"
+      }
     },
     {
       "id": "SV-038",
