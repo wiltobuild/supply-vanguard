@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "provenance": "synthetic example; thresholds are test values, not approved service levels",
+  "measuredAt": "2026-11-05T00:00:00.000Z",
+  "metrics": {
+    "apiErrorRatio": 0.01,
+    "ingestionDelaySeconds": 12,
+    "staleEquipmentRatio": 0.05,
+    "backgroundFailures": 0,
+    "journalFailures": 0
+  },
+  "thresholds": {
+    "maxSampleAgeSeconds": 60,
+    "apiErrorRatio": 0.05,
+    "ingestionDelaySeconds": 30,
+    "staleEquipmentRatio": 0.1,
+    "backgroundFailures": 0,
+    "journalFailures": 0
+  }
+}

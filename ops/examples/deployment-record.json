@@ -1,0 +1,21 @@
+{
+  "status": "template-only-no-deployment-authorized",
+  "releaseCommit": null,
+  "previousReleaseCommit": null,
+  "provider": null,
+  "regionAndResidencyApproval": null,
+  "environment": null,
+  "serviceAndDatabaseOwner": null,
+  "incidentPrimaryAndBackup": null,
+  "identityProviderIssuerAudienceAndVerifierReview": null,
+  "runtimeRoleAndGrantReviewReference": null,
+  "secretManagerAndRotationOwner": null,
+  "tlsNetworkAndRateLimitReview": null,
+  "backupRetentionEncryptionAndAccessReview": null,
+  "approvedRpoRtoAndRecoveryEvidence": null,
+  "monitoringCollectorThresholdsAndNotificationRoute": null,
+  "migrationAndCompatibilityReview": null,
+  "smokeAndAuthorizationEvidence": null,
+  "rollbackDecisionOwnerAndRehearsalEvidence": null,
+  "wardOperationalSignoff": null
+}

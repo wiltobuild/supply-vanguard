@@ -1,0 +1,255 @@
+# SV-017 validation record
+
+## Local CHECK renderer repair (2026-11-09)
+
+Coordinator unblock at revision 244 was rechecked on the live board. Original-owner claim
+exited 0 at **245**, owner `wil`, agent `wil-sol-sv017-20261105-ops`, same branch/checkout,
+clean base `a87df9844183453c46aa21516202a522834ed088`. Heartbeat exited 0 at revision 246.
+Only `ops/` changes are authorized, for a tested local commit and independent review. No native
+setup, recovery retry, publication, PR metadata/403 retry, merge or deployment occurs here.
+
+The prior instrumented full run failed at `post-restore` on one CHECK-definition value. The
+subsequent isolated 18.6 roundtrip matched both retained default JSON-string fingerprints,
+stabilized after the first reparse and converged using the server's pretty renderer. Constraint
+and NOT NULL flags agreed; 33 boundary probes across three tables and two AND/OR precedence
+controls confirmed the bounded diagnosis. Both runs completed cleanup; the full recovery result
+remains **failed**, and its protection probes did not run. No historical outcome is overwritten.
+
+The new capture uses the server's pretty renderer only for CHECK; other constraints use their
+strict default rendering. Strict JSON digest equality and all original domain/RLS/protection/
+cleanup operations remain unchanged. Explicit constraint/column metadata and fail-closed source
+validation cover identity, type, enforcement availability/value, validation, inheritance, deferral,
+parent and ordered column links, type/position and NOT NULL. PG16/17 `conenforced` absence is
+recorded via `to_jsonb`, never a direct reference to the newer catalog column. Tests preserve
+this SQL extraction contract; they do not claim native execution on PostgreSQL 16/17/18.
+
+Regressions verify the public source-derived strings against the exact native renderer hashes,
+then require stable rendered snapshots while rejecting changed bounds, prefix, operators,
+AND/OR precedence, non-CHECK spelling, flags/linkage and unrelated data/security changes.
+Incomplete or disabled matching source metadata also fails. The production comparison contains
+no hash allowlist, regex semantic rewrite or ignored raw-definition field.
+
+| Local command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 35 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: 8 migrations, 26 expected public tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 task definitions validated |
+| `git diff --check` | Exit 0 |
+| SHA-256 of six prior native/diagnostic/cleanup receipts | All unchanged |
+
+All six prior native/diagnostic/cleanup receipts were SHA-256 checked and remain unchanged.
+The latest diagnostic and cleanup fingerprints are respectively
+`6DBD935F91524C08F361080F44325ED1DAEF7B78BAAC74F3E11B5E5C5BA7D802` and
+`08571B1A81A99CC682E72CA5F30C74E7B0971A13B753CD69567CE31D3FDA07CB`.
+Their inherited `freshCimProcessQuery` text describes the earlier historical failure; no CIM
+enumeration was repeated. No denied root board-race fixture is retried. Full `npm test` and new
+CI/native acceptance passes are not claimed. Independent review and specific coordinator runtime
+clearance are required before a further full instrumented exercise.
+
+## Local failure diagnostics (2026-11-09)
+
+Separate-reviewer rework exited 0 at revision 230; original-owner claim exited 0 at **revision
+231**, owner `wil`, agent `wil-sol-sv017-20261105-ops`, in the same checkout/branch. Heartbeat
+before finishing the repair exited 0 at revision 235. Baseline remains published draft PR #17
+head `1cf34f3e7503b30fafbaaa04cd8ef0d690306beb`. This repair is authorized for a tested local
+commit only: no push, PR metadata/attachment retry, board submission, merge or deployment.
+Auth/core/bootstrap/root/dependency/CI/workflow scope remains excluded.
+
+The already executed native drill at that baseline used matching PostgreSQL **18.6** tools and
+server, with a synthetic loopback-only marked disposable cluster. It exited **1**, state
+`not-passed`, with `Restored data or security/schema metadata differs`. Dump and restore
+returned successfully before that error; the exact differing field and protection-probe
+completion cannot be reconstructed from the generic historical error. No native acceptance
+pass or hosted/release readiness is available. The finalized receipt records cluster shutdown,
+postmaster exit, credential-file removal and generated-root removal as true. Read-only
+reconciliation also verified no matching process or listener. No setup or native rerun occurs
+in this diagnostic repair; a further instrumented run requires coordinator clearance.
+
+The failure/reconciliation receipts are preserved unchanged outside the repository in the
+authorized task folder. Their SHA-256 fingerprints are:
+
+| Receipt | SHA-256 |
+| --- | --- |
+| `sv017-native-acceptance-20261109.json` | `21288322AD6145DEBDC0ACBB0D2832DC7006823ACEEEB5162DDB6A1A616CCCF7` |
+| `sv017-native-reconciliation-20261109.json` | `59A53CF77E638DFF0C3242CF1B26A22921522233DBF1EECB6C3B1067E7CDD129` |
+
+Comparison failures now identify `post-restore` or `post-protection-probes`, with complete
+snapshot hashes and bounded structural mismatch paths/subtree hashes. Only fixed public
+labels and numeric positions are emitted; arbitrary keys and all raw values are withheld.
+Strict JSON hash equality, fixture/tenant/identity/RLS/protection assertions and cleanup are
+unchanged. The regressions cover exact field/presence/security hashes, key-order/type rejection,
+value/key/phase redaction, immutable trusted receipts, cleanup-error retention and entry/depth/
+node/path/byte bounds. These are source/logic checks, not a new recovery pass.
+
+| Local command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 26 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: 8 migrations and 26 expected public tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 task definitions validated |
+| `git diff --check` | Exit 0 |
+| SHA-256 of the two preserved native receipts | Unchanged, as recorded above |
+
+Checks used Node `v24.18.0`. Diff review confirms the full-snapshot digest predicate and all
+remaining integrity assertions are unchanged. The drill changes only supply phase labels,
+print the safe receipt on failure and retain that receipt when cleanup takes error priority;
+the fixture SQL, native protection probes and database/archive cleanup operations are unchanged.
+
+The previous full/root-suite limitations and the denied board-race Git operation below remain
+historical evidence; that denied fixture is not retried for this local repair. No full `npm test`
+pass or exact-head CI result is claimed for an unpublished local commit.
+
+## Holds compatibility repair (2026-11-09)
+
+Live revision 190 confirmed separate-reviewer rework and no claim. Original-owner claim exited 0
+at **revision 191**, owner `wil`, agent `wil-sol-sv017-20261105-ops`, same checkout/branch.
+Heartbeat before integration exited 0 at revision 192. A normal non-force merge integrated main
+`dd770606db334de80e40800506d9ab399af8c5cd` as
+`7e5daa215752e4bcf9b9e91c9a45eb62847e0998`, without conflicts or shared-file hand edits.
+Only `ops/` is authored scope. All prior auth/core/bootstrap/root/CI/shared-web/transfer holds remain.
+
+| Current command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 17 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: 8 migrations, 26 expected public tables, including both holds tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 seed task definitions validated |
+| Root file set excluding the previously denied board-race fixture, PowerShell command below | Exit 1: 97 tests, 49 passed, 1 failed, 47 skipped. Missing `@electric-sql/pglite` auth import remains the failure; no dependency install/repair performed |
+| Native client discovery via `findTools()` | Node child exits 1: PostgreSQL `psql`, `pg_dump`, `pg_restore` unavailable; no database connection or native SQL execution |
+| `git diff --check` | Exit 0 |
+
+The same explicit root-file selection below excludes `board-race.test.mjs`; the prior denied Git
+operation was not retried through any identity, directory or alternate route. No new full local
+`npm test` pass is claimed. Current skips include missing embedded audit/equipment/request/holds
+coverage and native database/request-race/hold-race coverage. Existing CI evidence is recorded on
+the PR against the exact published head; it does not substitute for an ops-native recovery exercise.
+
+The added fixture has five hold rows on a separate available/version-0 asset: all four active
+kinds and one cleared dirty predecessor. Two explicitly synthetic configuration rows reuse the
+holds task's documented test mappings; maintenance and unknown stay unconfigured. Additional
+synthetic auth-user/membership rows are evidence fixtures only, with no credentials, tokens,
+database roles, grants or persistent access. No operational clearance policy is chosen.
+Integrity regressions reject broken equipment/actor/role links, missing clearance history,
+reactivation, reordered replacement, lost stacked blocking, missing holds RLS, disabled assignment
+blocking/history triggers and a missing active-kind unique index. Native probes additionally
+exercise wrong-role/unconfigured refusal and assignment refusal before and after clearing only
+one kind, with the successful test clearance rolled back. All native SQL remains **unrun**.
+
+No matching clients or `PG_BIN`/`OPS_PG*` configuration is available, and no existing marked
+disposable cluster was verified. Real recovery remains a required gate before merge. No clients,
+cluster, credentials, roles, grants or provisioning were created; no prior denial was bypassed.
+See [the manual recovery command](RECOVERY.md#run-the-real-drill). Hosted readiness, runtime-role
+RLS execution, recovery integrity, native cleanup and release sign-off remain unproven.
+
+## Previous repair (2026-11-05, historical)
+
+Reviewer rework was independently confirmed at live revision 148. Original-owner reclaim exited
+0 at revision **149**, agent `wil-sol-sv017-20261105-ops`, owner `wil`, on the same checkout/branch.
+Heartbeat before integration succeeded at revision 150. A normal non-force merge integrated
+main `9113df98c2601820f7a13c471b9d4c226458654c` as merge commit
+`70a39d453a5b9cc81d5253ebbbe03b540a7b2c7c`, with no conflicts or hand edits to shared files.
+All authored repair changes remain under `ops/`. SV-019 root/auth/core/bootstrap/CI ownership
+and all source migrations remain untouched.
+
+| Repair command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Exit 0: 15 passed, 0 failed, 0 skipped |
+| `node ops/recovery-inventory.mjs` | Exit 0: all 7 current service migrations discovered and hashed; 24 expected public tables |
+| `npm run check` | Exit 0: JavaScript syntax, 27 GLBs and 19 seed task definitions validated |
+| Root suites excluding the previously denied board-race fixture, command below | Exit 1: 83 tests, 46 passed, 1 failed, 36 skipped. Auth import still lacks `@electric-sql/pglite`; no dependency repair/install performed |
+| Native client discovery (`findTools()` from `ops/recovery-drill.mjs`) | Exit 1: `psql`, `pg_dump`, `pg_restore` unavailable. No native connection or SQL execution |
+| `git diff --check` | Exit 0 |
+
+The resumed root verification used:
+
+```powershell
+$taskRootTests = Get-ChildItem tests -File -Filter '*.test.mjs' |
+  Where-Object { $_.Name -ne 'board-race.test.mjs' } |
+  Select-Object -ExpandProperty FullName
+node --test @taskRootTests
+```
+
+This does not claim a new full `npm test` pass. The previously denied board-race Git operation
+was excluded, rather than rerun in another directory/identity/execution route. The original full
+command result and exact denied target remain in the historical record below. The 36 current
+skips comprise missing PGlite coverage (audit/equipment/requests), core native DB and native
+request-race coverage. The independent auth-local import failure belongs to SV-019.
+
+The repair uses unchanged equipment receipt, supply, request and location-resolution migrations,
+including actual legacy-key backfill. Synthetic fixtures now cover all 24 tables. Focused tests
+reject matching-but-incomplete inventories, changed replay actor/key/response links, fractional
+ledger/projection mismatches, broken assignments/events, override partner/policy/expiry changes,
+cross-tenant evidence and weakened source RLS/index metadata. Snapshots additionally compare
+all indexes and function ownership/ACL/security settings. These are source/logic regressions;
+the new SQL fixtures and native post-restore assertions are **unrun**, not a restore pass.
+
+Native prerequisites remain missing: there is no `psql`/`pg_dump`/`pg_restore` on PATH and no
+supplied `PG_BIN`, `OPS_PGHOST`, `OPS_PGPORT` or existing `OPS_PGUSER` configuration. No approved
+marked disposable cluster was supplied or verified. No clients/cluster/credentials/grants were
+installed, started or created, and no previous native/filesystem denial was bypassed.
+[RECOVERY.md](RECOVERY.md#run-the-real-drill) contains the reproducible manual command for
+an owner-provided existing marked loopback cluster. Native backup/restore, SQL fixture execution,
+native cleanup, runtime-role authorization, hosted recovery and rollback remain unproven.
+
+## Initial submission (historical, before the repair)
+
+Baseline: main `5e1100cae690f001fa4964bb73f52479598f6e75`, isolated branch
+`task/sv-017-wil-sol-sv017-20261105-ops`. Normal claim exited 0 at live board revision 99
+on 2026-11-05; lease retained in this checkout's ignored `.claims/SV-017.json`.
+Only `ops/` is implementation scope. Workflow/root dependencies/auth/core DB/app/domain/scene
+changes are excluded. PRs #9, #11, #12, #13 and #14 were open at initial inspection and were not
+treated as merged contracts in this baseline. Remote main subsequently advanced to
+`6eebdad5d94e1ecf28b9137885fc996836647ff7` (SV-020, PR #11); the parent thread also reported
+merged PRs #9/#12. Merge/rebase sequencing belongs to the separate PR manager; this isolated
+branch remains based on `5e1100ca` and changes no shared service contracts.
+
+Environment: Windows desktop, Node v24.18.0, npm 11.16.0. No provider service, production data,
+credential/grant, persistent access, alert delivery, hosted deployment or merge was created.
+
+| Command/check | Actual result |
+| --- | --- |
+| `node --test ops/tests/*.test.mjs` | Final run: exit 0, 8 passed, 0 failed, 0 skipped; local logic only, no native database |
+| `node --check ops/recovery-drill.mjs` | Exit 0 after the final cleanup guard change |
+| `node ops/environment.mjs --profile demo` | Exit 0; Node prerequisite satisfied |
+| `node ops/environment.mjs --profile integration` | Exit 1; missing auth PGlite, ingestion `pg` and `embedded-postgres` in this clean clone; no installation/fix made |
+| `node ops/monitor.mjs --input ops/examples/telemetry.synthetic.json` | `unknown` for all five signals because the example sample is stale; expected fail-closed result, not live monitoring evidence |
+| Recovery preflight below | Exit 1; PostgreSQL `psql`, `pg_dump`, `pg_restore` unavailable. No connection, database, archive or restore was attempted |
+| `npm test` | Exit 1: 41 tests, 23 passed, 2 failed, 16 skipped. Auth import fails for missing `@electric-sql/pglite`; board-race Git fixture receives filesystem permission denial. Six native DB tests and ten equipment tests skip for missing PostgreSQL/PGlite |
+| `npm run check` | Exit 0: JavaScript syntax, 12 original GLB containers and 19 seed task definitions validated |
+| `git diff --check` | Exit 0; no whitespace errors |
+
+The board-race failure was Git exit 128 trying to write
+`C:/Users/Wil/AppData/Local/Packages/sandbox.{268a9c61-cef9-41cc-92ca-3894c30dfade}/AC/Temp/vanguard-race-luF0NC/remote.git/config`:
+`Permission denied; could not set core.repositoryformatversion to 0`. This fixture failed;
+it was not rerun through another identity, directory or route. Reading the parent message history
+provided no new authorization to retry it. This was a filesystem denial inside the test, not an
+automatic approval-review rejection. The requested root test command finished; no root repair
+or substitute passing run is claimed.
+
+Recovery invocation used process-local `OPS_PGHOST=127.0.0.1`, `OPS_PGPORT=55439`, and the
+placeholder `OPS_PGUSER=existing_owner_required`, followed by
+`node ops/recovery-drill.mjs --confirm-disposable-synthetic`. The failure occurred during tool
+discovery before any use of that placeholder identity. Exact diagnostic:
+
+> PostgreSQL psql, pg_dump and pg_restore unavailable; install matching PostgreSQL 16+ client tools in an approved environment and set PG_BIN
+
+The real disposable native backup/restore exercise is **unproven**. The script's integrity
+comparison tests are not substituted for it. [RECOVERY.md](RECOVERY.md#run-the-real-drill)
+contains the reproducible command and prerequisites for an owner-approved existing marked local
+cluster. This task did not install PostgreSQL, provision identities/grants, reuse the ingestion
+bootstrap's temporary credentials, bypass existing native/loopback permission stops or change
+RLS/auth policy. Missing auth-local setup remains SV-019's independent work; its blocked Library
+artifact was not copied, reconstructed or transferred.
+
+At initial submission the fixture loaded only core/auth/ingestion migrations. The resumed repair
+above extends source coverage to every currently merged service migration. Any future release
+still requires reconciling the explicit inventory and fixtures; actual native execution remains
+a separate unmet gate.
+
+## Remaining operational gates
+
+Choose provider/region/residency, actual primary and backup owners, managed OIDC/source adapters,
+the assembled production service/health boundaries, reviewed existing runtime access, secret
+manager/rotation procedure, log/journal retention, metrics collector/alert route, approved
+freshness thresholds and staffing. Complete a real disposable restore, hosted recovery and
+rollback rehearsal, measured recovery targets and synthetic end-to-end authorization/readiness
+checks. CI wiring remains with SV-019. Real hardware integration, measured architectural
+accuracy and ward/production sign-off remain separate gates. These runbooks establish no SLO.
