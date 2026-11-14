@@ -4,28 +4,34 @@ import {presentEquipment,filterEquipment,describeFreshness,nextToReview,summariz
 import {createEquipmentApi,createEquipmentSession} from '/src/equipment-api.js';
 import {createEquipmentPolling} from '/src/equipment-polling.js';
 import {updateEquipmentFreshness} from '/src/equipment-freshness.js';
+import {mountMaintenance} from '/maintenance/panel.js';
 // All text from state or storage is added as text nodes by h(); no markup is ever built from data.
 const h=(tag,attrs={},...kids)=>{const el=document.createElement(tag);for(const [k,v] of Object.entries(attrs)){if(v===false||v===null||v===undefined)continue;if(k==='class')el.className=v;else if(k.startsWith('on'))el.addEventListener(k.slice(2),v);else el.setAttribute(k,v===true?'':v);}for(const kid of kids.flat())if(kid!==null&&kid!==undefined&&kid!==false)el.append(kid.nodeType?kid:document.createTextNode(String(kid)));return el;};
 const main=document.getElementById('main'),view=document.getElementById('view');
+const maintenanceWrap=document.getElementById('maintenance-wrap');
+let maintenanceApi=null,maintenancePanel=null,identityGeneration=0,readyItems=null;
 let items=[],events=[],notice=null,selected=null,query='',statusFilter='all',savedMessage='',formError=null,draft=null,session=null,connection={phase:'idle',busy:false};
 let ward={state:'idle',frame:null,timer:null};
 function connected(state){
  const busyChanged=connection.busy!==state.busy;
+ const availabilityChanged=JSON.stringify(state.readyItems)!==JSON.stringify(connection.readyItems)||state.availabilityError!==connection.availabilityError;
  const changed=JSON.stringify(state.items)!==JSON.stringify(items.map(({roomId,lastSeenAt,source,...record})=>record));
- connection=state;items=state.items.map(presentEquipment);syncScene();
+ connection=state;items=state.items.map(presentEquipment);readyItems=state.readyItems?.map(presentEquipment)??null;syncScene();
+ if(availabilityChanged)maintenancePanel?.invalidateReady();
  // Polls must never replace a focused field or throw away a draft.
  if(document.activeElement?.matches('input, select, textarea')&&!state.busy&&!busyChanged){
   document.querySelectorAll('#equipment-form select, #equipment-form textarea, #equipment-form button[type="submit"], #location-form select, #location-form button[type="submit"]').forEach(el=>{el.disabled=state.phase!=='ready'||state.needsRefresh||!navigator.onLine;});
   renderList();renderConnection();return;
  }
- if(changed||state.phase!=='ready'||state.busy||busyChanged)render();else renderConnection();
+ if(changed||availabilityChanged||state.phase!=='ready'||state.busy||busyChanged)render();else renderConnection();
 }
 function connect(org,token){
- let api;try{api=createEquipmentApi({organizationId:org,token});}catch(error){connection={phase:'idle',busy:false,error};renderConnection();return;}
- session?.close();items=[];events=[];selected=null;draft=null;formError=null;
- session=createEquipmentSession(api,{onChange:connected});refresh();}
+ const gen=++identityGeneration;
+ let api;try{api=createEquipmentApi({organizationId:org,token,onAuthorizationLoss:error=>{if(gen===identityGeneration)disconnect(error);}});}catch(error){disconnect(error);return;}
+ maintenancePanel?.close();maintenancePanel=null;session?.close();items=[];readyItems=null;events=[];selected=null;draft=null;formError=null;query='';statusFilter='all';
+ maintenanceApi=api.maintenance;session=createEquipmentSession(api,{withAvailability:true,onChange:state=>{if(gen===identityGeneration)connected(state);}});render();refresh();}
 function refresh(){return session?.refresh().catch(()=>{});}
-function disconnect(){session?.close();session=null;connection={phase:'idle',busy:false};items=[];events=[];selected=null;draft=null;syncScene();render();}
+function disconnect(error){identityGeneration++;maintenancePanel?.close();maintenancePanel=null;maintenanceApi=null;session?.close();session=null;connection={phase:'idle',busy:false,...(error?.message&&{error})};items=[];readyItems=null;events=[];selected=null;draft=null;formError=null;savedMessage='';query='';statusFilter='all';syncScene();render();}
 function connectionPanel(){
  if(!session)return h('section',{class:'connection','aria-labelledby':'connect-h'},h('h2',{id:'connect-h'},'Connect to equipment'),connection.error?h('p',{role:'alert'},connection.error.message):null,h('p',{},'Use an existing authorized session and organization. Local demo identities must be synthetic. Session tokens stay in this tab’s memory and disappear on reload.'),h('form',{onsubmit:e=>{e.preventDefault();const f=e.currentTarget;const org=f.elements.organization.value,token=f.elements.token.value;f.reset();connect(org,token);}},h('label',{},'Organization ID',h('input',{name:'organization',required:true,autocomplete:'off'})),h('label',{},'Session token',h('input',{name:'token',type:'password',required:true,autocomplete:'off'})),h('button',{type:'submit',class:'primary'},'Connect')));
  return h('section',{class:'connection','aria-label':'Equipment connection'},h('p',{role:connection.error?'alert':'status'},connection.error?.message||(connection.phase==='loading'?'Refreshing shared equipment…':connection.phase==='ready'?'Connected. Shared equipment refreshes every 5 seconds.':'Refresh to load shared equipment.')),connection.items?.length&&connection.phase!=='ready'?h('p',{},'Showing the last successful response. It may be out of date.'):null,h('div',{class:'card-actions'},h('button',{type:'button',disabled:connection.busy,onclick:refresh},'Refresh'),connection.phase==='loading'?h('button',{type:'button',onclick:()=>session.cancelRead()},'Cancel refresh'):null,h('button',{type:'button',onclick:disconnect},'Disconnect')));
@@ -48,7 +54,7 @@ const freshness=i=>{const f=describeFreshness(i,isStale);return h('span',{class:
 const noticeEl=()=>notice?h('p',{class:'notice',role:'status'},notice):null;
 function scene(){try{return ward.frame?.contentWindow?.SupplyVanguardScene;}catch{return undefined;}}
 function syncScene(){const s=scene();if(s){try{s.setEquipment(items);}catch{ward.state='error';render();}}}
-function route(){const m=/^#\/(workspace|equipment|ward)/.exec(location.hash);return m?m[1]:'workspace';}
+function route(){const m=/^#\/(workspace|equipment|ward|maintenance)(?:[?\/]|$)/.exec(location.hash);return m?m[1]:location.pathname==='/maintenance'||location.pathname==='/maintenance/'?'maintenance':'workspace';}
 function go(name,{focusSearch=false,select:id}={}){if(id)select(id,false);location.hash=`#/${name}${focusSearch?'?search=1':''}`;}
 /* workspace */
 function workspace(){
@@ -60,7 +66,7 @@ function workspace(){
   h('section',{class:'card mint nicu','aria-labelledby':'nicu-h'},
    h('h2',{id:'nicu-h'},h('a',{class:'card-link',href:'#/equipment'},'NICU ',h('span',{class:'arrow','aria-hidden':'true'},'→'))),
    h('p',{class:'lede'},'Equipment register and an explorable ward for the NICU reference section.'),
-   h('ul',{class:'chips'},h('li',{},`${sum.total} shared assets`),h('li',{},`${sum.available} available`),h('li',{'data-verification-count':true},`${sum.needsVerification} need location verification`)),
+   h('ul',{class:'chips'},h('li',{},`${sum.total} shared assets`),h('li',{'data-ready-count':true},readyItems&&connection.phase==='ready'?`${readyItems.length} available, unassigned and unheld`:'Availability not verified'),h('li',{'data-verification-count':true},`${sum.needsVerification} need location verification`)),
    h('div',{class:'card-actions'},h('a',{class:'btn primary',href:'#/equipment'},'Open equipment'),h('a',{class:'btn',href:'#/ward'},'Open 3D ward'))),
   h('section',{class:'card blush panel next-item','aria-labelledby':'next-h'},
    h('h2',{id:'next-h'},'Next to verify'),
@@ -75,10 +81,10 @@ let pendingFocus=null;const queueFocus=sel=>{pendingFocus=sel;};
 function equipmentView(){
  const shown=filterEquipment(items,query,statusFilter),cur=items.find(i=>i.id===selected);
  const search=h('input',{id:'search',type:'search',value:query,autocomplete:'off',oninput:e=>{query=e.target.value;renderList();}});
- const filter=h('select',{id:'status-filter',onchange:e=>{statusFilter=e.target.value;renderList();}},h('option',{value:'all'},'All statuses'),STATUSES.map(s=>h('option',{value:s,selected:s===statusFilter},s)));
+ const filter=h('select',{id:'status-filter',onchange:e=>{statusFilter=e.target.value;renderList();}},h('option',{value:'all'},'All statuses'),STATUSES.map(s=>h('option',{value:s,selected:s===statusFilter},s==='available'?'Available, unassigned and unheld':s)));
  return h('div',{},
   h('h1',{style:'font-size:clamp(32px,5vw,56px)'},'Equipment'),noticeEl(),
-  h('p',{class:'muted'},'Shared API records. Synthetic local data; no live hardware tracking. Status edits do not verify physical location.'),
+  h('p',{class:'muted'},'Shared API records. Synthetic local data; no live hardware tracking. Status edits do not verify physical location or clear assignments and holds.'),
   h('div',{class:'two-col'},
    h('section',{'aria-labelledby':'list-h'},h('h2',{id:'list-h',class:'sr-only'},'Equipment register'),
     h('div',{class:'toolbar'},h('label',{for:'search'},'Search equipment',search,h('span',{class:'hint'},'Name, asset ID, room or status')),h('label',{for:'status-filter'},'Status',filter)),
@@ -88,8 +94,9 @@ function equipmentView(){
     h('section',{class:'activity','aria-labelledby':'act-h'},h('h2',{id:'act-h',style:'font-size:22px'},'Recent activity'),activity()))));
 }
 function renderList(){
- const shown=filterEquipment(items,query,statusFilter),list=document.getElementById('asset-list'),count=document.getElementById('count');if(!list)return;
- count.textContent=`${shown.length} of ${items.length} assets shown`;list.replaceChildren(...(shown.length?shown.map(i=>h('li',{},h('button',{type:'button',class:'asset','aria-current':String(i.id===selected),onclick:()=>{select(i.id);render();}},h('strong',{},i.name),h('span',{class:'meta'},`${i.id} · ${i.roomId}`),h('span',{},statusBadge(i.status)),h('span',{class:'meta'},freshness(i))))):[h('li',{},h('p',{class:'muted'},items.length?'No matching equipment. Clear the search or choose All statuses.':session&&connection.phase==='ready'?'No equipment registered in this organization.':'Connect or refresh to load shared equipment.'))]));
+ const unavailable=statusFilter==='available'&&(!readyItems||connection.phase!=='ready');
+ const shown=filterEquipment(statusFilter==='available'?(unavailable?[]:readyItems):items,query,statusFilter==='available'?'all':statusFilter),list=document.getElementById('asset-list'),count=document.getElementById('count');if(!list)return;
+ count.textContent=unavailable?'Availability not verified. Refresh to retry.':`${shown.length} of ${items.length} assets shown`;list.replaceChildren(...(shown.length?shown.map(i=>h('li',{},h('button',{type:'button',class:'asset','aria-current':String(i.id===selected),onclick:()=>{select(i.id);render();}},h('strong',{},i.name),h('span',{class:'meta'},`${i.id} · ${i.roomId}`),h('span',{},statusBadge(i.status)),h('span',{class:'meta'},freshness(i))))):[h('li',{},h('p',{class:'muted'},unavailable?(connection.availabilityError?.message||'Availability service has not confirmed these records.'):items.length?'No matching equipment. Clear the search or choose All statuses.':session&&connection.phase==='ready'?'No equipment registered in this organization.':'Connect or refresh to load shared equipment.'))]));
 }
 function detail(i){
  const d=draft?.id===i.id?draft:{id:i.id,version:i.version,status:i.status,note:i.note||'',locationId:i.locationId};draft=d;
@@ -108,15 +115,15 @@ function detail(i){
 }
 async function submit(kind,id){
  if(!session||connection.busy||connection.phase!=='ready'||connection.needsRefresh||!navigator.onLine)return;
- const d={...draft};formError=null;savedMessage='';
+ const gen=identityGeneration,owner=session,d={...draft};formError=null;savedMessage='';
  try{
   const body=kind==='admin'?{expectedVersion:d.version,status:d.status,note:d.note}:{locationId:d.locationId,observedAt:new Date().toISOString(),source:'manual-check-in'};
-  const result=await session.mutate(kind,id,body);
-  if(selected!==id)return;
+  const result=await owner.mutate(kind,id,body);
+  if(gen!==identityGeneration||owner!==session||selected!==id)return;
   const latest=items.find(i=>i.id===id);if(latest)draft={id,version:latest.version,status:latest.status,note:latest.note||'',locationId:latest.locationId};
   savedMessage=kind==='admin'?'Saved and refreshed shared state. Location verification is unchanged.':result.applied?'Observation recorded; shared state refreshed.':'Observation recorded but did not replace a newer verified location.';
   events.push({equipmentId:id,kind,at:new Date().toISOString(),message:savedMessage});events=events.slice(-8);
- }catch(error){if(selected!==id)return;formError={message:error.message,conflict:error.status===409};}
+ }catch(error){if(gen!==identityGeneration||owner!==session||selected!==id)return;formError={message:error.message,conflict:error.status===409};}
  queueFocus(formError?'[role="alert"]':'.save-ok');render();
 }
 function activity(){return events.length?h('ol',{},events.slice().reverse().map(e=>h('li',{},e.equipmentId+' · '+e.message,h('br'),h('span',{class:'muted'},e.at)))):h('p',{class:'muted'},'Actions confirmed in this tab appear here. Shared audit history is not available from this API.');}
@@ -148,15 +155,24 @@ function renderWard(){
  if(!ward.frame)wardFrameSlot.replaceChildren();
 }
 /* shell */
+function renderMaintenance(){
+ if(maintenancePanel)return;
+ const host=h('div');maintenanceWrap.replaceChildren(h('h1',{},'Cleaning & maintenance'),host);
+ if(!session||!maintenanceApi){host.append(h('p',{},'Connect above with an existing authorized session to load maintenance.'));return;}
+ const gen=identityGeneration,api=maintenanceApi;
+ maintenancePanel=mountMaintenance(host,{api:{...api,service:async(...args)=>{const result=await api.service(...args);if(gen===identityGeneration&&api===maintenanceApi)await refresh();return result;}}});
+}
 function render(){
  renderConnection();
  const r=route();
  document.querySelectorAll('.nav a[data-route]').forEach(a=>{if(a.dataset.route===r)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
  const search=/search=1/.test(location.hash);
  wrap.hidden=r!=='ward';
- if(r==='ward'){view.replaceChildren();renderWard();}else view.replaceChildren(r==='equipment'?equipmentView():workspace());
+ maintenanceWrap.hidden=r!=='maintenance';
+ if(r!=='maintenance'){maintenancePanel?.close();maintenancePanel=null;maintenanceWrap.replaceChildren();}
+ if(r==='maintenance'){view.replaceChildren();renderMaintenance();}else if(r==='ward'){view.replaceChildren();renderWard();}else view.replaceChildren(r==='equipment'?equipmentView():workspace());
  if(r==='equipment')renderList();
- document.title=`${{workspace:'Workspace',equipment:'Equipment',ward:'3D ward'}[r]} · Supply Vanguard`;
+ document.title=`${{workspace:'Workspace',equipment:'Equipment',ward:'3D ward',maintenance:'Maintenance'}[r]} · Supply Vanguard`;
  if(pendingFocus){const el=main.querySelector(pendingFocus);pendingFocus=null;el?.focus?.();}
  else if(search&&r==='equipment'){document.getElementById('search')?.focus();}
 }

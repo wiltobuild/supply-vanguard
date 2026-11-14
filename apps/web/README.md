@@ -1,5 +1,28 @@
 # Shared equipment client (SV-007)
 
+## Maintenance integration (SV-011)
+
+The shared shell now routes `#/maintenance`, `/maintenance` and `/maintenance/` to Maintenance, including direct reload. It uses the existing connection form/session; no new public login, token issuance, persistence or duplicate auth is added. Only maintenance `api.js`, `panel.js` and scoped `style.css` are public module assets. Tests, README, evidence, standalone preview and API source are not exposed by the asset allowlist.
+
+The actual API host must compose the existing equipment and maintenance handlers using `createEquipmentMaintenanceHandler({authorization})` from `services/api/maintenance/dispatch.mjs`. Pass the **same existing authorization object/pool/verifier**, and inject that dispatcher into `createWebHandler({apiHandler})`, or mount it at the existing `API_ORIGIN`. There is no dependency on unmerged PR14. Core/auth/receipts/requests/holds migrations and approved runtime inventory/assignment/hold reads remain prerequisites; this integration does not apply production migrations or grants.
+
+Shared available counts/search use the server's canonical available/unassigned/no-active-hold query before pagination. Missing/failed reads display availability as unverified without a status-only fallback. Inventory and ready are separate reads, not a cross-query snapshot: mismatched ID/version/available status fails closed until refresh; matching readiness IDs use inventory records for consistent visible row/detail fields. Physical freshness remains separate. General all-status records retain their actual status; status alone is not allocation authority.
+
+Maintenance mounts once per route/session, remains stable through polling, and closes on navigation/disconnect/identity or inventory authorization loss. A changed/unverified shared readiness result invalidates an older maintenance ready view until explicit refresh. Focused drafts survive unchanged polls. Identity generations prevent old equipment/ready/panel401s or accepted old service responses from clearing/refetching a newer session. Audit-only403 remains distinct from session/inventory loss. Successful service/replay refetches shared state while preserving unavailable status and all holds.
+
+Permitted local checks (no listening sockets):
+
+```powershell
+node --test apps/web/tests/maintenance-integration.test.mjs
+node --test apps/web/tests/equipment-timing.test.mjs
+npm test --prefix services/api/maintenance
+npm run check
+```
+
+The integration suite uses the actual shared shell and public handlers with one injected authorization context, real in-memory SQL/RLS, and Node request/response streams. It uses maintenance's already-installed test dependencies without changing root/auth dependencies. Original socket tests, native PostgreSQL and previously denied temp-Git stages are not rerun in this environment. In-process DOM focus/Back/Forward is not actual-browser acceptance.
+
+For the manager's authorized supported runtime, the disposable host entrypoint is `node services/api/maintenance/preview.mjs` from repository root, Node22+ with maintenance dev dependencies installed. It binds one shared web/API fixture on configured `PORT` (default4184), uses synthetic in-memory records and the existing test verifier, and provides a trusted local REPL binding named `preview`. The trusted harness may instead import `startMaintenancePreview` and keep its returned ephemeral session/organization in memory. No session is automatically printed, stored in a file or exposed through an issuance endpoint; sessions expire under the existing verifier. Close the fixture/REPL after acceptance. This maintenance fixture's first listener attempt succeeded at `http://127.0.0.1:4184/maintenance`, with actual HTTP200 for the shell and authenticated ready query. No maintenance listener denial occurred or was bypassed; prior check-in/native/temp-Git/metadata stops remain distinct and untouched. These HTTP checks do not establish mounted-browser acceptance, which remains coordinator-owned.
+
 The equipment service owns inventory. This client does not load or save equipment in browser storage. The existing ward, procedural source, GLBs, responsive layout and list fallback remain in use. Browser-only supply counts inside the original viewer are a separate synthetic demo.
 
 ## Run locally
